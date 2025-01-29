@@ -16,6 +16,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCdJcgR6Fxm650aI4r8eVgsE-kPf4mqiP4"
+        }
+      },
       "package": "com.gesant.SkateSpot"
     },
     "web": {
