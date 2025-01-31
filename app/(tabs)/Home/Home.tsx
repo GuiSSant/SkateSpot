@@ -6,9 +6,9 @@ import MapView, {
   Region,
 } from "react-native-maps";
 import { StyleSheet, View, Text, Dimensions, Alert, Image } from 'react-native';
-import { marks } from '../../assets/marks';
+import { marks } from '../../../assets/marks';
 import * as Location from 'expo-location';
-import { customMapStyle } from '../../assets/customMapStyle'
+import { customMapStyle } from '../../../assets/customMapStyle'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -116,7 +116,7 @@ function Home() {
               title={mark.name}
             >
               <Image
-                source={require('../../assets/images/markerImagem.png')}
+                source={require('../../../assets/images/markerImagem.png')}
                 style={{ width: 30, height: 35 }}
                 resizeMode="contain"
               />

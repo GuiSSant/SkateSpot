@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, Dimensions, Alert, Image, Button, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
-import { onBoardingContent } from '../../assets/onBoardingContent'
+import { onBoardingContent } from '../../../assets/onBoardingContent'
 import { router } from 'expo-router';
 
 
 function OnBoarding() {
 
   const [loaded, error] = useFonts({
-    'Warband Stencil Textured': require('../../assets/fonts/Warband Stencil Textured.otf'),
-    'Quicksand-Bold': require('../../assets/fonts/Quicksand-Bold.ttf')
+    'Warband Stencil Textured': require('../../../assets/fonts/Warband Stencil Textured.otf'),
+    'Quicksand-Bold': require('../../../assets/fonts/Quicksand-Bold.ttf')
   });
 
   const [count, setCount] = useState(0);
@@ -18,14 +18,14 @@ function OnBoarding() {
       setCount(prevCount => prevCount + 1);
     }
     else {
-      router.replace('/Cadastro');
+      router.replace('/(tabs)/Cadastro/Cadastro');
     }
   }
   if (loaded) {
     return (
       <View style={styles.container}>
         <Image style={styles.logo} source={
-          require('../../assets/images/logo.png')
+          require('../../../assets/images/logo.png')
         } />
         <Image style={styles.backgroundImage}
           source={

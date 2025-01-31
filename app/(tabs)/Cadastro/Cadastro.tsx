@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, Dimensions, Alert, Image, Button, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useFonts } from 'expo-font';
-import { onBoardingContent } from '../../assets/onBoardingContent'
+import { onBoardingContent } from '../../../assets/onBoardingContent'
 import { Link, router } from 'expo-router';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -9,8 +9,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 function Cadastro() {
     const [loaded, error] = useFonts({
-        'Quicksand-Bold': require('../../assets/fonts/Quicksand-Bold.ttf'),
-        'Quicksand-Regular': require('../../assets/fonts/Quicksand-Regular.ttf'),
+        'Quicksand-Bold': require('../../../assets/fonts/Quicksand-Bold.ttf'),
+        'Quicksand-Regular': require('../../../assets/fonts/Quicksand-Regular.ttf'),
     });
 
     if (loaded) {
@@ -28,18 +28,18 @@ function Cadastro() {
 
                     <View style={styles.container}>
                         <Image style={styles.logo} source={
-                            require('../../assets/images/logo.png')
+                            require('../../../assets/images/logo.png')
                         } />
                         <Text style={styles.titulo}>Cadastro</Text>
                         <Text style={styles.infoText}>Encontre os melhores spots, descubra eventos e junte-se a comunidade!</Text>
 
                         <View style={styles.loginAlternavivesView}>
                             <TouchableOpacity style={styles.loginAlternavivesButton}>
-                                <Image style={{ width: 20, height: 'auto' }} source={require('../../assets/images/google.png')} />
+                                <Image style={{ width: 20, height: 'auto' }} source={require('../../../assets/images/google.png')} />
                                 <Text> Google</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.loginAlternavivesButton}>
-                                <Image style={{ width: 20, height: 'auto' }} source={require('../../assets/images/facebook.png')} />
+                                <Image style={{ width: 20, height: 'auto' }} source={require('../../../assets/images/facebook.png')} />
                                 <Text> Facebook</Text>
                             </TouchableOpacity>
                         </View>
@@ -61,7 +61,7 @@ function Cadastro() {
 
 
 
-                        <Link href="/home" style={styles.button}>
+                        <Link href="/UserProfile/UserProfile" style={styles.button}>
                             <Text style={styles.textButton}>Cadastrar</Text>
                         </Link>
 
