@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import * as Location from 'expo-location';
-import MapView, { Marker } from 'react-native-maps';
-import axios from 'axios';
-import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Keyboard } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  TextInput,
+  FlatList,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import * as Location from "expo-location";
+import MapView, { Marker } from "react-native-maps";
+import axios from "axios";
+import Icon from "react-native-vector-icons/Feather";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Keyboard } from "react-native";
+import DefaultLayout from "./DefaultLayout";
+import { customMapStyle } from "../../assets/customMapStyle";
 
-
-const API_URL = 'http://192.168.0.6:8000';
+const API_URL = "http://192.168.0.6:8000";
 
 interface Location {
   latitude: number;
@@ -28,41 +38,51 @@ interface Result {
   images: string;
 }
 
-
 // Tipagem da rota para receber a nova localização
 type RootStackParamList = {
   Explore: { newLocation?: Location };
 };
 
-type ExploreRouteProp = RouteProp<RootStackParamList, 'Explore'>;
+type ExploreRouteProp = RouteProp<RootStackParamList, "Explore">;
 
 const Explore = () => {
   const navigation = useNavigation();
   const route = useRoute<ExploreRouteProp>();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<string[]>([]);
-  const [userLocation, setUserLocation] = useState<Location>({ latitude: 0, longitude: 0 });
+  const [userLocation, setUserLocation] = useState<Location>({
+    latitude: 0,
+    longitude: 0,
+  });
   const [results, setResults] = useState<Result[]>([]);
   const [mapExpanded, setMapExpanded] = useState(false);
   const [isTyping, setIsTyping] = useState(false); // Estado para detectar digitação
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
   const [loaded, error] = useFonts({
-          'Quicksand-Bold': require('../../assets/fonts/Quicksand-Bold.ttf'),
-          'Quicksand-Regular': require('../../assets/fonts/Quicksand-Regular.ttf'),
-      });
-      
-      
+    "Quicksand-Bold": require("../../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("../../assets/fonts/Quicksand-Regular.ttf"),
+  });
+
+  // Estilização do mapa
+  const DarkStyleMap = customMapStyle;
+
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setIsKeyboardOpen(true);
-    });
-  
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setIsKeyboardOpen(false);
-    });
-  
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardOpen(true);
+      },
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardOpen(false);
+      },
+    );
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -80,7 +100,6 @@ const Explore = () => {
     }
   }, [route.params?.newLocation]);
 
-  
   useEffect(() => {
     if (userLocation.latitude !== 0 && userLocation.longitude !== 0) {
       fetchResults();
@@ -89,8 +108,8 @@ const Explore = () => {
 
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      console.log('Permissão de localização negada');
+    if (status !== "granted") {
+      console.log("Permissão de localização negada");
       return;
     }
 
@@ -103,8 +122,9 @@ const Explore = () => {
 
   const fetchResults = async () => {
     try {
-      const appliedFilters = filters.length > 0 ? filters.join(',') : 'spots,shops,events';
-  
+      const appliedFilters =
+        filters.length > 0 ? filters.join(",") : "spots,shops,events";
+
       const response = await axios.get<Result[]>(`${API_URL}/search/`, {
         params: {
           lat: userLocation.latitude,
@@ -113,16 +133,18 @@ const Explore = () => {
           query: searchQuery,
         },
       });
-      console.log('Response data:', response.data);
+      console.log("Response data:", response.data);
       setResults(response.data);
     } catch (error) {
-      console.error('Erro ao buscar resultados:', error);
+      console.error("Erro ao buscar resultados:", error);
     }
   };
 
   const toggleFilter = (filter: string) => {
     setFilters((prev) =>
-      prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]
+      prev.includes(filter)
+        ? prev.filter((f) => f !== filter)
+        : [...prev, filter],
     );
   };
 
@@ -132,6 +154,8 @@ const Explore = () => {
 
   return (
     <View style={styles.container}>
+      <DefaultLayout {...["explore"]} />
+
       <TextInput
         style={styles.searchBar}
         placeholder="Pesquisar..."
@@ -145,67 +169,118 @@ const Explore = () => {
 
       <ScrollView horizontal style={styles.filterContainer}>
         <TouchableOpacity
-          style={[styles.filterButton, filters.includes('spots') && styles.activeFilter]}
-          onPress={() => toggleFilter('spots')}
+          style={[
+            styles.filterButton,
+            filters.includes("spots") && styles.activeFilter,
+          ]}
+          onPress={() => toggleFilter("spots")}
         >
-          <Text style={styles.filterText}>Pistas</Text>
+          <Text
+            style={[
+              styles.filterText,
+              filters.includes("spots") && styles.activeTextFilter,
+            ]}
+          >
+            Pistas
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.filterButton, filters.includes('shops') && styles.activeFilter]}
-          onPress={() => toggleFilter('shops')}
+          style={[
+            styles.filterButton,
+            filters.includes("shops") && styles.activeFilter,
+          ]}
+          onPress={() => toggleFilter("shops")}
         >
-          <Text style={styles.filterText}>Lojas</Text>
+          <Text
+            style={[
+              styles.filterText,
+              filters.includes("shops") && styles.activeTextFilter,
+            ]}
+          >
+            Lojas
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.filterButton, filters.includes('events') && styles.activeFilter]}
-          onPress={() => toggleFilter('events')}
+          style={[
+            styles.filterButton,
+            filters.includes("events") && styles.activeFilter,
+          ]}
+          onPress={() => toggleFilter("events")}
         >
-          <Text style={styles.filterText}>Eventos</Text>
+          <Text
+            style={[
+              styles.filterText,
+              filters.includes("events") && styles.activeTextFilter,
+            ]}
+          >
+            Eventos
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
       {/* Botão de Localização */}
       <View style={styles.divider} />
-        <TouchableOpacity 
-          style={styles.locationButton} 
-          onPress={() => navigation.navigate('LocationSearch' as never)}
-        >
-          <Icon name="map-pin" size={20} color="#007bff" />
-          <Text style={styles.locationButtonText}>Localização Atual</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.locationButton}
+        onPress={() => navigation.navigate("LocationSearch" as never)}
+      >
+        <Icon name="map-pin" size={20} color="#F5D907" />
+        <Text style={styles.locationButtonText}>Localização Atual</Text>
+      </TouchableOpacity>
       <View style={styles.divider} />
 
       <View style={styles.containerMap}>
         <Text style={styles.sectionTitle}>Perto de você</Text>
 
-        <View style={{ flex: 1 }}>  
-        <FlatList
-          horizontal
-          data={results}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigation.navigate('LocalDetails', { id: item.id, name: item.name, type: item.type, latitude: item.latitude, longitude: item.longitude, distance: item.distance, description: item.description, main_image: item.main_image, images: item.images })}>
-              <View style={styles.card}>
-                <Image source={{ uri: `${API_URL}${item.main_image}` }} style={styles.cardImage} />
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <View style={styles.cardDistanceContainer}>
-                  <Icon name="map-pin" size={12} color="#666" />
-                  <Text style={styles.cardDistance}>{item.distance.toFixed(2)} km</Text>
+        <View style={{ flex: 1 }}>
+          <FlatList
+            horizontal
+            data={results}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("LocalDetails", {
+                    id: item.id,
+                    name: item.name,
+                    type: item.type,
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                    distance: item.distance,
+                    description: item.description,
+                    main_image: item.main_image,
+                    images: item.images,
+                  })
+                }
+              >
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: `${API_URL}${item.main_image}` }}
+                    style={styles.cardImage}
+                  />
+                  <Text style={styles.cardTitle}>{item.name}</Text>
+                  <View style={styles.cardDistanceContainer}>
+                    <Icon name="map-pin" size={12} color="#666" />
+                    <Text style={styles.cardDistance}>
+                      {item.distance.toFixed(2)} km
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={styles.horizontalList}
-        />
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.horizontalList}
+          />
         </View>
 
         {!isKeyboardOpen && (
-          <TouchableOpacity onPress={handleMapPress}>
+          <TouchableOpacity>
             <MapView
+              showsUserLocation={true}
+              showsMyLocationButton={true}
               style={[
-                styles.map, 
+                styles.map,
                 mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
-                { flexGrow: 1 } // Permite que o mapa use o espaço restante
+                { flexGrow: 1 }, // Permite que o mapa use o espaço restante
               ]}
               initialRegion={{
                 latitude: userLocation.latitude,
@@ -213,13 +288,23 @@ const Explore = () => {
                 latitudeDelta: 0.1,
                 longitudeDelta: 0.1,
               }}
+              customMapStyle={DarkStyleMap}
             >
               {results.map((result) => (
                 <Marker
                   key={result.id}
-                  coordinate={{ latitude: result.latitude, longitude: result.longitude }}
+                  coordinate={{
+                    latitude: result.latitude,
+                    longitude: result.longitude,
+                  }}
                   title={result.name}
-                />
+                >
+                  <Image
+                    source={require("../../assets/images/markerImagem.png")}
+                    style={{ width: 30, height: 35 }}
+                    resizeMode="contain"
+                  />
+                </Marker>
               ))}
             </MapView>
           </TouchableOpacity>
@@ -230,140 +315,144 @@ const Explore = () => {
 };
 
 const styles = StyleSheet.create({
-
-  container: { 
-    flex: 1, 
-    padding: 16, 
-    backgroundColor: '#fff' 
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#0C0A14",
   },
 
-  searchBar: { 
-    height: 45, 
-    borderColor: '#ccc', 
-    borderWidth: 1, 
-    borderRadius: 25, 
-    paddingHorizontal: 12, 
-    marginBottom: 10 
+  searchBar: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginTop: 12,
+    paddingHorizontal: 16,
   },
 
-  filterContainer: { 
-    flexDirection: 'row', 
-    marginVertical: 10, 
-    marginBottom: 15
+  filterContainer: {
+    flexDirection: "row",
+    marginVertical: 10,
+    marginBottom: 15,
   },
 
-  filterButton: { 
-    paddingVertical: 11, 
-    paddingHorizontal: 12, 
-    borderRadius: 25, 
-    backgroundColor: '#e0e0e0', 
-    marginRight: 12, 
-    height: 40 
+  filterButton: {
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    marginRight: 12,
+    height: 32,
   },
-  
-  activeFilter: { 
-    backgroundColor: '#007bff' 
+
+  activeFilter: {
+    backgroundColor: "#9747FF",
   },
-  
-  filterText: { 
+
+  activeTextFilter: {
+    color: "#FFFFFF",
+  },
+
+  filterText: {
     fontSize: 12,
-    color: '#000', 
-    textAlign: 'center', 
-    alignItems: 'center' },
-  
-  sectionTitle: { 
-    fontSize: 16, 
-    fontWeight: 'bold',
-    marginTop: 20, 
-    marginBottom: 8 
+    color: "#000",
+    textAlign: "center",
+    alignItems: "center",
+    margin: "auto",
+    fontFamily: "Quicksand-Bold",
   },
-  
+
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 8,
+  },
+
   locationButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center', // Centraliza os itens dentro do botão
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", // Centraliza os itens dentro do botão
     paddingVertical: 10,
-    alignSelf: 'center', // Centraliza o botão horizontalmente
+    alignSelf: "center", // Centraliza o botão horizontalmente
   },
-  
-  locationButtonText: { 
-    marginLeft: 8, 
-    color: '#007bff', 
-    fontSize: 16, 
-    alignItems: 'center' 
+
+  locationButtonText: {
+    marginLeft: 8,
+    color: "#F5D907",
+    fontSize: 16,
+    alignItems: "center",
+    fontFamily: "Quicksand-Bold",
   },
-  
-  horizontalList: { 
-    paddingBottom: 16 
+
+  horizontalList: {
+    paddingBottom: 16,
   },
-  
+
   divider: {
     height: 1,
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     marginVertical: 2,
-    width: '100%', // Define a largura para ocupar quase toda a tela
-    alignSelf: 'center', // Centraliza horizontalmente
+    width: "100%", // Define a largura para ocupar quase toda a tela
+    alignSelf: "center", // Centraliza horizontalmente
   },
 
-  card: { 
-    width: 100, 
-    height: 100, 
-    marginRight: 12, 
-    marginTop: 8, 
-    borderRadius: 15, 
-    backgroundColor: '#fff', 
-    elevation: 2, 
-    padding: 0, 
-    alignItems: 'center' 
+  card: {
+    width: 100,
+    height: 100,
+    marginRight: 12,
+    marginTop: 8,
+    borderRadius: 15,
+    backgroundColor: "#fff",
+    elevation: 2,
+    padding: 0,
+    alignItems: "center",
   },
-  
-  cardImage: { 
-    width: 100, 
-    height: 100, 
-    borderRadius: 15 
+
+  cardImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 15,
   },
-  
-  cardTitle: { 
-    fontSize: 12, 
-    fontWeight: 'bold', 
-    textAlign: 'center', 
-    marginTop: 4
+
+  cardTitle: {
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 4,
   },
-  
-  cardDistanceContainer: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginTop: 2 
+
+  cardDistanceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 2,
   },
-  
-  cardDistance: { 
-    fontSize: 10, color: '#666', 
+
+  cardDistance: {
+    fontSize: 10,
+    color: "#666",
     marginLeft: 4,
-    marginTop: 4 
+    marginTop: 4,
   },
-  
+
   // Adicionando margem superior ao container
-  containerMap: { 
-    flex: 500, 
-    marginTop: 0 
-  }, 
-  
+  containerMap: {
+    flex: 500,
+    marginTop: 0,
+  },
+
   // O mapa ocupará o espaço disponível
-  map: { 
-    width: '100%',
-    height: '100%' 
-  }, 
-  
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+
   // Altura do mapa quando não expandido
-  mapCollapsed: { 
-    height: '60%', 
-    marginTop: 0 
-    
+  mapCollapsed: {
+    height: "60%",
+    marginTop: 0,
   },
 
   // Altura do mapa quando expandido
-  mapExpanded: { 
-    height: '100%' 
+  mapExpanded: {
+    height: "100%",
   },
 });
 

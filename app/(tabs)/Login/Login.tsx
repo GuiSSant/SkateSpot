@@ -17,7 +17,7 @@ import { Link, router } from "expo-router";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-function Cadastro() {
+function Login() {
   const [loaded, error] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
@@ -40,7 +40,7 @@ function Cadastro() {
               style={styles.logo}
               source={require("../../../assets/images/logo.png")}
             />
-            <Text style={styles.titulo}>Cadastro</Text>
+            <Text style={styles.titulo}>Login</Text>
             <Text style={styles.infoText}>
               Encontre os melhores spots, descubra eventos e junte-se a
               comunidade!
@@ -64,13 +64,10 @@ function Cadastro() {
             </View>
 
             <View style={{ marginTop: 28, flexDirection: "row" }}>
-              <Text style={styles.infoText}>Cadastre-se</Text>
+              <Text style={styles.infoText}>Login</Text>
             </View>
 
             <View style={styles.formRegister}>
-              <Text style={styles.formFieldTitle}>Nome</Text>
-              <TextInput style={styles.formInputText} />
-
               <Text style={styles.formFieldTitle}>E-mail</Text>
               <TextInput style={styles.formInputText} />
 
@@ -80,10 +77,13 @@ function Cadastro() {
                 style={styles.formInputText}
                 placeholder="********"
               />
+              <Text style={[styles.infoText, { alignSelf: "flex-end" }]}>
+                Esqueci a senha
+              </Text>
             </View>
 
-            <Link href="/UserProfile/UserProfile" style={styles.button}>
-              <Text style={styles.textButton}>Cadastrar</Text>
+            <Link href="/(tabs)/Explore" style={styles.loginButton}>
+              <Text style={styles.textButton}>Entrar</Text>
             </Link>
           </View>
         </ScrollView>
@@ -127,13 +127,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 28,
     marginTop: 12,
   },
-  button: {
+  loginButton: {
     backgroundColor: "#9747FF",
     borderRadius: 8,
     paddingHorizontal: 42,
     paddingVertical: 8,
     position: "relative",
-    bottom: -32,
+    bottom: -84,
   },
   textButton: {
     color: "#fff",
@@ -179,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Cadastro;
+export default Login;

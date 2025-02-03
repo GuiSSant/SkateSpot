@@ -36,7 +36,7 @@ export default function UserProfile() {
         >
           <ScrollView>
             <View style={styles.container}>
-              <DefaultLayout />
+              <DefaultLayout {...["perfil"]} />
 
               <View style={styles.UserContainer}>
                 <TouchableHighlight style={styles.HandlerProfilePicture}>
@@ -61,9 +61,9 @@ export default function UserProfile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     position: "static",
     height: "100%",
+    padding: 16,
   },
   profileBackgroundImage: {
     flex: 1,
@@ -73,9 +73,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#0C0A14",
   },
   UserContainer: {
-    marginTop: 250,
+    marginTop: 160,
     alignItems: "center",
-    width: "100%",
+    alignSelf: "center",
+    width: "110%",
   },
   HandlerProfilePicture: {
     height: 120,
