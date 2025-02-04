@@ -323,6 +323,7 @@ const Explore = () => {
                   latitudeDelta: 0.1,
                   longitudeDelta: 0.1,
                 }}
+                
                 customMapStyle={DarkStyleMap}
               >
                 {results.map((result) => (
@@ -333,12 +334,40 @@ const Explore = () => {
                       longitude: result.longitude,
                     }}
                     title={result.name}
+                  
                   >
-                    <Image
-                      source={require("../../assets/images/markerImagem.png")}
-                      style={{ width: 30, height: 35 }}
-                      resizeMode="contain"
-                    />
+
+                    {result.type == 'spot' ? (
+                      <Image
+                        source={
+                          require("../../assets/images/skateRoxo.png")
+                        }
+                        style={{ width: 30, height: 35 }}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      result.type == 'shop' ? (
+                        <Image
+                          source={
+                            require("../../assets/images/shopRoxo.png")
+                          }
+                          style={{ width: 30, height: 35 }}
+                          resizeMode="contain"
+                        />
+                      ) : (
+                        <Image
+                          source={
+                            require("../../assets/images/eventoAmarelo.png")
+                          }
+                          style={{ width: 30, height: 35 }}
+                          resizeMode="contain"
+                        />
+
+                      )
+                    )
+                    }
+
+
                   </Marker>
                 ))}
               </MapView>
@@ -458,9 +487,11 @@ const styles = StyleSheet.create({
 
   cardTitle: {
     fontSize: 12,
-    fontWeight: "bold",
+    color: '#fff',
     textAlign: "center",
     marginTop: 4,
+    fontFamily: "Quicksand-Bold",
+
   },
 
   cardDistanceContainer: {
