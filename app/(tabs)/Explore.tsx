@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
@@ -60,6 +61,16 @@ const Explore = () => {
   const [isTyping, setIsTyping] = useState(false); // Estado para detectar digitação
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
+  //CONST de Localização inicial
+  const [currentLocation, setCurrentLocation] =
+    useState<Location.LocationObjectCoords | null>(null);
+  const [initialRegion, setInitialRegion] = useState<{
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  } | null>(null);
+
   const [loaded, error] = useFonts({
     "Quicksand-Bold": require("../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../assets/fonts/Quicksand-Regular.ttf"),
@@ -67,6 +78,29 @@ const Explore = () => {
 
   // Estilização do mapa
   const DarkStyleMap = customMapStyle;
+
+  //useEffect localização inicial
+  useEffect(() => {
+    const getLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setCurrentLocation(location.coords);
+
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    };
+
+    getLocation();
+  }, []);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -273,41 +307,49 @@ const Explore = () => {
         </View>
 
         {!isKeyboardOpen && (
-          <TouchableOpacity>
-            <MapView
-              showsUserLocation={true}
-              showsMyLocationButton={true}
-              style={[
-                styles.map,
-                mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
-                { flexGrow: 1 }, // Permite que o mapa use o espaço restante
-              ]}
-              initialRegion={{
-                latitude: userLocation.latitude,
-                longitude: userLocation.longitude,
-                latitudeDelta: 0.1,
-                longitudeDelta: 0.1,
-              }}
-              customMapStyle={DarkStyleMap}
-            >
-              {results.map((result) => (
-                <Marker
-                  key={result.id}
-                  coordinate={{
-                    latitude: result.latitude,
-                    longitude: result.longitude,
-                  }}
-                  title={result.name}
-                >
-                  <Image
-                    source={require("../../assets/images/markerImagem.png")}
-                    style={{ width: 30, height: 35 }}
-                    resizeMode="contain"
-                  />
-                </Marker>
-              ))}
-            </MapView>
-          </TouchableOpacity>
+          <View>
+            {initialRegion ? (
+              <MapView
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+                style={[
+                  styles.map,
+                  mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
+                  { flexGrow: 1 }, // Permite que o mapa use o espaço restante
+                ]}
+                initialRegion={{
+                  latitude: initialRegion?.latitude || 0,
+                  longitude: initialRegion?.longitude || 0,
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.1,
+                }}
+                customMapStyle={DarkStyleMap}
+              >
+                {results.map((result) => (
+                  <Marker
+                    key={result.id}
+                    coordinate={{
+                      latitude: result.latitude,
+                      longitude: result.longitude,
+                    }}
+                    title={result.name}
+                  >
+                    <Image
+                      source={require("../../assets/images/markerImagem.png")}
+                      style={{ width: 30, height: 35 }}
+                      resizeMode="contain"
+                    />
+                  </Marker>
+                ))}
+              </MapView>
+            ) : (
+              <ActivityIndicator
+                size={75}
+                color="#F5D907"
+                style={{ marginVertical: "50%" }}
+              />
+            )}
+          </View>
         )}
       </View>
     </View>
@@ -324,6 +366,7 @@ const styles = StyleSheet.create({
   searchBar: {
     backgroundColor: "#fff",
     borderRadius: 8,
+    height: 38,
     marginTop: 12,
     paddingHorizontal: 16,
   },
@@ -361,9 +404,10 @@ const styles = StyleSheet.create({
 
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
     marginTop: 20,
     marginBottom: 8,
+    color: "#fff",
+    fontFamily: "Quicksand-Bold",
   },
 
   locationButton: {
