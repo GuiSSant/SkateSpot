@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
 
   sectionTitle: {
     fontSize: 16,
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 8,
     color: "#fff",
     fontFamily: "Quicksand-Bold",
