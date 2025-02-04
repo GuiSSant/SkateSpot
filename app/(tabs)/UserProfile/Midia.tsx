@@ -30,6 +30,7 @@ export default function Midia() {
       contentContainerStyle={{ alignSelf: "center", gap: 8 }}
       numColumns={3}
       data={midiaAssets}
+      scrollEnabled={false}
       renderItem={({ item, index }) => (
         <TouchableHighlight style={[styles.midiaImageHandler]}>
           <Image style={[styles.midiaImage]} source={item.image}></Image>
