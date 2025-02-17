@@ -9,8 +9,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import axios from "axios"; // Não se esqueça de importar o axios
-import { RootStackParamList } from "../(tabs)/_layout"; // Ajuste o caminho conforme necessário
-import DefaultLayout from "./DefaultLayout";
+import { RootStackParamList } from "../_layout"; // Ajuste o caminho conforme necessário
+import DefaultLayout from "../DefaultLayout";
 import { useFonts } from "expo-font";
 
 // Defina a interface para a resposta da API
@@ -71,13 +71,13 @@ const LocationSearch = () => {
   };
 
   const [loaded, fontError] = useFonts({
-    "Quicksand-Bold": require("../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../assets/fonts/Quicksand-Regular.ttf"),
+    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
   });
 
   return (
     <View style={styles.container}>
-      <DefaultLayout {...["explore"]} />
+      <DefaultLayout {...["explore"]}/>
 
       <TextInput
         style={styles.searchBar}

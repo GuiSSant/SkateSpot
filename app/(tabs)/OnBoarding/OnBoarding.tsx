@@ -24,7 +24,7 @@ function OnBoarding() {
     if (count < 2) {
       setCount((prevCount) => prevCount + 1);
     } else {
-      router.replace("/(tabs)/Login/Login");
+      router.replace("/(tabs)/FormCadastros/FormCadastros");
     }
   };
   if (loaded) {

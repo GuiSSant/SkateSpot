@@ -31,8 +31,8 @@ export default function DefaultLayout(icon: string[]) {
         />
       </TouchableOpacity>
 
-      {icon[0] !== "perfil" ? (
-        <Link href="./UserProfile/UserProfile" style={styles.icon_right}>
+      {icon[0] !== "p" ? (
+        <Link href="../UserProfile/UserProfile" style={styles.icon_right}>
           <Image
             style={styles.icon_right}
             source={require("../../assets/images/Profile.png")}

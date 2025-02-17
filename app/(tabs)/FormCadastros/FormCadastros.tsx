@@ -16,18 +16,34 @@ import { onBoardingContent } from "../../../assets/onBoardingContent";
 import { Link, router } from "expo-router";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Dropdown } from "react-native-element-dropdown";
 
-function Login() {
+const dados = [
+  { label: 'Item 1', value: '1' },
+  { label: 'Item 2', value: '2' }
+]
+
+let tipoForm = ''
+
+function FormCadastros() {
   const [loaded, error] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
   });
 
+  const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+
+    function changeForm(label:string){
+      tipoForm = label
+    }
+
+  
+
   if (loaded) {
     return (
       <GestureHandlerRootView>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={{
             flex: 1,
           }}
@@ -36,38 +52,47 @@ function Login() {
           }}
         >
           <View style={styles.container}>
+          
             <Image
               style={styles.logo}
               source={require("../../../assets/images/logo.png")}
             />
-            <Text style={styles.titulo}>Login</Text>
+
+            <Text style={styles.titulo}>{tipoForm}</Text>
             <Text style={styles.infoText}>
               Encontre os melhores spots, descubra eventos e junte-se a
               comunidade!
             </Text>
+            <Dropdown
+            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            iconStyle={styles.iconStyle}
+            data={dados}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? 'Select item' : '...'}
+            searchPlaceholder="Search..."
+            value={value}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+              setValue(item.value);
+              setIsFocus(false);
+              changeForm(item.label)
+            }
+           }/>
 
-            <View style={styles.loginAlternavivesView}>
-              <TouchableOpacity style={styles.loginAlternavivesButton}>
-                <Image
-                  style={{ width: 20, height: "auto" }}
-                  source={require("../../../assets/images/google.png")}
-                />
-                <Text> Google</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.loginAlternavivesButton}>
-                <Image
-                  style={{ width: 20, height: "auto" }}
-                  source={require("../../../assets/images/facebook.png")}
-                />
-                <Text> Facebook</Text>
-              </TouchableOpacity>
-            </View>
 
             <View style={{ marginTop: 28, flexDirection: "row" }}>
-              <Text style={styles.infoText}>Login</Text>
+              <Text style={styles.infoText}>Cadastre-se</Text>
             </View>
 
             <View style={styles.formRegister}>
+              <Text style={styles.formFieldTitle}>Nome</Text>
+              <TextInput style={styles.formInputText} />
+
               <Text style={styles.formFieldTitle}>E-mail</Text>
               <TextInput style={styles.formInputText} />
 
@@ -77,14 +102,11 @@ function Login() {
                 style={styles.formInputText}
                 placeholder="********"
               />
-              <Text style={[styles.infoText, { alignSelf: "flex-end" }]}>
-                Esqueci a senha
-              </Text>
             </View>
-
-            <Link href="/(tabs)/Explore/Explore" style={styles.loginButton}>
-              <Text style={styles.textButton}>Entrar</Text>
-            </Link>
+            
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.textButton}>Cadastrar</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </GestureHandlerRootView>
@@ -114,7 +136,7 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     textAlign: "center",
-    marginTop: 180,
+    marginTop: 90,
   },
   infoText: {
     color: "#fff",
@@ -127,13 +149,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 28,
     marginTop: 12,
   },
-  loginButton: {
+  button: {
     backgroundColor: "#9747FF",
     borderRadius: 8,
     paddingHorizontal: 42,
     paddingVertical: 8,
     position: "relative",
-    bottom: -84,
+    bottom: -32,
   },
   textButton: {
     color: "#fff",
@@ -176,8 +198,39 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 12,
     paddingHorizontal: 16,
-    height: 36,
+  },
+  dropdown: {
+    height: 50,
+    width: 250,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
+    marginVertical: 16
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
   },
 });
 
-export default Login;
+export default FormCadastros;

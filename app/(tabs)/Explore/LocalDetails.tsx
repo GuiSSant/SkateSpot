@@ -18,6 +18,7 @@ import {
 import { useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "./_layout";
 import { RouteProp } from "@react-navigation/native";
+import DefaultLayout from "../DefaultLayout";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 
@@ -48,8 +49,9 @@ const LocalDetails = () => {
 
   return (
     <View style={styles.container}>
+    <DefaultLayout {...["explore"]} />     
       <Text style={styles.title}>{name}</Text>
-      <Image source={{ uri: `${API_URL}${main_image}` }} style={styles.image} />
+      <Image source={main_image} style={styles.image} />
       <Text style={styles.description}>{description}</Text>
 
       {/* Seção para os cards de imagens */}
@@ -68,17 +70,46 @@ const LocalDetails = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, alignItems: "center" },
-  image: { width: "100%", height: 200, borderRadius: 10 },
-  title: { fontSize: 24, fontWeight: "bold", marginTop: 10 },
-  description: { fontSize: 16, marginTop: 5, textAlign: "center" },
-  imageList: { paddingVertical: 10 }, // Espaçamento vertical para a lista de imagens
+
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#0C0A14",
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 16,
+    marginVertical: 8
+  },
+  title: {
+    fontSize: 28,
+    color: "#fff",
+    alignSelf: "center",
+    marginTop: 66,
+    lineHeight: 27.5,
+    fontFamily: "Quicksand-Bold",
+  },
+  description: {
+    color: "#fff",
+    fontFamily: "Quicksand-Regular",
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
+    textAlign: "center",
+    marginHorizontal: 28,
+    marginTop: 12,
+  },
+  imageList: {
+    paddingVertical: 10
+  },
   card: {
-    width: 100, // Ajuste o tamanho conforme necessário
-    height: 100, // Ajuste o tamanho conforme necessário
+    width: 100,
+    height: 100,
     borderRadius: 10,
     overflow: "hidden",
-    marginRight: 10, // Espaçamento entre os cards
+    marginRight: 10,
   },
   cardImage: {
     width: "100%",
