@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Switch,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { onBoardingContent } from "../../../assets/onBoardingContent";
@@ -19,26 +20,43 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
 
 const dados = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' }
+  { label: 'Pista', value: '1' },
+  { label: 'Skateshop', value: '2' },
+  { label: 'Evento', value: '3' },
 ]
 
-let tipoForm = ''
+const campos = [
+  { id: 1, nome: 'CEP', tipo: 'Text' },
+  { id: 2, nome: 'Logradouro', tipo: 'Text' },
+  { id: 3, nome: 'Número', tipo: 'Text' },
+  { id: 4, nome: 'Bairro', tipo: 'Text' },
+  { id: 5, nome: 'Cidade', tipo: 'Text' },
+  { id: 6, nome: 'Estado', tipo: 'Text' },
+  { id: 7, nome: 'País', tipo: 'Text' },
+  { id: 9, nome: 'Tipo', tipo: 'Dropdown' },
+
+]
+
+let tipoForm = 'TTeste'
 
 function FormCadastros() {
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
   const [loaded, error] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
   });
 
   const [value, setValue] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
+  const [isFocus, setIsFocus] = useState(false);
 
-    function changeForm(label:string){
-      tipoForm = label
-    }
+  function changeForm(label: string) {
+    tipoForm = label
+  }
 
-  
+
 
   if (loaded) {
     return (
@@ -52,58 +70,102 @@ function FormCadastros() {
           }}
         >
           <View style={styles.container}>
-          
+
             <Image
               style={styles.logo}
               source={require("../../../assets/images/logo.png")}
             />
 
-            <Text style={styles.titulo}>{tipoForm}</Text>
+            <Text style={styles.titulo}>Local</Text>
             <Text style={styles.infoText}>
-              Encontre os melhores spots, descubra eventos e junte-se a
-              comunidade!
+              Preencha o formulário para cadastrar um novo local
             </Text>
-            <Dropdown
-            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            iconStyle={styles.iconStyle}
-            data={dados}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select item' : '...'}
-            searchPlaceholder="Search..."
-            value={value}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-              setValue(item.value);
-              setIsFocus(false);
-              changeForm(item.label)
-            }
-           }/>
 
 
-            <View style={{ marginTop: 28, flexDirection: "row" }}>
-              <Text style={styles.infoText}>Cadastre-se</Text>
-            </View>
+
+
 
             <View style={styles.formRegister}>
-              <Text style={styles.formFieldTitle}>Nome</Text>
+
+              {/*<Text style={styles.formFieldTitle}>Nome</Text>
               <TextInput style={styles.formInputText} />
 
               <Text style={styles.formFieldTitle}>E-mail</Text>
-              <TextInput style={styles.formInputText} />
+              <TextInput style={styles.formInputText} defaultValue={tipoForm} />
 
               <Text style={styles.formFieldTitle}>Senha</Text>
               <TextInput
                 secureTextEntry={true}
                 style={styles.formInputText}
                 placeholder="********"
-              />
+              />*/}
+
+              {campos.map((campo) =>
+              (
+                <View key={campo.id + campo.nome}>
+                  {campo.tipo == 'Password' && (
+                    <>
+                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                      <TextInput
+                        secureTextEntry={true}
+                        style={styles.formInputText}
+                        placeholder="********"
+                      />
+                    </>
+                  )}
+                  {campo.tipo == 'Text' && (
+                    <>
+                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                      <TextInput
+                        style={styles.formInputText}
+                      />
+                    </>
+                  )}
+
+                  {campo.tipo == 'Switch' && (
+                    <>
+                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                      <Switch
+                        trackColor={{ false: '#767577', true: '#81b0ff' }}
+                        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                      />
+                    </>
+                  )}
+
+                  {campo.tipo == 'Dropdown' && (
+                    <>
+                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                      <Dropdown
+                        style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        iconStyle={styles.iconStyle}
+                        data={dados}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Select item' : '...'}
+                        searchPlaceholder="Search..."
+                        value={value}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                          setValue(item.value);
+                          setIsFocus(false);
+                          changeForm(item.label)
+                        }
+                        } />
+                    </>
+                  )}
+
+                </View>
+              ))}
+
             </View>
-            
+
             <TouchableOpacity style={styles.button}>
               <Text style={styles.textButton}>Cadastrar</Text>
             </TouchableOpacity>
@@ -155,7 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 42,
     paddingVertical: 8,
     position: "relative",
-    bottom: -32,
+    marginVertical: 32
   },
   textButton: {
     color: "#fff",
