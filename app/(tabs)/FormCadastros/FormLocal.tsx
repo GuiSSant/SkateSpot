@@ -26,7 +26,7 @@ import { TextInputMask } from 'react-native-masked-text';
 const API_URL = "http://34.231.200.200:8000";
 
 
-const dados = [
+const dropdownLocal = [
   { label: '', value: '0' },
   { label: 'Pista', value: '1' },
   { label: 'Skateshop', value: '2' },
@@ -338,8 +338,11 @@ function FormCadastros() {
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <Switch
-                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                        thumbColor={switches[campo.nome.toLowerCase()] ? "#f5dd4b" : "#f4f3f4"}
+                        trackColor={{ false: '#767577', true: '#9747FF' }}
+                        thumbColor={switches[campo.nome.toLowerCase()] ? '#F5D907' : '#f4f3f4'}
+                        style={{alignSelf: 'flex-start'}}
+                        // trackColor={{ false: "#767577", true: "#81b0ff" }}
+                        // thumbColor={switches[campo.nome.toLowerCase()] ? "#f5dd4b" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={() => toggleSwitch(campo.nome.toLowerCase())}
                         value={switches[campo.nome.toLowerCase()]}
@@ -355,7 +358,7 @@ function FormCadastros() {
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
                         iconStyle={styles.iconStyle}
-                        data={dados}
+                        data={dropdownLocal}
                         maxHeight={300}
                         labelField="label"
                         valueField="value"
