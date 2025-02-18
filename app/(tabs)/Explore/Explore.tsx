@@ -290,7 +290,7 @@ const Explore = () => {
               >
                 <View style={styles.card}>
                   <Image
-                    source={item.main_image}
+                    source={{ uri: `${API_URL}${item.main_image}` }}
                     style={styles.cardImage}
                   />
                   <Text style={styles.cardTitle}>{item.name}</Text>

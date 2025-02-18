@@ -19,7 +19,7 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
 import axios from "axios";
-
+import Toast from "react-native-toast-message";
 
 const API_URL = "http://34.231.200.200:8000";
 
@@ -31,15 +31,16 @@ const dados = [
 ]
 
 const campos = [
-  { id: 1, nome: 'CEP', tipo: 'Text' },
-  { id: 2, nome: 'Logradouro', tipo: 'Text' },
-  { id: 3, nome: 'Número', tipo: 'Text' },
-  { id: 4, nome: 'Bairro', tipo: 'Text' },
-  { id: 5, nome: 'Cidade', tipo: 'Text' },
-  { id: 6, nome: 'Estado', tipo: 'Text' },
-  { id: 7, nome: 'País', tipo: 'Text' },
-  { id: 9, nome: 'Tipo', tipo: 'Dropdown' },
-
+  { id: 1, nome: 'CEP', tipo: 'Numeric', editavel: true, visivel: "flex" },
+  { id: 2, nome: 'Logradouro', tipo: 'Text', editavel: false, visivel: "flex" },
+  { id: 3, nome: 'Número', tipo: 'Numeric', editavel: true, visivel: "flex" },
+  { id: 4, nome: 'Bairro', tipo: 'Text', editavel: false, visivel: "flex" },
+  { id: 5, nome: 'Cidade', tipo: 'Text', editavel: false, visivel: "flex" },
+  { id: 6, nome: 'Estado', tipo: 'Text', editavel: false, visivel: "flex" },
+  { id: 7, nome: 'País', tipo: 'Text', editavel: false, visivel: "flex" },
+  { id: 8, nome: 'Tipo', tipo: 'Dropdown', editavel: true, visivel: "flex" },
+  { id: 9, nome: 'Latitude', tipo: 'Text', editavel: false, visivel: "none" },
+  { id: 10, nome: 'Longitude', tipo: 'Text', editavel: false, visivel: "none" }
 ]
 
 let tipoForm = 'TTeste'
@@ -75,7 +76,9 @@ function FormCadastros() {
 				4: '',     	// Bairro
 				5: '',     	// Cidade
 				6: '',     	// Estado
-				7: ''       // País
+				7: '',       // País
+        9: '',      // Latitude
+        10: ''      // Longitude
 			}));
       if (cep && cep.length === 8) { // Verifica se o CEP está preenchido (8 dígitos)
         try {
@@ -89,11 +92,13 @@ function FormCadastros() {
           // Atualiza os campos com os dados recebidos
           setValores((prev) => ({
             ...prev,
-            2: data[0]['logradouro'], // Logradouro
-            4: data[0]['bairro'],     // Bairro
-            5: data[0]['cidade'],     // Cidade
-            6: data[0]['estado'],     // Estado
-            7: data[0]['pais'],       // País
+            2: data[0]['logradouro'],   // Logradouro
+            4: data[0]['bairro'],       // Bairro
+            5: data[0]['cidade'],       // Cidade
+            6: data[0]['estado'],       // Estado
+            7: data[0]['pais'],         // País
+            9: data[0]['latitude'],         // Latitude
+            10: data[0]['longitude']         // Longitude
           }));
         } catch (error) {
           console.error("Erro ao buscar dados:", error);
@@ -104,7 +109,9 @@ function FormCadastros() {
             4: '',     	// Bairro
             5: '',     	// Cidade
             6: '',     	// Estado
-            7: ''       // País
+            7: '',      // País
+            9: '',      // Latitude
+            10: ''      // Longitude
           }));
 					Alert.alert("Erro", "Não foi possível buscar o CEP. Tente novamente.");
         }
@@ -120,6 +127,28 @@ function FormCadastros() {
       ...prev,
       [id]: novoValor,
     }));
+  };
+
+  const registerAddress = async () => {
+    try {
+      console.log("Local: ", valores)
+
+      const response = await axios.post(`${API_URL}/location/`, {
+        'zip_code': valores[1],
+        'street': valores[2],
+        'number': valores[3],
+        'district': valores[4],
+        'city': valores[5],
+        'state': valores[6],
+        'country': valores[7],
+        'latitude': valores[9],
+        'longitude': valores[10],
+      });
+
+    } catch (error) {
+      console.error(error)
+      Alert.alert("Erro", "Não foi possível cadastrar o local. Tente novamente.");
+    }
   };
 
   if (loaded) {
@@ -177,13 +206,26 @@ function FormCadastros() {
                       />
                     </>
                   )}
-                  {campo.tipo == 'Text' && (
+                  {campo.tipo == 'Text' && campo.visivel == 'flex' && (
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <TextInput
                         style={styles.formInputText}
                         value={valores[campo.id] || ''}
+                        editable={campo.editavel}
                         onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
+                      />
+                    </>
+                  )}
+                  {campo.tipo == 'Numeric' && campo.visivel == 'flex' && (
+                    <>
+                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                      <TextInput
+                        style={styles.formInputText}
+                        value={valores[campo.id] || ''}
+                        editable={campo.editavel}
+                        onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
+                        keyboardType="numeric"
                       />
                     </>
                   )}
@@ -232,7 +274,7 @@ function FormCadastros() {
 
             </View>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={registerAddress}>
               <Text style={styles.textButton}>Cadastrar</Text>
             </TouchableOpacity>
           </View>
