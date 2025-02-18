@@ -24,10 +24,15 @@ import Toast from "react-native-toast-message";
 const API_URL = "http://34.231.200.200:8000";
 
 
-const dados = [
+const dropdownLocal = [
   { label: 'Pista', value: '1' },
   { label: 'Skateshop', value: '2' },
   { label: 'Evento', value: '3' },
+]
+
+const dropdownSimNao = [
+  { label: 'Sim', value: '1' },
+  { label: 'Não', value: '2' },
 ]
 
 const campos = [
@@ -41,6 +46,16 @@ const campos = [
   { id: 8, nome: 'Tipo', tipo: 'Dropdown', editavel: true, visivel: "flex" },
   { id: 9, nome: 'Latitude', tipo: 'Text', editavel: false, visivel: "none" },
   { id: 10, nome: 'Longitude', tipo: 'Text', editavel: false, visivel: "none" }
+]
+
+const camposPista = [
+  { id: 1, nome: 'Nome', tipo: 'Text', editavel: true, visivel: "flex" },
+  { id: 2, nome: 'Descrição', tipo: 'Text', editavel: true, visivel: "flex" },
+  { id: 3, nome: 'Luz', tipo: 'Dropdown', editavel: true, visivel: "flex" },
+  { id: 4, nome: 'Água', tipo: 'Dropdown', editavel: true, visivel: "flex" },
+  { id: 5, nome: 'Banheiro', tipo: 'Dropdown', editavel: true, visivel: "flex" },
+  { id: 6, nome: 'DataCriação', tipo: 'Text', editavel: false, visivel: "none" },
+  { id: 7, nome: 'location_id', tipo: 'Text', editavel: false, visivel: "none" }
 ]
 
 let tipoForm = 'TTeste'
@@ -61,6 +76,7 @@ function FormCadastros() {
   function changeForm(label: string) {
     tipoForm = label
   }
+
 
   // Estado para armazenar os valores de cada campo
   const [valores, setValores] = useState({});
@@ -224,6 +240,7 @@ function FormCadastros() {
                         style={styles.formInputText}
                         value={valores[campo.id] || ''}
                         editable={campo.editavel}
+                        maxLength={8}
                         onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
                         keyboardType="numeric"
                       />
@@ -234,8 +251,9 @@ function FormCadastros() {
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <Switch
-                        trackColor={{ false: '#767577', true: '#81b0ff' }}
-                        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+                        trackColor={{ false: '#767577', true: '#9747FF' }}
+                        thumbColor={isEnabled ? '#F5D907' : '#f4f3f4'}
+                        style={{alignSelf: 'flex-start'}}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={toggleSwitch}
                         value={isEnabled}
@@ -251,12 +269,11 @@ function FormCadastros() {
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
                         iconStyle={styles.iconStyle}
-                        data={dados}
+                        data={dropdownLocal}
                         maxHeight={300}
                         labelField="label"
                         valueField="value"
-                        placeholder={!isFocus ? 'Select item' : '...'}
-                        searchPlaceholder="Search..."
+                        placeholder={!isFocus ? 'Selecione um item' : '...'}
                         value={value}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
@@ -271,6 +288,89 @@ function FormCadastros() {
 
                 </View>
               ))}
+
+              {tipoForm == 'Pista' &&(
+                
+                  camposPista.map((campo) =>
+                    (
+                      <View key={campo.id + campo.nome}>
+                        {campo.tipo == 'Password' && (
+                          <>
+                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                            <TextInput
+                              secureTextEntry={true}
+                              style={styles.formInputText}
+                              placeholder="********"
+                            />
+                          </>
+                        )}
+                        {campo.tipo == 'Text' && campo.visivel == 'flex' && (
+                          <>
+                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                            <TextInput
+                              style={styles.formInputText}
+                              value={valores[campo.id] || ''}
+                              editable={campo.editavel}
+                              onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
+                            />
+                          </>
+                        )}
+                        {campo.tipo == 'Numeric' && campo.visivel == 'flex' && (
+                          <>
+                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                            <TextInput
+                              style={styles.formInputText}
+                              value={valores[campo.id] || ''}
+                              editable={campo.editavel}
+                              maxLength={8}
+                              onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
+                              keyboardType="numeric"
+                            />
+                          </>
+                        )}
+      
+                        {campo.tipo == 'Switch' && (
+                          <>
+                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                            <Switch
+                              trackColor={{ false: '#767577', true: '#9747FF' }}
+                              thumbColor={isEnabled ? '#F5D907' : '#f4f3f4'}
+                              style={{alignSelf: 'flex-start'}}
+                              ios_backgroundColor="#3e3e3e"
+                              onValueChange={toggleSwitch}
+                              value={isEnabled}
+                            />
+                          </>
+                        )}
+      
+                        {campo.tipo == 'Dropdown' && (
+                          <>
+                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                            <Dropdown
+                              style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                              placeholderStyle={styles.placeholderStyle}
+                              selectedTextStyle={styles.selectedTextStyle}
+                              iconStyle={styles.iconStyle}
+                              data={dropdownSimNao}
+                              maxHeight={300}
+                              labelField="label"
+                              valueField="value"
+                              placeholder={!isFocus ? 'Selecione um item' : '...'}
+                              value={value}
+                              onFocus={() => setIsFocus(true)}
+                              onBlur={() => setIsFocus(false)}
+                              onChange={item => {
+                                setValue(item.value);
+                                setIsFocus(false);
+                                changeForm(item.label)
+                              }
+                              } />
+                          </>
+                        )}
+      
+                      </View>
+                    ))
+              )}
 
             </View>
 
