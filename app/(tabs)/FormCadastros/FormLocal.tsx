@@ -18,6 +18,11 @@ import { Link, router } from "expo-router";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
+import axios from "axios";
+
+
+const API_URL = "http://34.231.200.200:8000";
+
 
 const dados = [
   { label: 'Pista', value: '1' },
@@ -56,7 +61,66 @@ function FormCadastros() {
     tipoForm = label
   }
 
+  // Estado para armazenar os valores de cada campo
+  const [valores, setValores] = useState({});
 
+  useEffect(() => {
+    const cep = valores[1]; // O campo de CEP tem id 1
+
+    const buscarDadosPorCep = async () => {
+			setValores((prev) => ({
+				...prev,
+				2: '', 			// Logradouro
+				3: '', 			// Número
+				4: '',     	// Bairro
+				5: '',     	// Cidade
+				6: '',     	// Estado
+				7: ''       // País
+			}));
+      if (cep && cep.length === 8) { // Verifica se o CEP está preenchido (8 dígitos)
+        try {
+          const response = await axios.get(`${API_URL}/search_address/`, {
+						params: {
+							cep: cep
+						}
+					});
+          const data = response.data;
+					console.log("Data: ", data)
+          // Atualiza os campos com os dados recebidos
+          setValores((prev) => ({
+            ...prev,
+            2: data[0]['logradouro'], // Logradouro
+            4: data[0]['bairro'],     // Bairro
+            5: data[0]['cidade'],     // Cidade
+            6: data[0]['estado'],     // Estado
+            7: data[0]['pais'],       // País
+          }));
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
+					setValores((prev) => ({
+            ...prev,
+            2: '', 			// Logradouro
+            3: '', 			// Número
+            4: '',     	// Bairro
+            5: '',     	// Cidade
+            6: '',     	// Estado
+            7: ''       // País
+          }));
+					Alert.alert("Erro", "Não foi possível buscar o CEP. Tente novamente.");
+        }
+      }
+    };
+
+    buscarDadosPorCep(); // Chama a função para buscar os dados
+  }, [valores[1]]); // O efeito é executado sempre que o valor do CEP mudar
+
+
+  const handleChange = (id, novoValor) => {
+    setValores((prev) => ({
+      ...prev,
+      [id]: novoValor,
+    }));
+  };
 
   if (loaded) {
     return (
@@ -118,6 +182,8 @@ function FormCadastros() {
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <TextInput
                         style={styles.formInputText}
+                        value={valores[campo.id] || ''}
+                        onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
                       />
                     </>
                   )}

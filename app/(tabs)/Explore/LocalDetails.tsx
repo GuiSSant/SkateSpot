@@ -16,13 +16,13 @@ import {
   ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "./_layout";
+import { RootStackParamList } from "../_layout";
 import { RouteProp } from "@react-navigation/native";
 import DefaultLayout from "../DefaultLayout";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 
-const API_URL = "http://34.231.200.200:8000/";
+const API_URL = "http://34.231.200.200:8000";
 
 const LocalDetails = () => {
   const route = useRoute<LocalDetailsRouteProp>();
