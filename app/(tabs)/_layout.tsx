@@ -30,11 +30,11 @@ export default function RootLayout() {
       <Stack.Screen name="UserProfile" options={{ title: "UserProfile" }} />
       <Stack.Screen name="Explore" options={{ title: "Explore" }} />
       <Stack.Screen
-        name="Explore/LocationSearch"
+        name="LocationSearch"
         options={{ title: "Buscar Localização" }}
       />
       <Stack.Screen
-        name="Explore/LocalDetails"
+        name="LocalDetails"
         options={{ title: "Detalhes do Local" }}
       />
     </Stack>

@@ -17,9 +17,9 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
-import DefaultLayout from "../DefaultLayout";
-import { customMapStyle } from "../../../assets/customMapStyle";
-import {resultTeste} from "./resultTeste"
+import DefaultLayout from "./DefaultLayout";
+import { customMapStyle } from "../../assets/customMapStyle";
+import {resultTeste} from "./Explore/resultTeste"
 
 const API_URL = "http://34.231.200.200:8000";
 
@@ -73,8 +73,8 @@ const Explore = () => {
   } | null>(null);
 
   const [loaded, error] = useFonts({
-    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf")
+    "Quicksand-Bold": require("../../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("../../assets/fonts/Quicksand-Regular.ttf")
   });
 
   // Estilização do mapa
@@ -257,7 +257,7 @@ const Explore = () => {
       <View style={styles.divider} />
       <TouchableOpacity
         style={styles.locationButton}
-        onPress={() => navigation.navigate("Explore/LocationSearch" as never)}
+        onPress={() => navigation.navigate("LocationSearch" as never)}
       >
         <Icon name="map-pin" size={20} color="#F5D907" />
         <Text style={styles.locationButtonText}>Localização Atual</Text>
@@ -275,7 +275,7 @@ const Explore = () => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("Explore/LocalDetails", {
+                  navigation.navigate("LocalDetails", {
                     id: item.id,
                     name: item.name,
                     type: item.type,
@@ -341,7 +341,7 @@ const Explore = () => {
                     {result.type == 'spot' ? (
                       <Image
                         source={
-                          require("../../../assets/images/skateRoxo.png")
+                          require("../../assets/images/skateRoxo.png")
                         }
                         style={{ width: 30, height: 35 }}
                         resizeMode="contain"
@@ -350,7 +350,7 @@ const Explore = () => {
                       result.type == 'shop' ? (
                         <Image
                           source={
-                            require("../../../assets/images/shopRoxo.png")
+                            require("../../assets/images/shopRoxo.png")
                           }
                           style={{ width: 30, height: 35 }}
                           resizeMode="contain"
@@ -358,7 +358,7 @@ const Explore = () => {
                       ) : (
                         <Image
                           source={
-                            require("../../../assets/images/eventoAmarelo.png")
+                            require("../../assets/images/eventoAmarelo.png")
                           }
                           style={{ width: 30, height: 35 }}
                           resizeMode="contain"

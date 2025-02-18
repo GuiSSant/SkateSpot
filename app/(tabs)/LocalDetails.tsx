@@ -16,9 +16,9 @@ import {
   ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "../_layout";
+import { RootStackParamList } from "./_layout";
 import { RouteProp } from "@react-navigation/native";
-import DefaultLayout from "../DefaultLayout";
+import DefaultLayout from "./DefaultLayout";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 

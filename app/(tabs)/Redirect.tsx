@@ -36,7 +36,7 @@ function Redirect() {
                 </Text>
 
                 <View style={styles.loginAlternavivesView}>
-                    <Link href="/(tabs)/Explore/Explore" style={styles.mainButton}>
+                    <Link href="/(tabs)/Explore" style={styles.mainButton}>
                         <Text style={styles.textButton}> Explore</Text>
                     </Link>
                     <Link href="/(tabs)/FormCadastros/FormLocal" style={styles.mainButton}>
