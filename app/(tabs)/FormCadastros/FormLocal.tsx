@@ -20,19 +20,17 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
 import axios from "axios";
 import Toast from "react-native-toast-message";
+import { TextInputMask } from 'react-native-masked-text';
+
 
 const API_URL = "http://34.231.200.200:8000";
 
 
 const dropdownLocal = [
+  { label: '', value: '0' },
   { label: 'Pista', value: '1' },
   { label: 'Skateshop', value: '2' },
   { label: 'Evento', value: '3' },
-]
-
-const dropdownSimNao = [
-  { label: 'Sim', value: '1' },
-  { label: 'Não', value: '2' },
 ]
 
 const campos = [
@@ -45,25 +43,70 @@ const campos = [
   { id: 7, nome: 'País', tipo: 'Text', editavel: false, visivel: "flex" },
   { id: 8, nome: 'Tipo', tipo: 'Dropdown', editavel: true, visivel: "flex" },
   { id: 9, nome: 'Latitude', tipo: 'Text', editavel: false, visivel: "none" },
-  { id: 10, nome: 'Longitude', tipo: 'Text', editavel: false, visivel: "none" }
-]
-
-const camposPista = [
-  { id: 1, nome: 'Nome', tipo: 'Text', editavel: true, visivel: "flex" },
-  { id: 2, nome: 'Descrição', tipo: 'Text', editavel: true, visivel: "flex" },
-  { id: 3, nome: 'Luz', tipo: 'Dropdown', editavel: true, visivel: "flex" },
-  { id: 4, nome: 'Água', tipo: 'Dropdown', editavel: true, visivel: "flex" },
-  { id: 5, nome: 'Banheiro', tipo: 'Dropdown', editavel: true, visivel: "flex" },
-  { id: 6, nome: 'DataCriação', tipo: 'Text', editavel: false, visivel: "none" },
-  { id: 7, nome: 'location_id', tipo: 'Text', editavel: false, visivel: "none" }
+  { id: 10, nome: 'Longitude', tipo: 'Text', editavel: false, visivel: "none" },
+  { id: 11, nome: 'Nome', tipo: 'Text', editavel: true, visivel: "flex" },
+  { id: 12, nome: 'Descrição', tipo: 'Text', editavel: true, visivel: "flex" },
+  { id: 13, nome: 'Água', tipo: 'Switch', editavel: true, visivel: "flex" },
+  { id: 14, nome: 'Iluminação', tipo: 'Switch', editavel: true, visivel: "flex" },
+  { id: 15, nome: 'Banheiro', tipo: 'Switch', editavel: true, visivel: "flex" },
+  { id: 16, nome: 'Data de Início', tipo: 'DateTime', editavel: true, visivel: "flex" },
+  { id: 17, nome: 'Data de Encerramento', tipo: 'DateTime', editavel: true, visivel: "flex" },
 ]
 
 let tipoForm = 'TTeste'
 
 function FormCadastros() {
 
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  // Estado para o tipo selecionado
+  const [tipoSelecionado, setTipoSelecionado] = useState(null); 
+  
+  // Estados para as datas
+  const [dataInicio, setDataInicio] = useState('');
+  const [dataEncerramento, setDataEncerramento] = useState('');
+
+  const [switches, setSwitches] = useState({
+    água: false,
+    banheiro: false,
+    iluminação: false,
+  });
+  
+  const toggleSwitch = (key) => {
+    setSwitches((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+
+  // Função para atualizar o tipo selecionado
+  const handleTipoChange = (item) => {
+    setTipoSelecionado(item.value); // Atualiza o tipo selecionado
+    setValue(item.value); // Atualiza o valor do dropdown
+    changeForm(item.label); // Função existente (se necessário)
+  };
+
+  // Função para verificar se o campo deve ser visível
+  const isCampoVisivel = (campo) => {
+    if (campo.nome === "Nome" || campo.nome === "Descrição") {
+      // Campos "Nome" e "Descrição" são visíveis se qualquer tipo for selecionado
+      return tipoSelecionado !== null && tipoSelecionado !== "0";
+    } else if (
+      campo.nome === "Água" ||
+      campo.nome === "Banheiro" ||
+      campo.nome === "Iluminação"
+    ) {
+      // Campos "Água", "Banheiro" e "Iluminação" são visíveis apenas se o tipo for "pista" (valor "1")
+      return tipoSelecionado === "1";
+    } else if (
+      campo.nome === "Data de Início" ||
+      campo.nome === "Data de Encerramento"
+    ) {
+      // Campos "Data de Início" e "Data de Encerramento" são visíveis apenas se o tipo for "evento" (valor "3")
+      return tipoSelecionado === "3";
+    }
+    return true; // Outros campos permanecem visíveis
+  };
+
 
   const [loaded, error] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
@@ -77,13 +120,28 @@ function FormCadastros() {
     tipoForm = label
   }
 
-
   // Estado para armazenar os valores de cada campo
   const [valores, setValores] = useState({});
 
+  const formatarParaISO = (data) => {
+    // Extrai dia, mês, ano, hora e minuto da string
+    const [dia, mes, ano, hora, minuto] = data.split(/[/ :]/);
+  
+    // Cria uma data no fuso horário local
+    const dataLocal = new Date(`${ano}-${mes}-${dia}T${hora}:${minuto}:00`);
+  
+    // Converte para o formato ISO 8601 com offset de fuso horário
+    return dataLocal.toISOString().replace('Z', '-03:00');
+  };
+
+  const gerarCreateDate = () => {
+    const dataAtual = new Date(); // Captura a data e hora atuais
+    return dataAtual.toISOString().replace('Z', '-03:00'); // Converte para o formato desejado
+  };
+  
   useEffect(() => {
     const cep = valores[1]; // O campo de CEP tem id 1
-
+    console.log(Date().toString())
     const buscarDadosPorCep = async () => {
 			setValores((prev) => ({
 				...prev,
@@ -146,6 +204,9 @@ function FormCadastros() {
   };
 
   const registerAddress = async () => {
+    if (value === '0') {
+      return Alert.alert("Erro", "É necessário escolher um tipo de local para cadastrar.");
+    }
     try {
       console.log("Local: ", valores)
 
@@ -160,6 +221,61 @@ function FormCadastros() {
         'latitude': valores[9],
         'longitude': valores[10],
       });
+      
+      console.log(response)
+      console.log(response.data['id'])
+      registerAddressType(response.data['id'])
+
+    } catch (error) {
+      console.error(error)
+      Alert.alert("Erro", "Não foi possível cadastrar o endereço. Tente novamente.");
+    }
+  };
+
+  const registerAddressType = async (location_id: number) => {
+    try {
+      console.log("Local: ", valores)
+      console.log("Tipo: ", value)
+      console.log("Switchs: ", switches)
+
+      if (value === '1') {
+        const response = await axios.post(`${API_URL}/skate-spots/`, {
+          'name': valores[11],
+          'description': valores[12],
+          'water': switches.água,
+          'lighting': switches.iluminação,
+          'bathroom': switches.banheiro,
+          'location_id': location_id,
+          'create_date': gerarCreateDate(),           // Data e hora atuais no formato ISO 8601 com offset
+        });
+        console.log(response)
+        console.log(response.data['id'])      
+      }
+
+      if (value === '2') {
+        const response = await axios.post(`${API_URL}/skate-shops/`, {
+          'name': valores[11],
+          'description': valores[12],
+          'location_id': location_id,
+        });
+        console.log(response)
+        console.log(response.data['id'])      
+      }
+
+      if (value === '3') {
+        const response = await axios.post(`${API_URL}/skate-events/`, {
+          'name': valores[11],
+          'description': valores[12],
+          'start_date': formatarParaISO(valores[16]), // Data de início no formato ISO 8601 com offset
+          'end_date': formatarParaISO(valores[17]),   // Data de encerramento no formato ISO 8601 com offset
+          'location_id': location_id,
+          'create_date': gerarCreateDate(),           // Data e hora atuais no formato ISO 8601 com offset
+        });
+        console.log(response)
+        console.log(response.data['id'])      
+      }
+
+      Alert.alert("Sucesso", "Local cadastrado com sucesso!");
 
     } catch (error) {
       console.error(error)
@@ -178,94 +294,67 @@ function FormCadastros() {
             flexGrow: 1,
           }}
         >
-          <View style={styles.container}>
+        <View style={styles.container}>
+          <Image
+            style={styles.logo}
+            source={require("../../../assets/images/logo.png")}
+          />
 
-            <Image
-              style={styles.logo}
-              source={require("../../../assets/images/logo.png")}
-            />
+          <Text style={styles.titulo}>Local</Text>
+          <Text style={styles.infoText}>
+            Preencha o formulário para cadastrar um novo local
+          </Text>
 
-            <Text style={styles.titulo}>Local</Text>
-            <Text style={styles.infoText}>
-              Preencha o formulário para cadastrar um novo local
-            </Text>
-
-
-
-
-
-            <View style={styles.formRegister}>
-
-              {/*<Text style={styles.formFieldTitle}>Nome</Text>
-              <TextInput style={styles.formInputText} />
-
-              <Text style={styles.formFieldTitle}>E-mail</Text>
-              <TextInput style={styles.formInputText} defaultValue={tipoForm} />
-
-              <Text style={styles.formFieldTitle}>Senha</Text>
-              <TextInput
-                secureTextEntry={true}
-                style={styles.formInputText}
-                placeholder="********"
-              />*/}
-
-              {campos.map((campo) =>
-              (
+          <View style={styles.formRegister}>
+            {campos.map((campo) =>
+              isCampoVisivel(campo) && ( // Renderiza o campo apenas se for visível
                 <View key={campo.id + campo.nome}>
-                  {campo.tipo == 'Password' && (
-                    <>
-                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
-                      <TextInput
-                        secureTextEntry={true}
-                        style={styles.formInputText}
-                        placeholder="********"
-                      />
-                    </>
-                  )}
-                  {campo.tipo == 'Text' && campo.visivel == 'flex' && (
+                  {campo.tipo === "Text" && campo.visivel === "flex" && (
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <TextInput
                         style={styles.formInputText}
-                        value={valores[campo.id] || ''}
+                        value={valores[campo.id] || ""}
                         editable={campo.editavel}
                         onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
                       />
                     </>
                   )}
-                  {campo.tipo == 'Numeric' && campo.visivel == 'flex' && (
+
+                  {campo.tipo === "Numeric" && campo.visivel === "flex" && (
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <TextInput
                         style={styles.formInputText}
-                        value={valores[campo.id] || ''}
+                        value={valores[campo.id] || ""}
                         editable={campo.editavel}
-                        maxLength={8}
                         onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
                         keyboardType="numeric"
                       />
                     </>
                   )}
 
-                  {campo.tipo == 'Switch' && (
+                  {campo.tipo === "Switch" && (
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <Switch
                         trackColor={{ false: '#767577', true: '#9747FF' }}
-                        thumbColor={isEnabled ? '#F5D907' : '#f4f3f4'}
+                        thumbColor={switches[campo.nome.toLowerCase()] ? '#F5D907' : '#f4f3f4'}
                         style={{alignSelf: 'flex-start'}}
+                        // trackColor={{ false: "#767577", true: "#81b0ff" }}
+                        // thumbColor={switches[campo.nome.toLowerCase()] ? "#f5dd4b" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
+                        onValueChange={() => toggleSwitch(campo.nome.toLowerCase())}
+                        value={switches[campo.nome.toLowerCase()]}
                       />
                     </>
                   )}
 
-                  {campo.tipo == 'Dropdown' && (
+                  {campo.tipo === "Dropdown" && (
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <Dropdown
-                        style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
                         iconStyle={styles.iconStyle}
@@ -273,111 +362,49 @@ function FormCadastros() {
                         maxHeight={300}
                         labelField="label"
                         valueField="value"
-                        placeholder={!isFocus ? 'Selecione um item' : '...'}
+                        placeholder={!isFocus ? "" : ""}
+                        searchPlaceholder="Search..."
                         value={value}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
-                        onChange={item => {
-                          setValue(item.value);
-                          setIsFocus(false);
-                          changeForm(item.label)
-                        }
-                        } />
+                        onChange={handleTipoChange} // Usa a nova função para atualizar o tipo
+                      />
                     </>
                   )}
 
+                  {campo.tipo === "DateTime" && (
+                    <>
+                      <Text style={styles.formFieldTitle}>{campo.nome}</Text>
+                      <TextInputMask
+                        type={'datetime'}
+                        options={{
+                          format: 'DD/MM/YYYY HH:mm', // Formato da data e hora
+                        }}
+                        value={campo.nome === "Data de Início" ? dataInicio : dataEncerramento}
+                        onChangeText={(text) => {
+                          if (campo.nome === "Data de Início") {
+                            setDataInicio(text);
+                            handleChange(campo.id, text); // Armazena a data no estado
+                          } else {
+                            setDataEncerramento(text);
+                            handleChange(campo.id, text); // Armazena a data no estado
+                          }
+                        }}
+                        style={styles.formInputText}
+                        placeholder="DD/MM/AAAA HH:MM"
+                        keyboardType="numeric"
+                      />
+                    </>
+                  )}
                 </View>
-              ))}
-
-              {tipoForm == 'Pista' &&(
-                
-                  camposPista.map((campo) =>
-                    (
-                      <View key={campo.id + campo.nome}>
-                        {campo.tipo == 'Password' && (
-                          <>
-                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
-                            <TextInput
-                              secureTextEntry={true}
-                              style={styles.formInputText}
-                              placeholder="********"
-                            />
-                          </>
-                        )}
-                        {campo.tipo == 'Text' && campo.visivel == 'flex' && (
-                          <>
-                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
-                            <TextInput
-                              style={styles.formInputText}
-                              value={valores[campo.id] || ''}
-                              editable={campo.editavel}
-                              onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
-                            />
-                          </>
-                        )}
-                        {campo.tipo == 'Numeric' && campo.visivel == 'flex' && (
-                          <>
-                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
-                            <TextInput
-                              style={styles.formInputText}
-                              value={valores[campo.id] || ''}
-                              editable={campo.editavel}
-                              maxLength={8}
-                              onChangeText={(novoValor) => handleChange(campo.id, novoValor)}
-                              keyboardType="numeric"
-                            />
-                          </>
-                        )}
-      
-                        {campo.tipo == 'Switch' && (
-                          <>
-                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
-                            <Switch
-                              trackColor={{ false: '#767577', true: '#9747FF' }}
-                              thumbColor={isEnabled ? '#F5D907' : '#f4f3f4'}
-                              style={{alignSelf: 'flex-start'}}
-                              ios_backgroundColor="#3e3e3e"
-                              onValueChange={toggleSwitch}
-                              value={isEnabled}
-                            />
-                          </>
-                        )}
-      
-                        {campo.tipo == 'Dropdown' && (
-                          <>
-                            <Text style={styles.formFieldTitle}>{campo.nome}</Text>
-                            <Dropdown
-                              style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                              placeholderStyle={styles.placeholderStyle}
-                              selectedTextStyle={styles.selectedTextStyle}
-                              iconStyle={styles.iconStyle}
-                              data={dropdownSimNao}
-                              maxHeight={300}
-                              labelField="label"
-                              valueField="value"
-                              placeholder={!isFocus ? 'Selecione um item' : '...'}
-                              value={value}
-                              onFocus={() => setIsFocus(true)}
-                              onBlur={() => setIsFocus(false)}
-                              onChange={item => {
-                                setValue(item.value);
-                                setIsFocus(false);
-                                changeForm(item.label)
-                              }
-                              } />
-                          </>
-                        )}
-      
-                      </View>
-                    ))
-              )}
-
-            </View>
-
-            <TouchableOpacity style={styles.button} onPress={registerAddress}>
-              <Text style={styles.textButton}>Cadastrar</Text>
-            </TouchableOpacity>
+              )
+            )}
           </View>
+
+          <TouchableOpacity style={styles.button} onPress={registerAddress}>
+            <Text style={styles.textButton}>Cadastrar</Text>
+          </TouchableOpacity>
+        </View>
         </ScrollView>
       </GestureHandlerRootView>
     );
