@@ -1,181 +1,121 @@
-import React, { useState, useRef, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-  Alert,
-  Image,
-  Button,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { useFonts } from "expo-font";
-import { onBoardingContent } from "../../../assets/onBoardingContent";
-import { Link, router } from "expo-router";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React from 'react';
+import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import { useFonts } from 'expo-font';
+import { Link, router } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ButtonMain } from '../../../components/common/ButtonMain';
+import { ButtonMidiaSocial } from '../../../components/common/ButtonMidiaSocial';
+import { Form } from '../../../components/common/Form';
 
 function Cadastro() {
-  const [loaded, error] = useFonts({
+  const [loaded] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
   });
 
-  if (loaded) {
-    return (
-      <GestureHandlerRootView>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{
-            flex: 1,
-          }}
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-        >
-          <View style={styles.container}>
-            <Image
-              style={styles.logo}
-              source={require("../../../assets/images/logo.png")}
+  if (!loaded) return null;
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={estilo.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={estilo.container}>
+          <Image
+            style={estilo.logo}
+            source={require("../../../assets/images/logo.png")}
+          />
+          
+          <Text style={estilo.title}>Cadastro</Text>
+          <Text style={estilo.subtitle}>
+            Encontre os melhores spots, descubra eventos e junte-se a comunidade!
+          </Text>
+
+          <View style={estilo.buttonsMidiaSocial}>
+            <ButtonMidiaSocial
+              icon={require("../../../assets/images/google.png")}
+              title="Google"
             />
-            <Text style={styles.titulo}>Cadastro</Text>
-            <Text style={styles.infoText}>
-              Encontre os melhores spots, descubra eventos e junte-se a
-              comunidade!
-            </Text>
-
-            <View style={styles.loginAlternavivesView}>
-              <TouchableOpacity style={styles.loginAlternavivesButton}>
-                <Image
-                  style={{ width: 20, height: "auto" }}
-                  source={require("../../../assets/images/google.png")}
-                />
-                <Text> Google</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.loginAlternavivesButton}>
-                <Image
-                  style={{ width: 20, height: "auto" }}
-                  source={require("../../../assets/images/facebook.png")}
-                />
-                <Text> Facebook</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={{ marginTop: 28, flexDirection: "row" }}>
-              <Text style={styles.infoText}>Cadastre-se</Text>
-            </View>
-
-            <View style={styles.formRegister}>
-              <Text style={styles.formFieldTitle}>Nome</Text>
-              <TextInput style={styles.formInputText} />
-
-              <Text style={styles.formFieldTitle}>E-mail</Text>
-              <TextInput style={styles.formInputText} />
-
-              <Text style={styles.formFieldTitle}>Senha</Text>
-              <TextInput
-                secureTextEntry={true}
-                style={styles.formInputText}
-                placeholder="********"
-              />
-            </View>
-
-            <Link href="/UserProfile/UserProfile" style={styles.button}>
-              <Text style={styles.textButton}>Cadastrar</Text>
-            </Link>
+            <ButtonMidiaSocial
+              icon={require("../../../assets/images/facebook.png")}
+              title="Facebook"
+            />
           </View>
-        </ScrollView>
-      </GestureHandlerRootView>
-    );
-  }
+
+          <Text style={estilo.secaoTitle}>Cadastre-se</Text>
+
+          <Form label="Nome" />
+          <Form label="E-mail" />
+          <Form label="Senha" secureTextEntry placeholder="********" />
+          
+          <Text style={estilo.tenhoConta}>Já tenho conta</Text>
+
+          <ButtonMain 
+            title="Cadastrar" 
+            onPress={() => router.push('/UserProfile/UserProfile')}
+            style={estilo.registerButton}
+          />
+        </View>
+      </ScrollView>
+    </GestureHandlerRootView>
+  );
 }
 
-const styles = StyleSheet.create({
+const estilo = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "#0C0A14",
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
     paddingHorizontal: 16,
+    paddingBottom: 32,
   },
   logo: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
     height: 109,
-    resizeMode: "contain",
-    top: -16,
+    resizeMode: 'contain',
+    marginTop: 16,
   },
-  titulo: {
-    color: "#fff",
-    fontFamily: "Quicksand-Bold",
+  title: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Bold',
     fontSize: 22,
-    lineHeight: 27.5,
-    letterSpacing: 0.11,
-    textAlign: "center",
-    marginTop: 180,
+    marginTop: 32,
+    marginBottom: 12,
   },
-  infoText: {
-    color: "#fff",
-    fontFamily: "Quicksand-Regular",
+  subtitle: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
     fontSize: 14,
-    fontWeight: 500,
-    lineHeight: 17.5,
-    letterSpacing: 0.11,
-    textAlign: "center",
+    textAlign: 'center',
     marginHorizontal: 28,
-    marginTop: 12,
+    marginBottom: 24,
   },
-  button: {
-    backgroundColor: "#9747FF",
-    borderRadius: 8,
-    paddingHorizontal: 42,
-    paddingVertical: 8,
-    position: "relative",
-    bottom: -32,
+  buttonsMidiaSocial: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
+    marginVertical: 24,
   },
-  textButton: {
-    color: "#fff",
-    fontFamily: "Quicksand-Bold",
-    fontSize: 22,
-    lineHeight: 27.5,
-    letterSpacing: 0.11,
-    textAlign: "center",
-  },
-  loginAlternavivesView: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 24,
-  },
-  loginAlternavivesButton: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#262626B2",
-    paddingHorizontal: 42,
-    paddingVertical: 8,
-    marginHorizontal: 14,
-  },
-  formRegister: {
-    width: "100%",
-  },
-  formFieldTitle: {
-    color: "#F5D907",
-    fontFamily: "Quicksand-Bold",
+  secaoTitle: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
     fontSize: 14,
-    lineHeight: 17.5,
-    letterSpacing: 0.11,
-    textAlign: "left",
-    marginTop: 24,
-    marginHorizontal: 16,
+    alignSelf: 'flex-start',
+    marginLeft: 16,
+    marginBottom: 16,
   },
-  formInputText: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    marginTop: 12,
-    paddingHorizontal: 16,
+  tenhoConta: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 14,
+    alignSelf: 'center',
+    marginVertical: 16,
+  },
+  registerButton: {
+    marginTop: 16,
   },
 });
 

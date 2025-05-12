@@ -4,10 +4,9 @@ import { useFonts } from 'expo-font';
 import { Link, router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ButtonMain } from '../../../components/common/ButtonMain';
-import { ButtonMidiaSocial } from '../../../components/common/ButtonMidiaSocial';
 import { Form } from '../../../components/common/Form';
 
-function Login() {
+function Evento() {
   const [loaded] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
@@ -27,33 +26,23 @@ function Login() {
             source={require("../../../assets/images/logo.png")}
           />
           
-          <Text style={estilo.title}>Login</Text>
+          <Text style={estilo.title}>Novo Evento</Text>
           <Text style={estilo.subtitle}>
-            Encontre os melhores spots, descubra eventos e junte-se a comunidade!
+          Aumente o alcance da sua skateshop e movimente a cena com um novo evento.
           </Text>
 
-          <View style={estilo.socialButtonsContainer}>
-            <ButtonMidiaSocial
-              icon={require("../../../assets/images/google.png")}
-              title="Google"
-            />
-            <ButtonMidiaSocial
-              icon={require("../../../assets/images/facebook.png")}
-              title="Facebook"
-            />
-          </View>
+          <Form label="Nome do Evento" placeholder='Digite o nome do Evento.' />
+          <Form label="Descrição" placeholder='Descreva o evento.'/>
+          <Form label="Endereço" placeholder='Pesquise por CEP, rua, bairro...'/>
+          <Form label="Modalidade" placeholder='Selecione as modalidades'/>
+          <Form label="Patrocinadores" placeholder='Informe os patrocinadores'/>
+          <Form label="Imagem" placeholder='Faça upload da imagem que servirá de banner'/>
 
-          <Text style={estilo.secaoTitle}>Login</Text>
-
-          <Form label="E-mail" />
-          <Form label="Senha" secureTextEntry placeholder="********" />
-          
-          <Text style={estilo.password}>Esqueci a senha</Text>
 
           <ButtonMain 
-            title="Entrar" 
-            onPress={() => router.push('/(tabs)/Explore/Explore')}
-            style={estilo.loginButton}
+            title="Cadastrar" 
+            onPress={() => router.push('/UserProfile/')}
+            style={estilo.registerButton}
           />
         </View>
       </ScrollView>
@@ -92,12 +81,6 @@ const estilo = StyleSheet.create({
     marginHorizontal: 28,
     marginBottom: 24,
   },
-  socialButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-    marginVertical: 24,
-  },
   secaoTitle: {
     color: '#fff',
     fontFamily: 'Quicksand-Regular',
@@ -106,18 +89,9 @@ const estilo = StyleSheet.create({
     marginLeft: 16,
     marginBottom: 16,
   },
-  password: {
-    color: '#fff',
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 14,
-    alignSelf: 'flex-end',
-    marginRight: 16,
-    marginBottom: 16,
-  },
-  loginButton: {
-    marginTop: 32,
+  registerButton: {
+    marginTop: 16,
   },
 });
 
-
-export default Login;
+export default Evento;
