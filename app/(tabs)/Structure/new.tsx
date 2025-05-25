@@ -1,14 +1,76 @@
-// /structures/new.tsx
 import { router } from 'expo-router';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StructureForm from '@/app/(tabs)/FormCadastros/StructureForm';
 import { createStructure } from '@/lib/api';
+import { ButtonMain } from '@/components/common/ButtonMain';
+import { Text } from '@/components/Themed';
 
 export default function CreateStructure() {
   const handleSubmit = async (data: any) => {
-    alert('Submitting structure data:' + JSON.stringify(data));
-    await createStructure(data);
-    router.push('/Structure');
+    try {
+      await createStructure(data);
+      router.push('/Structure');
+    } catch (error) {
+      console.error('Erro:', error);
+    }
   };
 
-  return <StructureForm onSubmit={handleSubmit} />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Nova Estrutura</Text>
+          <Text style={styles.subtitle}>
+            Cria uma nova estrutura
+          </Text>
+
+          <StructureForm onSubmit={handleSubmit}>
+            {({ handleSubmit }) => (
+              <ButtonMain
+                title="Criar Estrutura"
+                onPress={handleSubmit}
+                style={styles.submitButton}
+              />
+            )}
+          </StructureForm>
+        </View>
+      </ScrollView>
+    </GestureHandlerRootView>
+  );
 }
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+  },
+  title: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 22,
+    lineHeight: 27.5,
+    letterSpacing: 0.11,
+    marginBottom: 12
+  },
+  subtitle: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 14,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
+    textAlign: 'center',
+    marginHorizontal: 28,
+    marginBottom: 32
+  },
+  submitButton: {
+    width: '100%',
+    marginTop: 40,
+  },
+});
