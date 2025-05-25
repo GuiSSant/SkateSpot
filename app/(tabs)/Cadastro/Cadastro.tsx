@@ -5,13 +5,14 @@ import { Link, router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ButtonMain } from '../../../components/common/ButtonMain';
 import { Form } from '../../../components/common/Form';
+import { Alert } from 'react-native';
 
 import axios from 'axios';
 
 import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator } from 'expo-image-manipulator'; // opcional se quiser tratar recorte mais avançado
 
-const API_URL = "http://192.168.247.90:8000";
+const API_URL = "http://192.168.0.6:8000";
 
 function Cadastro() {
   const [loaded] = useFonts({
@@ -100,7 +101,17 @@ function Cadastro() {
     } catch (error: any) {
       console.error('Erro no cadastro:', error?.response?.data || error);
       console.log(error?.response?.data)
-      alert("Erro ao cadastrar: " + JSON.stringify(error?.response?.data));
+      const errorData = error?.response?.data;
+      if (errorData && typeof errorData === 'object') {
+        const mensagens = Object.values(errorData)
+          .flat()
+          .map(msg => `- ${msg}`)
+          .join('\n');
+
+        Alert.alert('Erro', mensagens); // <<-- Título definido como "Erro"
+      } else {
+        Alert.alert('Erro', 'Ocorreu um erro desconhecido.');
+      }
     }
   };
 

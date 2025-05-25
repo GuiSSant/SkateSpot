@@ -22,7 +22,7 @@ import DefaultLayout from "./DefaultLayout";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 
-const API_URL = "http://192.168.247.90:8000";
+const API_URL = "http://192.168.0.6:8000";
 
 const LocalDetails = () => {
   const route = useRoute<LocalDetailsRouteProp>();
