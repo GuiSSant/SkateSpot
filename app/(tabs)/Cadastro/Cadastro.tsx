@@ -1,17 +1,108 @@
-import React from 'react';
-import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Link, router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ButtonMain } from '../../../components/common/ButtonMain';
-import { ButtonMidiaSocial } from '../../../components/common/ButtonMidiaSocial';
 import { Form } from '../../../components/common/Form';
+
+import axios from 'axios';
+
+import * as ImagePicker from 'expo-image-picker';
+import { ImageManipulator } from 'expo-image-manipulator'; // opcional se quiser tratar recorte mais avançado
+
+const API_URL = "http://192.168.247.90:8000";
 
 function Cadastro() {
   const [loaded] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
   });
+
+  //Estados dos campos do formulário
+  const [nome, setNome] = useState('');
+  const [sobrenome, setSobrenome] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [emailConfirmacao, setEmailConfirmacao] = useState('');
+  const [senhaConfirmacao, setSenhaConfirmacao] = useState('');
+  const [imagemPerfil, setImagemPerfil] = useState<string | null>(null);
+
+  const selecionarImagem = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  
+    if (permissionResult.granted === false) {
+      alert("Permissão para acessar a galeria é necessária!");
+      return;
+    }
+  
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, // permite redimensionar
+      aspect: [1, 1],       // corte quadrado (ideal para foto circular)
+      quality: 1,
+    });
+  
+    if (!result.canceled) {
+      setImagemPerfil(result.assets[0].uri);
+    }
+  };
+
+  const handleRegister = async () => {
+    // Verificações básicas
+    if (!nome || !username || !email || !emailConfirmacao || !senha || !senhaConfirmacao) {
+      alert("Preencha todos os campos obrigatórios.");
+      return;
+    }
+  
+    if (email !== emailConfirmacao) {
+      alert("Os e-mails não coincidem.");
+      return;
+    }
+  
+    if (senha !== senhaConfirmacao) {
+      alert("As senhas não coincidem.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password1', senha);
+    formData.append('password2', senha);
+    formData.append('first_name', nome);
+    formData.append('last_name', sobrenome);
+
+    if (imagemPerfil) {
+      const filename = imagemPerfil.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename || '');
+      const ext = match ? match[1] : 'jpg';
+  
+      formData.append('profile_picture', {
+        uri: imagemPerfil,
+        name: `profile.${ext}`,
+        type: `image/${ext}`,
+      } as any);
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/auth/registration/`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      router.replace('/(tabs)/Login/Login');
+    } catch (error: any) {
+      console.error('Erro no cadastro:', error?.response?.data || error);
+      console.log(error?.response?.data)
+      alert("Erro ao cadastrar: " + JSON.stringify(error?.response?.data));
+    }
+  };
 
   if (!loaded) return null;
 
@@ -32,28 +123,42 @@ function Cadastro() {
             Encontre os melhores spots, descubra eventos e junte-se a comunidade!
           </Text>
 
-          <View style={estilo.buttonsMidiaSocial}>
-            <ButtonMidiaSocial
-              icon={require("../../../assets/images/google.png")}
-              title="Google"
+          <TouchableOpacity onPress={selecionarImagem} style={{ marginBottom: 24 }}>
+            <Image
+              source={
+                imagemPerfil
+                  ? { uri: imagemPerfil }
+                  : require("../../../assets/images/icon.png") // imagem padrão
+              }
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                borderWidth: 2,
+                borderColor: "#F5D907",
+                backgroundColor: "#ccc",
+              }}
             />
-            <ButtonMidiaSocial
-              icon={require("../../../assets/images/facebook.png")}
-              title="Facebook"
-            />
-          </View>
+            <Text style={{ color: '#fff', textAlign: 'center', marginTop: 8 }}>Carregar foto</Text>
+          </TouchableOpacity>
 
-          <Text style={estilo.secaoTitle}>Cadastre-se</Text>
+          <Form label="Nome" value={nome} onChangeText={setNome} />
+          <Form label="Sobrenome" value={sobrenome} onChangeText={setSobrenome} />
+          <Form label="Nome de usuário" value={username} onChangeText={setUsername} />
 
-          <Form label="Nome" />
-          <Form label="E-mail" />
-          <Form label="Senha" secureTextEntry placeholder="********" />
-          
-          <Text style={estilo.tenhoConta}>Já tenho conta</Text>
+          <Form label="E-mail" keyboardType="email-address" value={email} onChangeText={setEmail} />
+          <Form label="Confirmar E-mail" keyboardType="email-address" value={emailConfirmacao} onChangeText={setEmailConfirmacao} />
+
+          <Form label="Senha" secureTextEntry placeholder="********" value={senha} onChangeText={setSenha} />
+          <Form label="Confirmar Senha" secureTextEntry placeholder="********" value={senhaConfirmacao} onChangeText={setSenhaConfirmacao} />
+                    
+          <Text style={estilo.tenhoConta} onPress={() => router.push('/(tabs)/Login/Login')}>
+            Já tenho conta
+          </Text>
 
           <ButtonMain 
             title="Cadastrar" 
-            onPress={() => router.push('/UserProfile/UserProfile')}
+            onPress={handleRegister}
             style={estilo.registerButton}
           />
         </View>

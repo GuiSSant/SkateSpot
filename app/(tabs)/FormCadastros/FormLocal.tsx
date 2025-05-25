@@ -23,7 +23,7 @@ import Toast from "react-native-toast-message";
 import { TextInputMask } from 'react-native-masked-text';
 
 
-const API_URL = "http://34.231.200.200:8000";
+const API_URL = "http://192.168.247.90:8000";
 
 
 const dropdownLocal = [

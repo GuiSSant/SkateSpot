@@ -21,7 +21,7 @@ import DefaultLayout from "./DefaultLayout";
 import { customMapStyle } from "../../assets/customMapStyle";
 import {resultTeste} from "./Explore/resultTeste"
 
-const API_URL = "http://34.231.200.200:8000";
+const API_URL = "http://192.168.247.90:8000";
 
 interface Location {
   latitude: number;

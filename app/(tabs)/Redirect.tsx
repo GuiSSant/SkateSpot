@@ -42,6 +42,9 @@ function Redirect() {
                     <Link href="/(tabs)/FormCadastros/FormLocal" style={styles.mainButton}>
                         <Text style={styles.textButton}> Cadastrar Local</Text>
                     </Link>
+                    <Link href="/(tabs)/Login/Login" style={styles.mainButton}>
+                        <Text style={styles.textButton}> Login</Text>
+                    </Link>
                 </View>
             </View>
 
