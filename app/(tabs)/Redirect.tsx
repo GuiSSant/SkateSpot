@@ -3,19 +3,11 @@ import {
     StyleSheet,
     View,
     Text,
-    Dimensions,
-    Alert,
     Image,
-    Button,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    Platform,
 } from "react-native";
 import { useFonts } from "expo-font";
-import { onBoardingContent } from "../../assets/onBoardingContent";
 import { Link, router } from "expo-router";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ButtonMain } from "@/components/common/ButtonMain";
 
 function Redirect() {
     const [loaded, error] = useFonts({
@@ -36,15 +28,11 @@ function Redirect() {
                 </Text>
 
                 <View style={styles.loginAlternavivesView}>
-                    <Link href="/(tabs)/Explore" style={styles.mainButton}>
-                        <Text style={styles.textButton}> Explore</Text>
-                    </Link>
-                    <Link href="/(tabs)/FormCadastros/FormLocal" style={styles.mainButton}>
-                        <Text style={styles.textButton}> Cadastrar Local</Text>
-                    </Link>
-                    <Link href="/(tabs)/Login/Login" style={styles.mainButton}>
-                        <Text style={styles.textButton}> Login</Text>
-                    </Link>
+                    <ButtonMain title="Explore" onPress={() => router.push("/Explore")} style={styles.mainButton} />
+                    <ButtonMain title="Cadastrar Local" onPress={() => router.push("/FormCadastros/FormLocal")} style={styles.mainButton} />
+                    <ButtonMain title="Login" onPress={() => router.push("/Login")} style={styles.mainButton} />
+                    <ButtonMain title="Estruturas" onPress={() => router.push("/Structure")} style={styles.mainButton} />
+                    <ButtonMain title="Modalidades" onPress={() => router.push("/Modalities")} style={styles.mainButton} />
                 </View>
             </View>
 
@@ -88,11 +76,6 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     mainButton: {
-        backgroundColor: "#9747FF",
-        borderRadius: 8,
-        paddingHorizontal: 42,
-        paddingVertical: 8,
-        position: "relative",
         marginTop: 32
     },
     textButton: {

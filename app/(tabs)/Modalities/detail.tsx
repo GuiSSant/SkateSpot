@@ -21,7 +21,7 @@ export default function ModalityDetail() {
 
   const handleDelete = async () => {
     await deleteModality(Number(id));
-    router.push({ pathname: '/modalities' });
+    router.push({ pathname: '/Modalities' });
   };
 
   if (!modality) return <Text>Carregando...</Text>;

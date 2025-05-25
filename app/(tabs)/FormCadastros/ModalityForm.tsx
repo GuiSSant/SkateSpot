@@ -2,7 +2,7 @@ import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { useState } from 'react';
 
 type ModalityFormProps = {
-  onSubmit: (data: { name: string; description: string }) => void;
+  onSubmit: (data: { name: string; description?: string }) => void;
   initialData?: { name?: string; description?: string };
 };
 

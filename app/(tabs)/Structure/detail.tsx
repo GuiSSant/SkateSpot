@@ -13,7 +13,7 @@ export default function StructureDetail() {
 
   const handleDelete = async () => {
     await deleteStructure(Number(id));
-    router.push('/structures');
+    router.push('/Structure');
   };
 
   if (!structure) return <Text>Carregando...</Text>;
@@ -22,7 +22,7 @@ export default function StructureDetail() {
     <View style={{ padding: 16 }}>
       <Text style={{ fontSize: 24 }}>{structure.name}</Text>
       <Text>{structure.description}</Text>
-      <Button title="Editar" onPress={() => router.push({ pathname: '/structures/edit', params: { id } })} />
+      <Button title="Editar" onPress={() => router.push({ pathname: '/Structure/edit', params: { id } })} />
       <View style={{ marginTop: 8 }}>
         <Button title="Excluir" color="red" onPress={handleDelete} />
       </View>

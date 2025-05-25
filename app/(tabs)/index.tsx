@@ -1,9 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import UserProfile from "./UserProfile/UserProfile";
-import OnBoarding from "./OnBoarding/OnBoarding";
-import Explore from "./Explore";
-import Login from "./Login/Login";
+import Redirect from "./Redirect";
 
 export default function Index() {
-  return <OnBoarding />;
+  return <Redirect />;
 }

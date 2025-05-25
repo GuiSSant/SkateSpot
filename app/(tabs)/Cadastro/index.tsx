@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Image, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ButtonMain } from '../../../components/common/ButtonMain';
 import { Form } from '../../../components/common/Form';
@@ -11,13 +11,15 @@ import axios from 'axios';
 
 import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator } from 'expo-image-manipulator'; // opcional se quiser tratar recorte mais avançado
+import MainHeader from '../../../components/common/MainHeader';
+import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 
-const API_URL = "http://192.168.0.6:8000";
+const API_URL = "http://34.231.200.200:8000";
 
 function Cadastro() {
   const [loaded] = useFonts({
-    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
+    "Quicksand-Bold": require("@/assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("@/assets/fonts/Quicksand-Regular.ttf"),
   });
 
   //Estados dos campos do formulário
@@ -29,22 +31,26 @@ function Cadastro() {
   const [emailConfirmacao, setEmailConfirmacao] = useState('');
   const [senhaConfirmacao, setSenhaConfirmacao] = useState('');
   const [imagemPerfil, setImagemPerfil] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {setShowPassword(!showPassword);};
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const toggleShowPasswordConfirm = () => {setShowPasswordConfirm(!showPasswordConfirm);};
 
   const selecionarImagem = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
+
     if (permissionResult.granted === false) {
       alert("Permissão para acessar a galeria é necessária!");
       return;
     }
-  
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true, // permite redimensionar
       aspect: [1, 1],       // corte quadrado (ideal para foto circular)
       quality: 1,
     });
-  
+
     if (!result.canceled) {
       setImagemPerfil(result.assets[0].uri);
     }
@@ -56,17 +62,17 @@ function Cadastro() {
       alert("Preencha todos os campos obrigatórios.");
       return;
     }
-  
+
     if (email !== emailConfirmacao) {
       alert("Os e-mails não coincidem.");
       return;
     }
-  
+
     if (senha !== senhaConfirmacao) {
       alert("As senhas não coincidem.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('username', username);
     formData.append('email', email);
@@ -79,7 +85,7 @@ function Cadastro() {
       const filename = imagemPerfil.split('/').pop();
       const match = /\.(\w+)$/.exec(filename || '');
       const ext = match ? match[1] : 'jpg';
-  
+
       formData.append('profile_picture', {
         uri: imagemPerfil,
         name: `profile.${ext}`,
@@ -97,7 +103,7 @@ function Cadastro() {
           },
         }
       );
-      router.replace('/(tabs)/Login/Login');
+      router.replace('/(tabs)/Login');
     } catch (error: any) {
       console.error('Erro no cadastro:', error?.response?.data || error);
       console.log(error?.response?.data)
@@ -124,11 +130,9 @@ function Cadastro() {
         showsVerticalScrollIndicator={false}
       >
         <View style={estilo.container}>
-          <Image
-            style={estilo.logo}
-            source={require("../../../assets/images/logo.png")}
-          />
-          
+
+          <MainHeader />
+
           <Text style={estilo.title}>Cadastro</Text>
           <Text style={estilo.subtitle}>
             Encontre os melhores spots, descubra eventos e junte-se a comunidade!
@@ -160,15 +164,21 @@ function Cadastro() {
           <Form label="E-mail" keyboardType="email-address" value={email} onChangeText={setEmail} />
           <Form label="Confirmar E-mail" keyboardType="email-address" value={emailConfirmacao} onChangeText={setEmailConfirmacao} />
 
-          <Form label="Senha" secureTextEntry placeholder="********" value={senha} onChangeText={setSenha} />
-          <Form label="Confirmar Senha" secureTextEntry placeholder="********" value={senhaConfirmacao} onChangeText={setSenhaConfirmacao} />
-                    
-          <Text style={estilo.tenhoConta} onPress={() => router.push('/(tabs)/Login/Login')}>
+          <View style={{ flexDirection: "row", alignItems: "center", position: "relative" }}>
+            <Form label="Senha" secureTextEntry={!showPassword} placeholder="********" value={senha} onChangeText={setSenha} />
+            <MaterialCommunityIcons name={showPassword ? "eye-off" : "eye"} size={24} color="#000" onPress={toggleShowPassword} style={{ position: "absolute", right: 16, top: 40 }} />
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", position: "relative" }}>
+            <Form label="Confirmar Senha" secureTextEntry={!showPasswordConfirm} placeholder="********" value={senhaConfirmacao} onChangeText={setSenhaConfirmacao} />
+            <MaterialCommunityIcons name={showPasswordConfirm ? "eye-off" : "eye"} size={24} color="#000" onPress={toggleShowPasswordConfirm} style={{ position: "absolute", right: 16, top: 40 }} />
+          </View>
+
+          <Text style={estilo.tenhoConta} onPress={() => router.push('/(tabs)/Login')}>
             Já tenho conta
           </Text>
 
-          <ButtonMain 
-            title="Cadastrar" 
+          <ButtonMain
+            title="Cadastrar"
             onPress={handleRegister}
             style={estilo.registerButton}
           />
@@ -198,7 +208,7 @@ const estilo = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Quicksand-Bold',
     fontSize: 22,
-    marginTop: 32,
+    marginTop: 120,
     marginBottom: 12,
   },
   subtitle: {

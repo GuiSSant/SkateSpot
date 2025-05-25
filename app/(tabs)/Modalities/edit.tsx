@@ -16,7 +16,7 @@ export default function EditModality() {
 
   const handleSubmit = async (data: { name: string; description?: string }) => {
     await updateModality(Number(id), data);
-    router.push({ pathname: '/modalities/detail', params: { id } });
+    router.push({ pathname: '/Modalities/detail', params: { id } });
   };
 
   if (!modality) return <Text>Carregando...</Text>;

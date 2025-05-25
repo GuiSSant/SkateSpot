@@ -17,11 +17,10 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
-import DefaultLayout from "./DefaultLayout";
-import { customMapStyle } from "../../assets/customMapStyle";
-import {resultTeste} from "./Explore/resultTeste"
+import DefaultLayout from "../../../components/common/MainHeader";
+import { customMapStyle } from "../../../assets/customMapStyle";
 
-const API_URL = "http://192.168.0.6:8000";
+const API_URL = "34.231.200.200:8000";
 
 interface Location {
   latitude: number;
@@ -47,7 +46,7 @@ type RootStackParamList = {
 
 type ExploreRouteProp = RouteProp<RootStackParamList, "Explore">;
 
-const Explore = () => {
+export default function Explore() {
   const navigation = useNavigation();
   const route = useRoute<ExploreRouteProp>();
 
@@ -73,8 +72,8 @@ const Explore = () => {
   } | null>(null);
 
   const [loaded, error] = useFonts({
-    "Quicksand-Bold": require("../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../assets/fonts/Quicksand-Regular.ttf")
+    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf")
   });
 
   // Estilização do mapa
@@ -324,7 +323,7 @@ const Explore = () => {
                   latitudeDelta: 0.1,
                   longitudeDelta: 0.1,
                 }}
-                
+
                 customMapStyle={DarkStyleMap}
               >
                 {results.map((result) => (
@@ -335,13 +334,13 @@ const Explore = () => {
                       longitude: result.longitude,
                     }}
                     title={result.name}
-                  
+
                   >
 
                     {result.type == 'spot' ? (
                       <Image
                         source={
-                          require("../../assets/images/skateRoxo.png")
+                          require("../../../assets/images/skateRoxo.png")
                         }
                         style={{ width: 30, height: 35 }}
                         resizeMode="contain"
@@ -350,7 +349,7 @@ const Explore = () => {
                       result.type == 'shop' ? (
                         <Image
                           source={
-                            require("../../assets/images/shopRoxo.png")
+                            require("../../../assets/images/shopRoxo.png")
                           }
                           style={{ width: 30, height: 35 }}
                           resizeMode="contain"
@@ -358,7 +357,7 @@ const Explore = () => {
                       ) : (
                         <Image
                           source={
-                            require("../../assets/images/eventoAmarelo.png")
+                            require("../../../assets/images/eventoAmarelo.png")
                           }
                           style={{ width: 30, height: 35 }}
                           resizeMode="contain"
@@ -532,4 +531,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Explore;

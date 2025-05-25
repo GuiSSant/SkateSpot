@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://192.168.15.16:8000',
+  baseURL: 'http://34.231.200.200:8000',
 });
 
 export const getModalities = () => api.get('/modalities/');
 export const getModality = (id: number) => api.get(`/modalities/${id}/`);
-export const createModality = (data: { name: string; description?: string }) =>
+export const createModality = (data: { name: string; description?: string }) => 
   api.post('/modalities/', data);
 export const updateModality = (id: number, data: { name: string; description?: string }) =>
   api.put(`/modalities/${id}/`, data);

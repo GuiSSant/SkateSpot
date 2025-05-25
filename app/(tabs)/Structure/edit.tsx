@@ -14,7 +14,7 @@ export default function EditStructure() {
 
   const handleSubmit = async (data: any) => {
     await updateStructure(Number(id), data);
-    router.push({ pathname: '/structures/detail', params: { id } });
+    router.push({ pathname: '/Structure/detail', params: { id } });
   };
 
   if (!structure) return <Text>Carregando...</Text>;

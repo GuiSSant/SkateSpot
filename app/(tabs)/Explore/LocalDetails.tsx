@@ -16,22 +16,18 @@ import {
   ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "./_layout";
+import { RootStackParamList } from "../_layout";
 import { RouteProp } from "@react-navigation/native";
-import DefaultLayout from "./DefaultLayout";
+import DefaultLayout from "../../../components/common/MainHeader";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 
 const API_URL = "http://192.168.0.6:8000";
 
-const LocalDetails = () => {
+export default function LocalDetails() {
   const route = useRoute<LocalDetailsRouteProp>();
   const {
     name,
-    type,
-    latitude,
-    longitude,
-    distance,
     description,
     main_image,
     images,
@@ -49,7 +45,7 @@ const LocalDetails = () => {
 
   return (
     <View style={styles.container}>
-    <DefaultLayout {...["explore"]} />     
+      <DefaultLayout {...["explore"]} />
       <Text style={styles.title}>{name}</Text>
       <Image source={main_image} style={styles.image} />
       <Text style={styles.description}>{description}</Text>
@@ -116,5 +112,3 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 });
-
-export default LocalDetails;

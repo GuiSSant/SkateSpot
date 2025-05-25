@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, Pressable, FlatList, Button } from 'react-native';
 import { getStructures } from '@/lib/api';
 import { router } from 'expo-router';
+import { ButtonMain } from '@/components/common/ButtonMain';
 
 type Structure = {
   id: number;
@@ -17,13 +18,13 @@ export default function StructureList() {
 
   return (
     <View style={{ padding: 16 }}>
-      <Button title="Nova Estrutura" onPress={() => router.push({ pathname: '/structures/new' })} />
+      <ButtonMain title="Nova Estrutura" onPress={() => router.push({ pathname: '/Structure/new' })} />
       <FlatList
         data={structures}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => router.push({ pathname: '/structures/detail', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: '/Structure/detail', params: { id: item.id } })}
             style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
           >
             <Text style={{ fontSize: 20 }}>{item.name}</Text>

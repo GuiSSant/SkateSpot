@@ -5,8 +5,9 @@ import { createStructure } from '@/lib/api';
 
 export default function CreateStructure() {
   const handleSubmit = async (data: any) => {
+    alert('Submitting structure data:' + JSON.stringify(data));
     await createStructure(data);
-    router.push('/structures');
+    router.push('/Structure');
   };
 
   return <StructureForm onSubmit={handleSubmit} />;

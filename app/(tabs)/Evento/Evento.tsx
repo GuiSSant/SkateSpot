@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
 import { useFonts } from 'expo-font';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ButtonMain } from '../../../components/common/ButtonMain';
 import { Form } from '../../../components/common/Form';
@@ -41,7 +41,7 @@ function Evento() {
 
           <ButtonMain 
             title="Cadastrar" 
-            onPress={() => router.push('/UserProfile/')}
+            onPress={() => router.push('/(tabs)/UserProfile')}
             style={estilo.registerButton}
           />
         </View>

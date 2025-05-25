@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, FlatList, Text, Pressable, Button } from 'react-native';
 import { router } from 'expo-router';
 import { getModalities } from '@/lib/api'; 
+import { ButtonMain } from '@/components/common/ButtonMain';
 
 type Modality = {
   id: number;
@@ -17,7 +18,7 @@ export default function ModalitiesList() {
 
   return (
     <View style={{ padding: 16 }}>
-      <Button title="Nova Modalidade" onPress={() => router.push('/modalities/new')} />
+      <ButtonMain title="Nova Modalidade" onPress={() => router.push('/Modalities/new')} />
       <FlatList
         data={modalities}
         keyExtractor={(item) => item.id.toString()}
@@ -29,7 +30,7 @@ export default function ModalitiesList() {
               borderBottomColor: '#D1D5DB',
             }}
             onPress={() =>
-              router.push({ pathname: '/modalities/detail', params: { id: item.id } })
+              router.push({ pathname: '/Modalities/detail', params: { id: item.id } })
             }
           >
             <Text style={{ fontSize: 20 }}>{item.name}</Text>

@@ -3,21 +3,15 @@ import {
   StyleSheet,
   View,
   Text,
-  Dimensions,
-  Alert,
   Image,
-  Button,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   TouchableHighlight,
   ImageBackground,
   ScrollView,
 } from "react-native";
 import { useFonts } from "expo-font";
-import DefaultLayout from "../DefaultLayout";
 import MinhasPistas from "./MinhasPistas";
 import Midia from "./Midia";
+import MainHeader from "../../../components/common/MainHeader";
 
 export default function UserProfile() {
   const [loaded, error] = useFonts({
@@ -36,7 +30,7 @@ export default function UserProfile() {
         >
           <ScrollView>
             <View style={styles.container}>
-              <DefaultLayout {...["perfil"]} />
+              <MainHeader/>
 
               <View style={styles.UserContainer}>
                 <TouchableHighlight style={styles.HandlerProfilePicture}>

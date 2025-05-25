@@ -2,18 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
-  Text,
-  Dimensions,
-  Alert,
   Image,
-  Button,
   TouchableOpacity,
 } from "react-native";
-import { useFonts } from "expo-font";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Link, router } from "expo-router";
 
-export default function DefaultLayout(icon: string[]) {
+export default function Header() {
   return (
     <View style={styles.container}>
       <Image
@@ -31,30 +25,26 @@ export default function DefaultLayout(icon: string[]) {
         />
       </TouchableOpacity>
 
-      {icon[0] !== "p" ? (
-        <Link href="../UserProfile/UserProfile" style={styles.icon_right}>
-          <Image
-            style={styles.icon_right}
-            source={require("../../assets/images/Profile.png")}
-          />
-        </Link>
-      ) : (
+      
+      <TouchableOpacity onPress={() => router.back()} style={styles.icon_right}>
         <Image
-          style={styles.icon_right}
           source={require("../../assets/images/config.png")}
+          style={{
+            height: 28,
+            resizeMode: "contain",
+          }}
         />
-      )}
+      </TouchableOpacity>
+      
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 64,
+    width: "100%",
   },
   logo: {
-    justifyContent: "center",
-    alignItems: "center",
     alignSelf: "center",
     height: 109,
     resizeMode: "contain",
@@ -66,10 +56,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 16,
     top: 20,
-
     zIndex: 100,
   },
   icon_right: {
+    display: "none",
     position: "absolute",
     right: 16,
     top: 20,
