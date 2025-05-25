@@ -12,7 +12,7 @@ import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 
-const API_URL = "http://192.168.247.90:8000";
+const API_URL = "http://192.168.0.6:8000";
 
 function Login() {
   const [loaded] = useFonts({
