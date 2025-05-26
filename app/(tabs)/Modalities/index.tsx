@@ -5,6 +5,8 @@ import { getModalities } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
+import MainHeader from "@/components/common/MainHeader";
+
 
 type Modality = {
   id: number;
@@ -41,6 +43,7 @@ export default function ModalitiesList() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <MainHeader />
         <View style={styles.container}>
           <Text style={styles.title}>Modalidades</Text>
           <Text style={styles.subtitle}>
@@ -68,7 +71,7 @@ export default function ModalitiesList() {
                   router.push({ pathname: '/Modalities/detail', params: { id: item.id } })
                 }
               >
-                <Text style={styles.modalityName}>{item.name}</Text>
+                <Text style={styles.modalityName}>Modalidade {item.name}</Text>
                 <Text style={styles.detailText}>Ver detalhes →</Text>
               </Pressable>
             )}
@@ -97,6 +100,7 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     marginBottom: 12,
+    marginTop: 180
   },
   subtitle: {
     color: '#fff',

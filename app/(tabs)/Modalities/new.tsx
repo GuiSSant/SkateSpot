@@ -4,6 +4,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StructureForm from '@/app/(tabs)/FormCadastros/StructureForm';
 import { createStructure } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
+import MainHeader from "@/components/common/MainHeader";
+
 
 export default function CreateStructure() {
   const handleSubmit = async (data: any) => {
@@ -18,6 +20,7 @@ export default function CreateStructure() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <MainHeader />
         <View style={styles.container}>
           <Text style={styles.title}>Nova Estrutura</Text>
           <Text style={styles.subtitle}>
@@ -56,7 +59,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 27.5,
     letterSpacing: 0.11,
-    marginBottom: 12
+    marginBottom: 12,
+    marginTop: 180
+
   },
   subtitle: {
     color: '#fff',

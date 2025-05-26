@@ -1,56 +1,83 @@
-import React from 'react';
-import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import React, {useState} from 'react';
+import { View, Image, StyleSheet, ScrollView, Text, Pressable} from 'react-native';
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ButtonMain } from '../../../components/common/ButtonMain';
 import { Form } from '../../../components/common/Form';
 
-function Evento() {
+function NovoEvento() {
   const [loaded] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
   });
 
-  if (!loaded) return null;
 
+  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView
-        contentContainerStyle={estilo.scrollContainer}
+        contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={estilo.container}>
+        <View style={styles.container}>
           <Image
-            style={estilo.logo}
+            style={styles.logo}
             source={require("../../../assets/images/logo.png")}
           />
           
-          <Text style={estilo.title}>Novo Evento</Text>
-          <Text style={estilo.subtitle}>
-          Aumente o alcance da sua skateshop e movimente a cena com um novo evento.
+          <Text style={styles.title}>Novo Evento</Text>
+          <Text style={styles.subtitle}>
+            Aumente o alcance da sua skateshop e movimente a cena com um novo evento.
           </Text>
 
-          <Form label="Nome do Evento" placeholder='Digite o nome do Evento.' />
-          <Form label="Descrição" placeholder='Descreva o evento.'/>
-          <Form label="Endereço" placeholder='Pesquise por CEP, rua, bairro...'/>
-          <Form label="Modalidade" placeholder='Selecione as modalidades'/>
-          <Form label="Patrocinadores" placeholder='Informe os patrocinadores'/>
-          <Form label="Imagem" placeholder='Faça upload da imagem que servirá de banner'/>
-
+          <View style={styles.formContainer}>
+            <Form 
+              label="Nome do Evento" 
+              placeholder='Digite o nome do Evento'
+              containerStyle={styles.formField}
+            />
+            
+            <Form 
+              label="Descrição" 
+              placeholder='Descreva o evento'
+              multiline
+              numberOfLines={4}
+              containerStyle={styles.formField}
+            />
+            
+            <Form 
+              label="Endereço" 
+              placeholder='Pesquise por CEP, rua, bairro...'
+              containerStyle={styles.formField}
+            />
+            
+            <View style={styles.dateRow}>
+              <View style={styles.dateInput}>
+                <Text style={styles.label}>Data de Início</Text>
+                
+              </View>
+              
+              <View style={styles.dateInput}>
+                <Text style={styles.label}>Data de Término</Text>
+          
+              </View>
+            </View>
+            
 
           <ButtonMain 
             title="Cadastrar" 
             onPress={() => router.push('/(tabs)/UserProfile')}
-            style={estilo.registerButton}
+            style={styles.registerButton}
           />
+          </View>
         </View>
       </ScrollView>
     </GestureHandlerRootView>
   );
 }
 
-const estilo = StyleSheet.create({
+const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
@@ -65,12 +92,13 @@ const estilo = StyleSheet.create({
     height: 109,
     resizeMode: 'contain',
     marginTop: 16,
+    marginBottom: 8,
   },
   title: {
     color: '#fff',
     fontFamily: 'Quicksand-Bold',
     fontSize: 22,
-    marginTop: 32,
+    marginTop: 16,
     marginBottom: 12,
   },
   subtitle: {
@@ -79,19 +107,46 @@ const estilo = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginHorizontal: 28,
+    marginBottom: 32,
+    lineHeight: 20,
+  },
+  formContainer: {
+    width: '100%',
     marginBottom: 24,
   },
-  secaoTitle: {
+  formField: {
+    marginBottom: 20,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  dateInput: {
+    width: '48%',
+  },
+  label: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  datePickerButton: {
+    backgroundColor: '#1E1B2B',
+    borderRadius: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2A2638',
+  },
+  dateText: {
     color: '#fff',
     fontFamily: 'Quicksand-Regular',
     fontSize: 14,
-    alignSelf: 'flex-start',
-    marginLeft: 16,
-    marginBottom: 16,
   },
   registerButton: {
     marginTop: 16,
+    width: '100%',
   },
 });
 
-export default Evento;
+export default NovoEvento;

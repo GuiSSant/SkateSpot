@@ -6,6 +6,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import ModalityForm from '@/app/(tabs)/FormCadastros/ModalityForm';
 import { getModality, updateModality } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
+import MainHeader from "@/components/common/MainHeader";
+
 
 export default function EditModality() {
   const { id } = useLocalSearchParams();
@@ -55,6 +57,7 @@ export default function EditModality() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <MainHeader />
         <View style={styles.container}>
           <Text style={styles.title}>Editar Modalidade</Text>
           <Text style={styles.subtitle}>
@@ -103,6 +106,7 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     marginBottom: 12,
+    marginTop: 180
   },
   subtitle: {
     color: '#fff',
