@@ -58,7 +58,7 @@ export default function EditStructure() {
         <View style={styles.container}>
           <Text style={styles.title}>Editar Estrutura</Text>
           <Text style={styles.subtitle}>
-            Atualize a estrutura
+            Edite a estrutura
           </Text>
 
           <StructureForm initialData={structure} onSubmit={handleSubmit}>

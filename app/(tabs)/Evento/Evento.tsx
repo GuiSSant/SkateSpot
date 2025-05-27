@@ -1,97 +1,148 @@
-import React from 'react';
-import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
-import { useFonts } from 'expo-font';
-import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ButtonMain } from '../../../components/common/ButtonMain';
-import { Form } from '../../../components/common/Form';
+import { ScrollView } from 'react-native-gesture-handler';
+import MainHeader from '../../../components/common/MainHeader';
+import { getEvents } from '@/lib/api'; 
 
-function Evento() {
-  const [loaded] = useFonts({
-    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
-  });
+const API_URL = "http://34.231.200.200:8000";
 
-  if (!loaded) return null;
+
+type Event = {
+  id: number;
+  name: string;
+  description: string;
+  start_date: string;
+  end_date: string ;
+  create_date:  string;
+  location_id: number;
+
+};
+
+export default function CommunityEvents() {
+  const [events, setEvents] = useState<Event[]>([]);
+
+    useEffect(() => {
+    if (id) {
+      getEvents(Number(id)).then((res) => setEvents(res.data));
+    }
+  }, [id]);
+
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={estilo.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={estilo.container}>
-          <Image
-            style={estilo.logo}
-            source={require("../../../assets/images/logo.png")}
-          />
-          
-          <Text style={estilo.title}>Novo Evento</Text>
-          <Text style={estilo.subtitle}>
-          Aumente o alcance da sua skateshop e movimente a cena com um novo evento.
-          </Text>
-
-          <Form label="Nome do Evento" placeholder='Digite o nome do Evento.' />
-          <Form label="Descrição" placeholder='Descreva o evento.'/>
-          <Form label="Endereço" placeholder='Pesquise por CEP, rua, bairro...'/>
-          <Form label="Modalidade" placeholder='Selecione as modalidades'/>
-          <Form label="Patrocinadores" placeholder='Informe os patrocinadores'/>
-          <Form label="Imagem" placeholder='Faça upload da imagem que servirá de banner'/>
-
-
-          <ButtonMain 
-            title="Cadastrar" 
-            onPress={() => router.push('/(tabs)/UserProfile')}
-            style={estilo.registerButton}
-          />
+     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+        <MainHeader backgroundColor={black}/>
+          <View style={styles.eventsSection}>
+            <Text style={styles.eventsTitle}>Eventos</Text>
+            
+            {events.length > 0 ? (
+              <FlatList
+                data={events}
+                scrollEnabled={false}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.eventCard}>
+                    <Text >nome {item.name}</Text>
+                    <Text style={styles.eventDescription}>{item.description}</Text>
+                    <Text style={styles.eventDescription}>{item.start_date}</Text>
+                    
+                  </View>
+                )}
+              />
+            ) : (
+              <Text style={styles.noEventsText}>Nenhum evento encontrado</Text>
+            )}
+          </View>
         </View>
       </ScrollView>
     </GestureHandlerRootView>
   );
 }
 
-const estilo = StyleSheet.create({
+const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: '#0C0A14',
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
-  logo: {
-    height: 109,
-    resizeMode: 'contain',
-    marginTop: 16,
-  },
-  title: {
-    color: '#fff',
+  header: {
+    color: '#F5D907',
     fontFamily: 'Quicksand-Bold',
-    fontSize: 22,
-    marginTop: 32,
-    marginBottom: 12,
-  },
-  subtitle: {
-    color: '#fff',
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 14,
+    fontSize: 24,
     textAlign: 'center',
-    marginHorizontal: 28,
     marginBottom: 24,
   },
-  secaoTitle: {
+  sectionTitle: {
     color: '#fff',
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 14,
-    alignSelf: 'flex-start',
-    marginLeft: 16,
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 20,
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
+  eventsSection: {
+    width: '100%',
+    marginBottom: 24,
+  },
+  eventsTitle: {
+    color: '#9747FF',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
+  eventCard: {
+    backgroundColor: '#1E1B2B',
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 16,
   },
-  registerButton: {
+  eventType: {
+    color: '#A0A0A0',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  eventTitle: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  eventDescription: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  noEventsText: {
+    color: '#A0A0A0',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    textAlign: 'center',
     marginTop: 16,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+  },
 });
-
-export default Evento;
