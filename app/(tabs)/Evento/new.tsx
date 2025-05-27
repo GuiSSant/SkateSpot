@@ -1,41 +1,54 @@
+import React from 'react';
+import { View, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import EventForm from '../FormCadastros/eventForm';
-import { createEvents } from '@/lib/api';
-import { ButtonMain } from '@/components/common/ButtonMain';
-import MainHeader from "@/components/common/MainHeader";
+import { ButtonMain } from '../../../components/common/ButtonMain';
+import { Form } from '../../../components/common/Form';
+import MainHeader from '../../../components/common/MainHeader';
 
+type Event = {
+  name: string;
+  start_date: string;
+  end_date: string ;
+  create_date:  string;
+  location_id: number;
 
-export default function CreateStructure() {
-  const handleSubmit = async (data: any) => {
-    try {
-      await createEvents(data);
-      router.push('/Evento');
-    } catch (error) {
-      console.error('Erro:', error);
-    }
-  };
+};
+
+function Evento() {
+  const [loaded] = useFonts({
+    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
+  });
+
+  if (!loaded) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+      <View>
         <MainHeader />
-        <View style={styles.container}>
-          <Text style={styles.title}>Novo</Text>
+          
+          <Text style={styles.title}>Novo Evento</Text>
           <Text style={styles.subtitle}>
-            Crie um novo evento
+         Crie um novo evento.
           </Text>
 
-          <EventForm onSubmit={handleSubmit}>
-            {({ handleSubmit }) => (
-              <ButtonMain
-                title="Criar Evento"
-                onPress={handleSubmit}
-                style={styles.submitButton}
-              />
-            )}
-          </EventForm>
+          <Form label="Nome do Evento" placeholder='Digite o nome do Evento.' />
+          <Form label="Descrição" placeholder='Descreva o evento.'/>
+          <Form label="Local" placeholder='Pesquise por CEP, rua, bairro...'/>
+          <Form label="Início" placeholder='informe a data de início'/>
+
+
+          <ButtonMain 
+            title="Cadastrar" 
+            onPress={() => router.push('/(tabs)/UserProfile')}
+            
+          />
         </View>
       </ScrollView>
     </GestureHandlerRootView>

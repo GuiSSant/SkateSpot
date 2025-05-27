@@ -25,7 +25,10 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.5",
     "expo": "~52.0.46",
+<<<<<<< HEAD
     "expo-auth-session": "~6.0.3",
+=======
+>>>>>>> 306556e14177d404426a3597910423e97611f409
     "expo-blur": "~14.0.2",
     "expo-constants": "~17.0.8",
     "expo-font": "~13.0.4",
@@ -35,7 +38,10 @@
     "expo-linking": "~7.0.4",
     "expo-location": "~18.0.10",
     "expo-router": "~4.0.21",
+<<<<<<< HEAD
     "expo-secure-store": "~14.0.1",
+=======
+>>>>>>> 306556e14177d404426a3597910423e97611f409
     "expo-splash-screen": "~0.29.24",
     "expo-status-bar": "~2.0.1",
     "expo-symbols": "~0.2.2",

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from '../../../components/common/MainHeader';
@@ -87,6 +89,7 @@ export default function Eventos() {
 }
 
 const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
@@ -96,6 +99,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 40,
     paddingBottom: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   header: {
     color: '#F5D907',
@@ -103,7 +108,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     marginBottom: 24,
+  header: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 24,
   },
+  sectionTitle: {
   sectionTitle: {
     color: '#fff',
     fontFamily: 'Quicksand-Bold',
@@ -114,7 +126,29 @@ const styles = StyleSheet.create({
   eventsSection: {
     width: '100%',
     marginBottom: 24,
+    fontSize: 20,
+    marginBottom: 16,
+    paddingLeft: 8,
   },
+  eventsSection: {
+    width: '100%',
+    marginBottom: 24,
+  },
+  eventsTitle: {
+    color: '#9747FF',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
+  eventCard: {
+    backgroundColor: '#1E1B2B',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  eventType: {
+    color: '#A0A0A0',
   eventsTitle: {
     color: '#9747FF',
     fontFamily: 'Quicksand-Bold',
@@ -139,7 +173,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Bold',
     fontSize: 18,
     marginBottom: 8,
+    marginBottom: 4,
   },
+  eventTitle: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  eventDescription: {
   eventDescription: {
     color: '#fff',
     fontFamily: 'Quicksand-Regular',
@@ -151,8 +193,34 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand-Regular',
     fontSize: 16,
     textAlign: 'center',
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  noEventsText: {
+    color: '#A0A0A0',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    textAlign: 'center',
     marginTop: 16,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+  },
+});
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',

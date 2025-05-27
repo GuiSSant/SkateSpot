@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
-import { Text } from 'react-native';
+import { View, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StructureForm from '@/app/(tabs)/FormCadastros/StructureForm';
 import { getStructure, updateStructure } from '@/lib/api';
 

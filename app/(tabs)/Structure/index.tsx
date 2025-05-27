@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
-import HeaderNavi from "@/components/common/HeaderNavi";
+import MainHeader from "@/components/common/MainHeader";
 
 
 type Structure = {
@@ -24,7 +24,7 @@ export default function StructureList() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-        <HeaderNavi />
+        <MainHeader />
 
           <Text style={styles.title}>Estruturas</Text>
           <Text style={styles.subtitle}>
@@ -50,7 +50,7 @@ export default function StructureList() {
                   { opacity: pressed ? 0.6 : 1 }
                 ]}
               >
-                <Text style={styles.text}>{item.name}</Text>
+                <Text style={styles.structureName}>{item.name}</Text>
                 <Text style={styles.details}>+</Text>
               </Pressable>
             )}
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   structureItem: {
+    backgroundColor: '#1E1B2B',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
