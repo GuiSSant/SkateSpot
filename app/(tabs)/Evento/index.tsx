@@ -16,7 +16,7 @@ type Event = {
 
 };
 
-export default function CommunityEvents() {
+export default function Eventos() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export default function CommunityEvents() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <ScrollView>
 
-          <View >
+                    <View style={styles.container}>
           <MainHeader />
 
             <Text style={styles.eventsTitle}>Eventos</Text>
@@ -49,7 +49,6 @@ export default function CommunityEvents() {
                       <Text style={styles.eventDate}>(item.end_date)</Text>
                     </View>
                   </View>
-                  
                 )}
               />
             ) : (
@@ -63,22 +62,22 @@ export default function CommunityEvents() {
 
 const styles = StyleSheet.create({
     scrollContainer: {
-      flexGrow: 1,
-      paddingBottom: 20,
-    },
-    container: {
-      flex: 1,
-      backgroundColor: '#0C0A14',
-      paddingHorizontal: 16,
-      paddingTop: 20,
-    },
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#0C0A14',
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 40,
+  },
     eventsTitle: {
       color: '#9747FF',
       fontFamily: 'Quicksand-Bold',
       fontSize: 22,
       marginBottom: 20,
       paddingLeft: 8,
-      marginTop: 180
+      marginTop: 80
     },
     eventCard: {
       backgroundColor: '#1E1B2B',

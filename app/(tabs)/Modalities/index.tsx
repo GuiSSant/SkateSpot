@@ -23,7 +23,7 @@ export default function ModalitiesList() {
         const res = await getModalities();
         setModalities(res.data);
       } catch (error) {
-        console.error('Error fetching modalities:', error);
+        console.error('Erro:', error);
       } finally {
         setIsLoading(false);
       }
@@ -47,15 +47,14 @@ export default function ModalitiesList() {
         <View style={styles.container}>
           <Text style={styles.title}>Modalidades</Text>
           <Text style={styles.subtitle}>
-            Gerencie ou crie novas modalidades para classificar seus spots
+             Edite ou crie modalidades 
           </Text>
 
           <ButtonMain
-            title="Nova Modalidade"
+            title="Nova"
             onPress={() => router.push('/Modalities/new')}
-            style={styles.newButton}
+            style={styles.nova}
           />
-
           <FlatList
             data={modalities}
             scrollEnabled={false}
@@ -71,8 +70,8 @@ export default function ModalitiesList() {
                   router.push({ pathname: '/Modalities/detail', params: { id: item.id } })
                 }
               >
-                <Text style={styles.modalityName}>Modalidade {item.name}</Text>
-                <Text style={styles.detailText}>Ver detalhes →</Text>
+                <Text style={styles.text}>Modalidade {item.name}</Text>
+                <Text style={styles.details}>+</Text>
               </Pressable>
             )}
           />
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     marginBottom: 12,
-    marginTop: 180
+    marginTop: 80
   },
   subtitle: {
     color: '#fff',
@@ -112,15 +111,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 28,
     marginBottom: 32,
   },
-  newButton: {
-    width: '100%',
-    marginBottom: 24,
+  text: {
+  color: '#fff',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
+    textAlign: 'center',
+  },
+  nova: {
+    width: '40%',
+    marginBottom: 20,
   },
   listContainer: {
     width: '100%',
   },
   modalityItem: {
-    backgroundColor: '#1E1B2B',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
@@ -134,10 +140,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
-  detailText: {
+  details: {
+    textAlign: 'center',
+    fontSize: 18,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
     color: '#9747FF',
     fontFamily: 'Quicksand-Regular',
-    fontSize: 14,
     marginLeft: 16,
   },
   loadingContainer: {

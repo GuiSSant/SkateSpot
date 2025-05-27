@@ -31,6 +31,28 @@ export const updateStructure = (
 ) => api.put(`/structures/${id}/`, data);
 export const deleteStructure = (id: number) => api.delete(`/structures/${id}/`);
 export const getEvents = () => api.get('/events/');
+export const createEvents = (data: {
+  id: number;
+  name: string;
+  description: string;
+  start_date: string;
+  end_date: string ;
+  create_date:  string;
+  location_id: number;
+}) => api.post('/events/', data);
+export const updateEvent= (
+  id: number,
+  data: {
+    id: number;
+    name: string;
+    description: string;
+    start_date: string;
+   end_date: string ;
+   create_date:  string;
+   location_id: number;
+  }
+) => api.put(`/events/${id}/`, data);
+export const deleteEvent = (id: number) => api.delete(`/events/${id}/`);
 
 
 export default api;

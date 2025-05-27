@@ -1,75 +1,84 @@
-import React, {useState} from 'react';
-import { View, Image, StyleSheet, ScrollView, Text, Pressable} from 'react-native';
-import { useFonts } from 'expo-font';
-import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ButtonMain } from '../../../components/common/ButtonMain';
-import { Form } from '../../../components/common/Form';
+import { ScrollView } from 'react-native-gesture-handler';
+import MainHeader from '../../../components/common/MainHeader';
+import { getEvents } from '@/lib/api'; 
+import { ButtonMain } from '@/components/common/ButtonMain';
+import { router } from 'expo-router';
 
-function NovoEvento() {
-  const [loaded] = useFonts({
-    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
-  });
+const API_URL = "http://34.231.200.200:8000";
 
 
-  
+type Event = {
+  id: number;
+  name: string;
+  description: string;
+  start_date: string;
+  end_date: string ;
+  create_date:  string;
+  location_id: number;
+
+};
+
+export default function Eventos() {
+  const [events, setEvents] = useState<Event[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+
+ useEffect(() => {
+     const fetchEvents = async () => {
+       try {
+         const res = await getEvents();
+         setEvents(res.data);
+       } catch (error) {
+         console.error('Erro:', error);
+       } finally {
+         setIsLoading(false);
+       }
+     };
+ 
+     fetchEvents();
+   }, []);
+ 
+   if (isLoading) {
+     return (
+       <View style={styles.loadingContainer}>
+         <ActivityIndicator size="large" color="#9747FF" />
+       </View>
+     );
+   }
+ 
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
+     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <Image
-            style={styles.logo}
-            source={require("../../../assets/images/logo.png")}
-          />
-          
-          <Text style={styles.title}>Novo Evento</Text>
-          <Text style={styles.subtitle}>
-            Aumente o alcance da sua skateshop e movimente a cena com um novo evento.
-          </Text>
-
-          <View style={styles.formContainer}>
-            <Form 
-              label="Nome do Evento" 
-              placeholder='Digite o nome do Evento'
-              containerStyle={styles.formField}
-            />
+        <MainHeader />
+          <View style={styles.eventsSection}>
+            <Text style={styles.eventsTitle}>Eventos</Text>
+              <ButtonMain 
+                        title="Novo" 
+                        onPress={() => router.push({ pathname: '/Evento/new' })}
+                      />
             
-            <Form 
-              label="Descrição" 
-              placeholder='Descreva o evento'
-              multiline
-              numberOfLines={4}
-              containerStyle={styles.formField}
-            />
-            
-            <Form 
-              label="Endereço" 
-              placeholder='Pesquise por CEP, rua, bairro...'
-              containerStyle={styles.formField}
-            />
-            
-            <View style={styles.dateRow}>
-              <View style={styles.dateInput}>
-                <Text style={styles.label}>Data de Início</Text>
-                
-              </View>
-              
-              <View style={styles.dateInput}>
-                <Text style={styles.label}>Data de Término</Text>
-          
-              </View>
-            </View>
-            
-
-          <ButtonMain 
-            title="Cadastrar" 
-            onPress={() => router.push('/(tabs)/UserProfile')}
-            style={styles.registerButton}
-          />
+            {events.length > 0 ? (
+              <FlatList
+                data={events}
+                scrollEnabled={false}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.eventCard}>
+                    <Text style={styles.eventType}>{item.name}</Text>
+                    <Text style={styles.eventDescription}>{item.description}</Text>
+                    <Text style={styles.eventDescription}>{item.start_date}</Text>
+                    
+                  </View>
+                )}
+              />
+            ) : (
+              <Text style={styles.noEventsText}>Nenhum evento encontrado</Text>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -83,70 +92,82 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: '#0C0A14',
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
-  logo: {
-    height: 109,
-    resizeMode: 'contain',
-    marginTop: 16,
-    marginBottom: 8,
+  header: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 24,
   },
-  title: {
+  sectionTitle: {
     color: '#fff',
     fontFamily: 'Quicksand-Bold',
-    fontSize: 22,
-    marginTop: 16,
-    marginBottom: 12,
+    fontSize: 20,
+    marginBottom: 16,
+    paddingLeft: 8,
   },
-  subtitle: {
-    color: '#fff',
-    fontFamily: 'Quicksand-Regular',
-    fontSize: 14,
-    textAlign: 'center',
-    marginHorizontal: 28,
-    marginBottom: 32,
-    lineHeight: 20,
-  },
-  formContainer: {
+  eventsSection: {
     width: '100%',
     marginBottom: 24,
   },
-  formField: {
-    marginBottom: 20,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  dateInput: {
-    width: '48%',
-  },
-  label: {
-    color: '#F5D907',
+  eventsTitle: {
+    color: '#9747FF',
     fontFamily: 'Quicksand-Bold',
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: 18,
+    marginBottom: 16,
+    paddingLeft: 8,
   },
-  datePickerButton: {
+  eventCard: {
     backgroundColor: '#1E1B2B',
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
-    borderWidth: 1,
-    borderColor: '#2A2638',
+    marginBottom: 16,
   },
-  dateText: {
-    color: '#fff',
+  eventType: {
+    color: '#A0A0A0',
     fontFamily: 'Quicksand-Regular',
     fontSize: 14,
+    marginBottom: 4,
   },
-  registerButton: {
+  eventTitle: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  eventDescription: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  noEventsText: {
+    color: '#A0A0A0',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    textAlign: 'center',
     marginTop: 16,
-    width: '100%',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C0A14',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
   },
 });
-
-export default NovoEvento;

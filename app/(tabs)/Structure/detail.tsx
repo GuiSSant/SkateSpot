@@ -4,6 +4,7 @@ import { View, ScrollView, StyleSheet, ActivityIndicator, Text } from 'react-nat
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { getStructure, deleteStructure } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
+import MainHeader from '../../../components/common/MainHeader';
 
 export default function StructureDetail() {
   const { id } = useLocalSearchParams();
@@ -53,6 +54,7 @@ export default function StructureDetail() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <MainHeader />
         <View style={styles.container}>
           <Text style={styles.title}>Detalhes da Estrutura</Text>
           
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     marginBottom: 24,
+    marginTop: 80
   },
   card: {
     backgroundColor: '#1E1B2B',

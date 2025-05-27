@@ -4,6 +4,7 @@ import { View, ScrollView, StyleSheet, ActivityIndicator, Text } from 'react-nat
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { getModality, deleteModality } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
+import MainHeader from "@/components/common/MainHeader";
 
 type Modality = {
   id: number;
@@ -60,6 +61,7 @@ export default function ModalityDetail() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
+          < MainHeader />
           <Text style={styles.title}>Detalhes da Modalidade</Text>
           
           <View style={styles.card}>
@@ -106,6 +108,8 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     marginBottom: 24,
+    marginTop: 80
+
   },
   card: {
     backgroundColor: '#1E1B2B',

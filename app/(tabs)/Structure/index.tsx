@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
-import MainHeader from "@/components/common/MainHeader";
+import HeaderNavi from "@/components/common/HeaderNavi";
 
 
 type Structure = {
@@ -24,7 +24,7 @@ export default function StructureList() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-        <MainHeader />
+        <HeaderNavi />
 
           <Text style={styles.title}>Estruturas</Text>
           <Text style={styles.subtitle}>
@@ -32,9 +32,9 @@ export default function StructureList() {
           </Text>
 
           <ButtonMain 
-            title="Nova Estrutura" 
+            title="Nova" 
             onPress={() => router.push({ pathname: '/Structure/new' })}
-            style={styles.newButton} 
+            style={styles.nova} 
           />
 
           <FlatList
@@ -50,8 +50,8 @@ export default function StructureList() {
                   { opacity: pressed ? 0.6 : 1 }
                 ]}
               >
-                <Text style={styles.structureName}>{item.name}</Text>
-                <Text style={styles.detailText}>Ver detalhes →</Text>
+                <Text style={styles.text}>{item.name}</Text>
+                <Text style={styles.details}>+</Text>
               </Pressable>
             )}
           />
@@ -78,8 +78,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 27.5,
     letterSpacing: 0.11,
-    marginTop: 180,
+    marginTop: 80,
     marginBottom: 12
+  },
+    text: {
+  color: '#fff',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 18,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
+    textAlign: 'center',
   },
   subtitle: {
     color: "#fff",
@@ -91,15 +99,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 28,
     marginBottom: 32
   },
-  newButton: {
-    width: '100%',
+  nova: {
+    width: '40%',
     marginBottom: 24,
   },
   listContainer: {
     width: '100%',
   },
   structureItem: {
-    backgroundColor: '#1E1B2B',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
@@ -113,10 +120,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
-  detailText: {
+  details: {
     color: "#9747FF",
-    fontFamily: "Quicksand-Regular",
-    fontSize: 14,
+    fontSize: 18,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
+    fontFamily: "Quicksand-Bold",
     marginLeft: 16,
   }
 });

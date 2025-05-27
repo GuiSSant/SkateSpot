@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import StructureForm from '@/app/(tabs)/FormCadastros/StructureForm';
-import { createStructure } from '@/lib/api';
+import EventForm from '../FormCadastros/eventForm';
+import { createEvents } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import MainHeader from "@/components/common/MainHeader";
 
@@ -10,8 +10,8 @@ import MainHeader from "@/components/common/MainHeader";
 export default function CreateStructure() {
   const handleSubmit = async (data: any) => {
     try {
-      await createStructure(data);
-      router.push('/Structure');
+      await createEvents(data);
+      router.push('/Evento');
     } catch (error) {
       console.error('Erro:', error);
     }
@@ -22,20 +22,20 @@ export default function CreateStructure() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <MainHeader />
         <View style={styles.container}>
-          <Text style={styles.title}>Nova Estrutura</Text>
+          <Text style={styles.title}>Novo</Text>
           <Text style={styles.subtitle}>
-            Cria uma nova estrutura
+            Crie um novo evento
           </Text>
 
-          <StructureForm onSubmit={handleSubmit}>
+          <EventForm onSubmit={handleSubmit}>
             {({ handleSubmit }) => (
               <ButtonMain
-                title="Criar Estrutura"
+                title="Criar Evento"
                 onPress={handleSubmit}
                 style={styles.submitButton}
               />
             )}
-          </StructureForm>
+          </EventForm>
         </View>
       </ScrollView>
     </GestureHandlerRootView>
@@ -59,9 +59,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 27.5,
     letterSpacing: 0.11,
-    marginBottom: 12,
-    marginTop: 80
-
+    marginTop: 80,
+    marginBottom: 12
   },
   subtitle: {
     color: '#fff',

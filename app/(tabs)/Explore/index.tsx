@@ -19,6 +19,7 @@ import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
 import DefaultLayout from "../../../components/common/MainHeader";
 import { customMapStyle } from "../../../assets/customMapStyle";
+import HeaderNavi from "@/components/common/HeaderNavi";
 
 const API_URL = "34.231.200.200:8000";
 
@@ -188,7 +189,7 @@ export default function Explore() {
 
   return (
     <View style={styles.container}>
-      <DefaultLayout {...["explore"]} />
+          <HeaderNavi />
 
       <TextInput
         style={styles.searchBar}
@@ -396,7 +397,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     height: 38,
-    marginTop: 12,
+    marginTop: 80,
     paddingHorizontal: 16,
   },
 

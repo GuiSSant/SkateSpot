@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 27.5,
     letterSpacing: 0.11,
-    marginTop: 180,
+    marginTop: 80,
     marginBottom: 12
   },
   subtitle: {
