@@ -9,8 +9,8 @@ import {
   ScrollView,
 } from "react-native";
 import { useFonts } from "expo-font";
-import MinhasPistas from "./MinhasPistas";
-import Midia from "./Midia";
+import Carrossel from "../../../components/common/Carrossel";
+import Midia from "../../../components/common/Midia";
 import MainHeader from "../../../components/common/MainHeader";
 
 export default function UserProfile() {
@@ -41,7 +41,7 @@ export default function UserProfile() {
                 </TouchableHighlight>
                 <View style={styles.profileContent}>
                   <Text style={styles.nameProfile}>Giovanna Mendes</Text>
-                  <MinhasPistas />
+                  <Carrossel title="Minhas Pistas"/>
                   <Midia />
                 </View>
               </View>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "static",
     height: "100%",
-    padding: 16,
+    paddingHorizontal: 16,
   },
   profileBackgroundImage: {
     flex: 1,

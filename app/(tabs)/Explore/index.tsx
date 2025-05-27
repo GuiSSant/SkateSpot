@@ -17,10 +17,10 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
-import DefaultLayout from "../../../components/common/MainHeader";
 import { customMapStyle } from "../../../assets/customMapStyle";
+import MainHeader from "../../../components/common/MainHeader";
 
-const API_URL = "34.231.200.200:8000";
+const API_URL = "http://34.231.200.200:8000";
 
 interface Location {
   latitude: number;
@@ -188,7 +188,7 @@ export default function Explore() {
 
   return (
     <View style={styles.container}>
-      <DefaultLayout {...["explore"]} />
+      <MainHeader />
 
       <TextInput
         style={styles.searchBar}
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     height: 38,
-    marginTop: 12,
+    marginTop: 80,
     paddingHorizontal: 16,
   },
 

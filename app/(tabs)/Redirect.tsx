@@ -33,6 +33,7 @@ function Redirect() {
                     <ButtonMain title="Login" onPress={() => router.push("/Login")} style={styles.mainButton} />
                     <ButtonMain title="Estruturas" onPress={() => router.push("/Structure")} style={styles.mainButton} />
                     <ButtonMain title="Modalidades" onPress={() => router.push("/Modalities")} style={styles.mainButton} />
+                    <ButtonMain title="Perfil" onPress={() => router.push("/UserProfile")} style={styles.mainButton} />
                 </View>
             </View>
 
