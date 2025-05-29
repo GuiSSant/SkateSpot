@@ -22,6 +22,7 @@ import DefaultLayout from "../../../components/common/MainHeader";
 import { customMapStyle } from "../../../assets/customMapStyle";
 import HeaderNavi from "@/components/common/HeaderNavi";
 import { ButtonMain } from "@/components/common/ButtonMain";
+import ModalExplore from "./Modal/modal";
 
 const API_URL = "34.231.200.200:8000";
 
@@ -42,62 +43,6 @@ interface Result {
   images: string;
 }
 
-interface SubfilterModalProps {
-  visible: boolean;
-  type: 'modalidade' | 'estrutura' | null;
-  onClose: () => void;
-  onSelect: (option: string) => void;
-  selectedFilters: string[];
-}
-
-const SubfilterModal: React.FC<SubfilterModalProps> = ({ 
-  visible, 
-  type, 
-  onClose, 
-  onSelect, 
-  selectedFilters 
-}) => {
-  const options = {
-    modalidade: ['Street', 'Park', 'Vert'],
-    estrutura: ['Corrimão', 'Bank', 'Half Pipe', 'Bowl']
-  };
-
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>
-            {type === 'modalidade' ? 'Modalidade' : 'Estrutura'}
-          </Text>
-          
-          <ScrollView contentContainerStyle={styles.modalOptions}>
-            {type && options[type].map(option => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.modalOption,
-                  selectedFilters.includes(option) && styles.modalOptionSelected
-                ]}
-                onPress={() => onSelect(option)}
-              >
-                <Text style={styles.modalOptionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          
-          <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
-            <Text style={styles.modalCloseText}>Fechar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
-};
 
 type RootStackParamList = {
   Explore: { newLocation?: Location };
@@ -106,53 +51,21 @@ type RootStackParamList = {
 type ExploreRouteProp = RouteProp<RootStackParamList, "Explore">;
 
 
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>
-            {type === 'modalidade' ? 'Modalidade' : 'Estrutura'}
-          </Text>
-          
-          <ScrollView contentContainerStyle={styles.modalOptions}>
-            {options[type].map(option => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.modalOption,
-                  selectedFilters.includes(option) && styles.modalOptionSelected
-                ]}
-                onPress={() => onSelect(option)}
-              >
-                <Text style={styles.modalOptionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          
-          <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
-            <Text style={styles.modalCloseText}>Fechar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
-};
-
 export default function Explore() {
   const navigation = useNavigation();
   const route = useRoute<ExploreRouteProp>();
 
+interface filtrosPista {
+  modalidade: string[];
+  estrutura: string[];
+}
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<string[]>([]);
-  const [subfilters, setSubfilters] = useState({
-    modalidade: [],
-    estrutura: []
-  });
+const [subfilters, setSubfilters] = useState<filtrosPista>({
+  modalidade: [],
+  estrutura: []
+});
   const [showSubfilterModal, setShowSubfilterModal] = useState(false);
   const [currentSubfilterType, setCurrentSubfilterType] = useState<'modalidade' | 'estrutura' | null>(null);
   const [userLocation, setUserLocation] = useState<Location>({
@@ -506,32 +419,23 @@ export default function Explore() {
           </View>
         )}
       </View>
-
-      <SubfilterModal
-        visible={showSubfilterModal}
-        type={currentSubfilterType}
-        onClose={() => setShowSubfilterModal(false)}
-        onSelect={(option) => {
-          if (currentSubfilterType) {
-            setSubfilters(prev => {
-              const currentOptions = [...prev[currentSubfilterType]];
-              const index = currentOptions.indexOf(option);
-              
-              if (index > -1) {
-                currentOptions.splice(index, 1);
-              } else {
-                currentOptions.push(option);
-              }
-              
-              return {
-                ...prev,
-                [currentSubfilterType]: currentOptions
-              };
-            });
-          }
-        }}
-        selectedFilters={currentSubfilterType ? subfilters[currentSubfilterType] : []}
+        <ModalExplore
+       visible={showSubfilterModal}
+  type={currentSubfilterType}
+  onClose={() => setShowSubfilterModal(false)}
+  onSelect={(option: string) => {
+    if (currentSubfilterType) {
+      setSubfilters(prev => ({
+        ...prev,
+        [currentSubfilterType]: prev[currentSubfilterType].includes(option)
+          ? prev[currentSubfilterType].filter(item => item !== option)
+          : [...prev[currentSubfilterType], option]
+      }));
+    }
+  }}
+  selectedFilters={currentSubfilterType ? subfilters[currentSubfilterType] : []}
       />
+
     </View>
   );
 };
