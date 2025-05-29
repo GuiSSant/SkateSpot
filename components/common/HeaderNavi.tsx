@@ -12,10 +12,10 @@ export default function HeaderNavi() {
 
   const menuItems: MenuItem[] = [
     { name: "PISTAS", route: "/Spots" },
-    { name: "EVENTOS", route: "/Events" },
+    { name: "EVENTOS", route: "/Evento" },
     { name: "LOJAS", route: "/Shops" },
     { name: "MODALIDADES", route: "/Modalities" },
-    { name: "ESTRUTURAS", route: "/Structures" },
+    { name: "ESTRUTURAS", route: "/Structure" },
     { name: "SOBRE", route: "/About" },
   ];
 

@@ -50,7 +50,8 @@ export default function StructureList() {
                   { opacity: pressed ? 0.6 : 1 }
                 ]}
               >
-                <Text style={styles.structureName}>{item.name}</Text>
+                
+                <Text style={styles.text}>{item.name}</Text>
                 <Text style={styles.details}>+</Text>
               </Pressable>
             )}
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   structureItem: {
-    backgroundColor: '#1E1B2B',
+    backgroundColor: '#0C0A14',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
