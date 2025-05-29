@@ -18,9 +18,13 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
 import { customMapStyle } from "../../../assets/customMapStyle";
-import MainHeader from "../../../components/common/MainHeader";
 
-const API_URL = "http://34.231.200.200:8000";
+import HeaderNavi from "@/components/common/HeaderNavi";
+import ModalExplore from "./Modal/modal";
+import api from "@/lib/api";
+import { router } from "expo-router";
+
+const API_URL = api.defaults.baseURL || "http:// ";
 
 interface Location {
   latitude: number;
@@ -39,31 +43,40 @@ interface Result {
   images: string;
 }
 
-// Tipagem da rota para receber a nova localização
+
 type RootStackParamList = {
   Explore: { newLocation?: Location };
 };
 
 type ExploreRouteProp = RouteProp<RootStackParamList, "Explore">;
 
+
 export default function Explore() {
   const navigation = useNavigation();
   const route = useRoute<ExploreRouteProp>();
 
+interface filtrosPista {
+  modalidade: string[];
+  estrutura: string[];
+}
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<string[]>([]);
+const [subfilters, setSubfilters] = useState<filtrosPista>({
+  modalidade: [],
+  estrutura: []
+});
+  const [showSubfilterModal, setShowSubfilterModal] = useState(false);
+  const [currentSubfilterType, setCurrentSubfilterType] = useState<'modalidade' | 'estrutura' | null>(null);
   const [userLocation, setUserLocation] = useState<Location>({
     latitude: 0,
     longitude: 0,
   });
   const [results, setResults] = useState<Result[]>([]);
   const [mapExpanded, setMapExpanded] = useState(false);
-  const [isTyping, setIsTyping] = useState(false); // Estado para detectar digitação
+  const [isTyping, setIsTyping] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-
-  //CONST de Localização inicial
-  const [currentLocation, setCurrentLocation] =
-    useState<Location.LocationObjectCoords | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<Location.LocationObjectCoords | null>(null);
   const [initialRegion, setInitialRegion] = useState<{
     latitude: number;
     longitude: number;
@@ -76,15 +89,13 @@ export default function Explore() {
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf")
   });
 
-  // Estilização do mapa
   const DarkStyleMap = customMapStyle;
 
-  //useEffect localização inicial
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permission to access location was denied");
+        console.log("Permissão para acessar localização negada");
         return;
       }
 
@@ -128,7 +139,6 @@ export default function Explore() {
   }, []);
 
   useEffect(() => {
-    // Atualiza a localização se uma nova for passada como parâmetro
     if (route.params?.newLocation) {
       setUserLocation(route.params.newLocation);
     }
@@ -138,7 +148,7 @@ export default function Explore() {
     if (userLocation.latitude !== 0 && userLocation.longitude !== 0) {
       fetchResults();
     }
-  }, [userLocation, filters, searchQuery]);
+  }, [userLocation, filters, searchQuery, subfilters]);
 
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -159,14 +169,23 @@ export default function Explore() {
       const appliedFilters =
         filters.length > 0 ? filters.join(",") : "spots,shops,events";
 
-      const response = await axios.get<Result[]>(`${API_URL}/search/`, {
-        params: {
-          lat: userLocation.latitude,
-          lng: userLocation.longitude,
-          types: appliedFilters,
-          query: searchQuery,
-        },
-      });
+      const params: any = {
+        lat: userLocation.latitude,
+        lng: userLocation.longitude,
+        types: appliedFilters,
+        query: searchQuery,
+      };
+
+      if (filters.includes("spots")) {
+        if (subfilters.modalidade.length > 0) {
+          params.modalidade = subfilters.modalidade.join(",");
+        }
+        if (subfilters.estrutura.length > 0) {
+          params.estrutura = subfilters.estrutura.join(",");
+        }
+      }
+
+      const response = await axios.get<Result[]>(`${API_URL}/search/`, { params });
       console.log("Response data:", response.data);
       setResults(response.data);
     } catch (error) {
@@ -188,7 +207,9 @@ export default function Explore() {
 
   return (
     <View style={styles.container}>
-      <MainHeader />
+
+      <HeaderNavi />
+
 
       <TextInput
         style={styles.searchBar}
@@ -196,9 +217,9 @@ export default function Explore() {
         value={searchQuery}
         onChangeText={(text) => {
           setSearchQuery(text);
-          setIsTyping(text.length > 0); // Define isTyping como true se houver texto
+          setIsTyping(text.length > 0);
         }}
-        onBlur={() => setIsTyping(false)} // Quando o usuário sai do campo, volta ao normal
+        onBlur={() => setIsTyping(false)}
       />
 
       <ScrollView horizontal style={styles.filterContainer}>
@@ -218,6 +239,41 @@ export default function Explore() {
             Pistas
           </Text>
         </TouchableOpacity>
+        
+        {filters.includes("spots") && (
+          <>
+            <TouchableOpacity
+              style={styles.subfilterButton}
+              onPress={() => {
+                setCurrentSubfilterType('modalidade');
+                setShowSubfilterModal(true);
+              }}
+            >
+              <Text style={styles.subfilterText}>Modalidade</Text>
+              {subfilters.modalidade.length > 0 && (
+                <View style={styles.subfilterBadge}>
+                  <Text style={styles.subfilterBadgeText}>{subfilters.modalidade.length}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.subfilterButton}
+              onPress={() => {
+                setCurrentSubfilterType('estrutura');
+                setShowSubfilterModal(true);
+              }}
+            >
+              <Text style={styles.subfilterText}>Estrutura</Text>
+              {subfilters.estrutura.length > 0 && (
+                <View style={styles.subfilterBadge}>
+                  <Text style={styles.subfilterBadgeText}>{subfilters.estrutura.length}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </>
+        )}
+        
         <TouchableOpacity
           style={[
             styles.filterButton,
@@ -252,7 +308,6 @@ export default function Explore() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Botão de Localização */}
       <View style={styles.divider} />
       <TouchableOpacity
         style={styles.locationButton}
@@ -274,7 +329,7 @@ export default function Explore() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("LocalDetails", {
+                  router.push({pathname: '/(tabs)/Explore/LocalDetails', params: {
                     id: item.id,
                     name: item.name,
                     type: item.type,
@@ -284,7 +339,7 @@ export default function Explore() {
                     description: item.description,
                     main_image: item.main_image,
                     images: item.images,
-                  })
+                  }})
                 }
               >
                 <View style={styles.card}>
@@ -315,7 +370,7 @@ export default function Explore() {
                 style={[
                   styles.map,
                   mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
-                  { flexGrow: 1 }, // Permite que o mapa use o espaço restante
+                  { flexGrow: 1 },
                 ]}
                 initialRegion={{
                   latitude: initialRegion?.latitude || 0,
@@ -323,7 +378,6 @@ export default function Explore() {
                   latitudeDelta: 0.1,
                   longitudeDelta: 0.1,
                 }}
-
                 customMapStyle={DarkStyleMap}
               >
                 {results.map((result) => (
@@ -334,40 +388,26 @@ export default function Explore() {
                       longitude: result.longitude,
                     }}
                     title={result.name}
-
                   >
-
                     {result.type == 'spot' ? (
                       <Image
-                        source={
-                          require("../../../assets/images/skateRoxo.png")
-                        }
+                        source={require("../../../assets/images/skateRoxo.png")}
+                        style={{ width: 30, height: 35 }}
+                        resizeMode="contain"
+                      />
+                    ) : result.type == 'shop' ? (
+                      <Image
+                        source={require("../../../assets/images/shopRoxo.png")}
                         style={{ width: 30, height: 35 }}
                         resizeMode="contain"
                       />
                     ) : (
-                      result.type == 'shop' ? (
-                        <Image
-                          source={
-                            require("../../../assets/images/shopRoxo.png")
-                          }
-                          style={{ width: 30, height: 35 }}
-                          resizeMode="contain"
-                        />
-                      ) : (
-                        <Image
-                          source={
-                            require("../../../assets/images/eventoAmarelo.png")
-                          }
-                          style={{ width: 30, height: 35 }}
-                          resizeMode="contain"
-                        />
-
-                      )
-                    )
-                    }
-
-
+                      <Image
+                        source={require("../../../assets/images/eventoAmarelo.png")}
+                        style={{ width: 30, height: 35 }}
+                        resizeMode="contain"
+                      />
+                    )}
                   </Marker>
                 ))}
               </MapView>
@@ -381,6 +421,23 @@ export default function Explore() {
           </View>
         )}
       </View>
+        <ModalExplore
+       visible={showSubfilterModal}
+  type={currentSubfilterType}
+  onClose={() => setShowSubfilterModal(false)}
+  onSelect={(option: string) => {
+    if (currentSubfilterType) {
+      setSubfilters(prev => ({
+        ...prev,
+        [currentSubfilterType]: prev[currentSubfilterType].includes(option)
+          ? prev[currentSubfilterType].filter(item => item !== option)
+          : [...prev[currentSubfilterType], option]
+      }));
+    }
+  }}
+  selectedFilters={currentSubfilterType ? subfilters[currentSubfilterType] : []}
+      />
+
     </View>
   );
 };
@@ -391,7 +448,6 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#0C0A14",
   },
-
   searchBar: {
     backgroundColor: "#fff",
     borderRadius: 8,
@@ -399,13 +455,11 @@ const styles = StyleSheet.create({
     marginTop: 80,
     paddingHorizontal: 16,
   },
-
   filterContainer: {
     flexDirection: "row",
     marginVertical: 10,
     marginBottom: 15,
   },
-
   filterButton: {
     paddingHorizontal: 12,
     borderRadius: 8,
@@ -413,15 +467,12 @@ const styles = StyleSheet.create({
     marginRight: 12,
     height: 32,
   },
-
   activeFilter: {
     backgroundColor: "#9747FF",
   },
-
   activeTextFilter: {
     color: "#FFFFFF",
   },
-
   filterText: {
     fontSize: 12,
     color: "#000",
@@ -430,7 +481,34 @@ const styles = StyleSheet.create({
     margin: "auto",
     fontFamily: "Quicksand-Bold",
   },
-
+  subfilterButton: {
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: "#333",
+    marginRight: 12,
+    height: 32,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  subfilterText: {
+    fontSize: 12,
+    color: "#fff",
+    fontFamily: "Quicksand-Bold",
+  },
+  subfilterBadge: {
+    backgroundColor: '#F5D907',
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  subfilterBadgeText: {
+    fontSize: 10,
+    color: '#000',
+    fontFamily: "Quicksand-Bold",
+  },
   sectionTitle: {
     fontSize: 16,
     marginTop: 10,
@@ -438,15 +516,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Quicksand-Bold",
   },
-
   locationButton: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Centraliza os itens dentro do botão
+    justifyContent: "center",
     paddingVertical: 10,
-    alignSelf: "center", // Centraliza o botão horizontalmente
+    alignSelf: "center",
   },
-
   locationButtonText: {
     marginLeft: 8,
     color: "#F5D907",
@@ -454,19 +530,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontFamily: "Quicksand-Bold",
   },
-
   horizontalList: {
     paddingBottom: 16,
   },
-
   divider: {
     height: 1,
     backgroundColor: "#ccc",
     marginVertical: 2,
-    width: "100%", // Define a largura para ocupar quase toda a tela
-    alignSelf: "center", // Centraliza horizontalmente
+    width: "100%",
+    alignSelf: "center",
   },
-
   card: {
     width: 100,
     height: 100,
@@ -478,56 +551,90 @@ const styles = StyleSheet.create({
     padding: 0,
     alignItems: "center",
   },
-
   cardImage: {
     width: 100,
     height: 100,
     borderRadius: 15,
   },
-
   cardTitle: {
     fontSize: 12,
     color: '#fff',
     textAlign: "center",
     marginTop: 4,
     fontFamily: "Quicksand-Bold",
-
   },
-
   cardDistanceContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 2,
   },
-
   cardDistance: {
     fontSize: 10,
     color: "#666",
     marginLeft: 4,
     marginTop: 4,
   },
-
-  // Adicionando margem superior ao container
   containerMap: {
     flex: 500,
     marginTop: 0,
   },
-
-  // O mapa ocupará o espaço disponível
   map: {
     width: "100%",
     height: "100%",
   },
-
-  // Altura do mapa quando não expandido
   mapCollapsed: {
     height: "60%",
     marginTop: 0,
   },
-
-  // Altura do mapa quando expandido
   mapExpanded: {
     height: "100%",
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 15,
+    padding: 20,
+    width: '80%',
+    maxHeight: '60%',
+  },
+  modalTitle: {
+    color: '#F5D907',
+    fontSize: 18,
+    fontFamily: "Quicksand-Bold",
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalOptions: {
+    paddingBottom: 15,
+  },
+  modalOption: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: '#333',
+  },
+  modalOptionSelected: {
+    backgroundColor: '#9747FF',
+  },
+  modalOptionText: {
+    color: '#fff',
+    fontFamily: "Quicksand-Regular",
+    textAlign: 'center',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: '#333',
+    borderRadius: 8,
+  },
+  modalCloseText: {
+    color: '#F5D907',
+    textAlign: 'center',
+    fontFamily: "Quicksand-Bold",
+  },
 });
-

@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     lineHeight: 27.5,
     letterSpacing: 0.11,
     textAlign: "center",
-    marginTop: 180,
+    marginTop: 80,
     marginBottom: 12
   },
   infoText: {

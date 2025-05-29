@@ -22,7 +22,7 @@ function Redirect() {
                     style={styles.logo}
                     source={require("../../assets/images/logo.png")}
                 />
-                <Text style={styles.titulo}>Recirecionamento</Text>
+                <Text style={styles.titulo}>Redirecionamento</Text>
                 <Text style={styles.infoText}>
                     Selecione a opção que deseja
                 </Text>
@@ -31,9 +31,12 @@ function Redirect() {
                     <ButtonMain title="Explore" onPress={() => router.push("/Explore")} style={styles.mainButton} />
                     <ButtonMain title="Cadastrar Local" onPress={() => router.push("/FormCadastros/FormLocal")} style={styles.mainButton} />
                     <ButtonMain title="Login" onPress={() => router.push("/Login")} style={styles.mainButton} />
+                    <ButtonMain title="Cadastro" onPress={() => router.push("/Cadastro")} style={styles.mainButton} />
                     <ButtonMain title="Estruturas" onPress={() => router.push("/Structure")} style={styles.mainButton} />
                     <ButtonMain title="Modalidades" onPress={() => router.push("/Modalities")} style={styles.mainButton} />
-                    <ButtonMain title="Perfil" onPress={() => router.push("/UserProfile")} style={styles.mainButton} />
+
+                    <ButtonMain title="Eventos" onPress={() => router.push("/Evento")} style={styles.mainButton} />
+
                 </View>
             </View>
 
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
         lineHeight: 27.5,
         letterSpacing: 0.11,
         textAlign: "center",
-        marginTop: 180,
+        marginTop: 80,
     },
     infoText: {
         color: "#fff",
