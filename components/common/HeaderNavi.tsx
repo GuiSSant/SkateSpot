@@ -1,22 +1,30 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity, Text, Pressable } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity, Text, Pressable, Modal } from "react-native";
 import { router } from "expo-router";
 
 interface MenuItem {
   name: string;
+  route?: string;
 }
 
 export default function HeaderNavi() {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const menuItems: MenuItem[] = [
-    { name: "PISTAS"},
-    { name: "EVENTOS" },
-    { name: "LOJAS"},
-    { name: "MODALIDADES"},
-    { name: "ESTRUTURA" },
-    { name: "SOBRE"},
+    { name: "PISTAS", route: "/Spots" },
+    { name: "EVENTOS", route: "/Events" },
+    { name: "LOJAS", route: "/Shops" },
+    { name: "MODALIDADES", route: "/Modalities" },
+    { name: "ESTRUTURA", route: "/Structures" },
+    { name: "SOBRE", route: "/About" },
   ];
+
+  const handleMenuItemPress = (route?: string) => {
+    setMenuVisible(false);
+    if (route) {
+      router.push(route);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -26,30 +34,30 @@ export default function HeaderNavi() {
       />
 
       <TouchableOpacity 
-        onPress={() => setMenuVisible(menuVisible)} 
-        style={styles.icon_left}
+        onPress={() => setMenuVisible(!menuVisible)} 
+        style={styles.menuButton}
       >
         <Image
           source={require("../../assets/images/menu.png")}
-          style={styles.icon}
+          style={styles.menuIcon}
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.icon_right}>
-        <Image
-          source={require("../../assets/images/config.png")}
-          style={styles.icon}
-        />
-      </TouchableOpacity>
-
-      {menuVisible && (
-        <>
-         
+      <Modal
+        visible={menuVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <View style={styles.modalContainer}>
           <View style={styles.menuContainer}>
             <View style={styles.menuHeader}>
               <Text style={styles.menuTitle}>MENU</Text>
-              <TouchableOpacity onPress={() => setMenuVisible(false)}>
-                <Text style={styles.closeButton}>×</Text>
+              <TouchableOpacity 
+                onPress={() => setMenuVisible(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>×</Text>
               </TouchableOpacity>
             </View>
 
@@ -57,14 +65,21 @@ export default function HeaderNavi() {
               <Pressable
                 key={item.name}
                 style={styles.menuItem}
-                onPress={() => router.push('/Evento')} 
+                onPress={() => handleMenuItemPress(item.route)}
               >
                 <Text style={styles.menuText}>{item.name}</Text>
               </Pressable>
             ))}
           </View>
-        </>
-      )}
+          
+          {}
+          <TouchableOpacity 
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setMenuVisible(false)}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -72,82 +87,75 @@ export default function HeaderNavi() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    position: 'relative',
+    height: 80,
+    justifyContent: "center",
+    backgroundColor: "#0C0A14",
   },
   logo: {
+    position: "absolute",
     alignSelf: "center",
     height: 109,
     resizeMode: "contain",
-    position: "absolute",
     top: -18,
     zIndex: 100,
   },
-  icon: {
+  menuButton: {
+    position: "absolute",
+    left: 16,
+    zIndex: 101,
+    padding: 10,
+  },
+  menuIcon: {
     height: 28,
     resizeMode: "contain",
   },
-  icon_left: {
-    position: "absolute",
-    left: 16,
-    top: 20,
-    zIndex: 101,
-  },
-  icon_right: {
-    display: "none",
-    position: "absolute",
-    right: 16,
-    top: 20,
-    zIndex: 100,
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    zIndex: 200,
+  modalContainer: {
+    flex: 1,
+    flexDirection: "row",
   },
   menuContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '70%',
-    height: '100%',
-    backgroundColor: '#0C0A14',
+    width: "70%",
+    height: "100%",
+    backgroundColor: "#0C0A14",
     paddingTop: 60,
     paddingHorizontal: 20,
-    zIndex: 300,
     borderRightWidth: 1,
-    borderRightColor: '#262626',
+    borderRightColor: "#262626",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   menuHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 30,
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#262626',
+    borderBottomColor: "#262626",
   },
   menuTitle: {
-    color: '#F5D907',
-    fontFamily: 'Quicksand-Bold',
+    color: "#F5D907",
+    fontFamily: "Quicksand-Bold",
     fontSize: 24,
   },
   closeButton: {
-    color: '#fff',
+    padding: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
     fontSize: 30,
     lineHeight: 30,
   },
   menuItem: {
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#262626',
+    borderBottomColor: "#262626",
   },
   menuText: {
-    color: '#fff',
-    fontFamily: 'Quicksand-Bold',
+    color: "#fff",
+    fontFamily: "Quicksand-Bold",
     fontSize: 18,
   },
 });
