@@ -59,7 +59,7 @@ export default function HeaderNavi() {
                 style={styles.menuItem}
                 onPress={() => router.push('/Evento')} 
               >
-                <Text style={styles.menuText}>abc {item.name}</Text>
+                <Text style={styles.menuText}>{item.name}</Text>
               </Pressable>
             ))}
           </View>

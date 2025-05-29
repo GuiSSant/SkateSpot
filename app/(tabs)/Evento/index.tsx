@@ -25,7 +25,7 @@ export default function Eventos() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <ScrollView>
 
-                    <View style={styles.container}>
+          <View style={styles.container}>
           <MainHeader />
 
             <Text style={styles.eventsTitle}>Eventos</Text>
