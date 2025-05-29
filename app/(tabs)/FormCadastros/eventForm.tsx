@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ButtonMain } from '@/components/common/ButtonMain';
-import DateTimePicker from '@react-native-community/datetimepicker';
+//import DateTimePicker from '@react-native-community/datetimepicker';
 
 type EventFormProps = {
   onSubmit: (data: { 
@@ -91,7 +91,7 @@ export default function EventForm({
                 {startDate.toLocaleDateString('pt-BR')}
               </Text>
             </Pressable>
-            {showStartPicker && (
+            {/*showStartPicker && (
               <DateTimePicker
                 value={startDate}
                 mode="datetime"
@@ -101,7 +101,7 @@ export default function EventForm({
                   if (selectedDate) setStartDate(selectedDate);
                 }}
               />
-            )}
+            )*/}
           </View>
 
           {}
