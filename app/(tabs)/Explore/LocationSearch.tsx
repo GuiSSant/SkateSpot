@@ -12,6 +12,8 @@ import axios from "axios"; // Não se esqueça de importar o axios
 import { RootStackParamList } from "../_layout"; // Ajuste o caminho conforme necessário
 import DefaultLayout from "../../../components/common/MainHeader";
 import { useFonts } from "expo-font";
+import MainHeader from "../../../components/common/MainHeader";
+import { useLocalSearchParams } from "expo-router";
 
 
 // Defina a interface para a resposta da API
@@ -28,6 +30,8 @@ type NavigationProps = NativeStackNavigationProp<
 >;
 
 export default function LocationSearch() {
+  const { id, name, type, latitude, longitude, distance, description, main_image, images } = useLocalSearchParams();
+
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const navigation = useNavigation<NavigationProps>();
@@ -78,7 +82,7 @@ export default function LocationSearch() {
 
   return (
     <View style={styles.container}>
-      <DefaultLayout {...["explore"]} />
+      <MainHeader/>
 
       <TextInput
         style={styles.searchBar}

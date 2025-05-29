@@ -4,25 +4,17 @@ import {
   View,
   Text,
   FlatList,
-  Dimensions,
-  Alert,
   Image,
-  Button,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableHighlight,
-  ImageBackground,
-  ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../_layout";
 import { RouteProp } from "@react-navigation/native";
 import DefaultLayout from "../../../components/common/MainHeader";
+import api from "@/lib/api";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 
-const API_URL = "http://192.168.0.6:8000";
+const API_URL = api.defaults.baseURL || "http:// ";
 
 export default function LocalDetails() {
   const route = useRoute<LocalDetailsRouteProp>();

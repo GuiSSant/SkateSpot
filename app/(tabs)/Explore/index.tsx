@@ -9,7 +9,6 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
-  Modal
 } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
@@ -18,13 +17,13 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
-import DefaultLayout from "../../../components/common/MainHeader";
 import { customMapStyle } from "../../../assets/customMapStyle";
 import HeaderNavi from "@/components/common/HeaderNavi";
-import { ButtonMain } from "@/components/common/ButtonMain";
 import ModalExplore from "./Modal/modal";
+import api from "@/lib/api";
+import { router } from "expo-router";
 
-const API_URL = "34.231.200.200:8000";
+const API_URL = api.defaults.baseURL || "http:// ";
 
 interface Location {
   latitude: number;
@@ -327,7 +326,7 @@ const [subfilters, setSubfilters] = useState<filtrosPista>({
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("LocalDetails", {
+                  router.push({pathname: '/(tabs)/Explore/LocalDetails', params: {
                     id: item.id,
                     name: item.name,
                     type: item.type,
@@ -337,7 +336,7 @@ const [subfilters, setSubfilters] = useState<filtrosPista>({
                     description: item.description,
                     main_image: item.main_image,
                     images: item.images,
-                  })
+                  }})
                 }
               >
                 <View style={styles.card}>
