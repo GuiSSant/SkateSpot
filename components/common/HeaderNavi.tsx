@@ -15,7 +15,7 @@ export default function HeaderNavi() {
     { name: "EVENTOS", route: "/Events" },
     { name: "LOJAS", route: "/Shops" },
     { name: "MODALIDADES", route: "/Modalities" },
-    { name: "ESTRUTURA", route: "/Structures" },
+    { name: "ESTRUTURAS", route: "/Structures" },
     { name: "SOBRE", route: "/About" },
   ];
 
