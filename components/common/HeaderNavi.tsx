@@ -38,8 +38,18 @@ export default function HeaderNavi() {
         style={styles.menuButton}
       >
         <Image
-          source={require("../../assets/images/menu.png")}
+          source={require("@/assets/images/menu.png")}
           style={styles.menuIcon}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        onPress={() => router.navigate("/(tabs)/UserProfile")} 
+        style={styles.profileButton}
+      >
+        <Image
+          source={require("@/assets/images/Profile.png")}
+          style={styles.profileIcon}
         />
       </TouchableOpacity>
 
@@ -106,6 +116,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   menuIcon: {
+    height: 28,
+    resizeMode: "contain",
+  },
+   profileButton: {
+    position: "absolute",
+    right: 16,
+    zIndex: 101,
+    padding: 10,
+  },
+  profileIcon: {
     height: 28,
     resizeMode: "contain",
   },
