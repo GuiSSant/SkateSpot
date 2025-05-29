@@ -18,6 +18,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
 import { customMapStyle } from "../../../assets/customMapStyle";
+
 import HeaderNavi from "@/components/common/HeaderNavi";
 import ModalExplore from "./Modal/modal";
 import api from "@/lib/api";
@@ -206,7 +207,9 @@ const [subfilters, setSubfilters] = useState<filtrosPista>({
 
   return (
     <View style={styles.container}>
+
       <HeaderNavi />
+
 
       <TextInput
         style={styles.searchBar}

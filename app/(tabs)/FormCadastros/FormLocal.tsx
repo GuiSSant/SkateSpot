@@ -13,17 +13,13 @@ import {
   Switch,
 } from "react-native";
 import { useFonts } from "expo-font";
-import { onBoardingContent } from "../../../assets/onBoardingContent";
-import { Link, router } from "expo-router";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
-import axios from "axios";
-import Toast from "react-native-toast-message";
 import { TextInputMask } from 'react-native-masked-text';
 
 
-const API_URL = "http://192.168.0.6:8000";
+const API_URL = "http://34.231.200.200:8000";
 
 
 const dropdownLocal = [

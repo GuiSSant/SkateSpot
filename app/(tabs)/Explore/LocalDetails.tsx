@@ -14,7 +14,9 @@ import api from "@/lib/api";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
 
+
 const API_URL = api.defaults.baseURL || "http:// ";
+
 
 export default function LocalDetails() {
   const route = useRoute<LocalDetailsRouteProp>();
