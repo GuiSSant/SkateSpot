@@ -2,16 +2,17 @@ import { router } from 'expo-router';
 import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import StructureForm from '@/app/(tabs)/FormCadastros/StructureForm';
-import { createStructure } from '@/lib/api';
+import { createModality } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import MainHeader from "@/components/common/MainHeader";
+import ModalityForm from '../FormCadastros/ModalityForm';
 
 
-export default function CreateStructure() {
+export default function CreateModality() {
   const handleSubmit = async (data: any) => {
     try {
-      await createStructure(data);
-      router.push('/Structure');
+      await createModality(data);
+      router.push('/Modalities');
     } catch (error) {
       console.error('Erro:', error);
     }
@@ -22,20 +23,20 @@ export default function CreateStructure() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <MainHeader />
         <View style={styles.container}>
-          <Text style={styles.title}>Nova Estrutura</Text>
+          <Text style={styles.title}>Nova Modalidade</Text>
           <Text style={styles.subtitle}>
-            Cria uma nova estrutura
+            Cria uma nova modalidade
           </Text>
 
-          <StructureForm onSubmit={handleSubmit}>
+          <ModalityForm onSubmit={handleSubmit}>
             {({ handleSubmit }) => (
               <ButtonMain
-                title="Criar Estrutura"
+                title="Criar"
                 onPress={handleSubmit}
                 style={styles.submitButton}
               />
             )}
-          </StructureForm>
+          </ModalityForm>
         </View>
       </ScrollView>
     </GestureHandlerRootView>

@@ -21,6 +21,22 @@ export default function Eventos() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+   useEffect(() => {
+      const fetchEvents = async () => {
+        try {
+          const res = await getEvents();
+          setEvents(res.data);
+        } catch (error) {
+          console.error('Erro:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }, []);
+  
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <ScrollView>
