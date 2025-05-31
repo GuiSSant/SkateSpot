@@ -5,25 +5,15 @@ import {
   View,
   Text,
   Dimensions,
-  Alert,
   Image,
-  Button,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   TouchableHighlight,
-  ImageBackground,
   FlatList,
 } from "react-native";
-import { midiaAssets } from "./midiaAssets";
+import { midiaAssets } from "../../app/(tabs)/UserProfile/midiaAssets";
 
 export default function Midia() {
   const windowWidth = Dimensions.get("window").width - 32;
 
-  const [loaded, error] = useFonts({
-    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
-  });
 
   const item = (
     <FlatList
@@ -39,7 +29,6 @@ export default function Midia() {
     />
   );
 
-  if (loaded)
     return (
       <>
         <View style={styles.container}>

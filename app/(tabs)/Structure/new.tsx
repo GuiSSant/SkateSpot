@@ -9,12 +9,14 @@ import MainHeader from "@/components/common/MainHeader";
 
 export default function CreateStructure() {
   const handleSubmit = async (data: any) => {
+
     try {
       await createStructure(data);
       router.push('/Structure');
     } catch (error) {
       console.error('Erro:', error);
     }
+
   };
 
   return (
