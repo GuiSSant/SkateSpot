@@ -27,6 +27,9 @@ export default function LocalDetails() {
     images,
   } = route.params;
 
+  console.log(main_image)
+  console.log(images)
+
   // Função para renderizar cada card de imagem
   const renderImageCard = ({ item }) => (
     <View style={styles.card}>
@@ -41,7 +44,7 @@ export default function LocalDetails() {
     <View style={styles.container}>
       <DefaultLayout {...["explore"]} />
       <Text style={styles.title}>{name}</Text>
-      <Image source={main_image} style={styles.image} />
+      <Image source={{ uri: `${API_URL}${main_image}` }} style={styles.image} />
       <Text style={styles.description}>{description}</Text>
 
       {/* Seção para os cards de imagens */}

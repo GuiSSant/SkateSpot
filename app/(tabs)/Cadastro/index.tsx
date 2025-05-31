@@ -35,6 +35,7 @@ function Cadastro() {
   const toggleShowPassword = () => {setShowPassword(!showPassword);};
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const toggleShowPasswordConfirm = () => {setShowPasswordConfirm(!showPasswordConfirm);};
+  const [tipoUsuario, setTipoUsuario] = useState<string | null>(null);
 
   const selecionarImagem = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -80,6 +81,7 @@ function Cadastro() {
     formData.append('password2', senha);
     formData.append('first_name', nome);
     formData.append('last_name', sobrenome);
+    formData.append('user_type', tipoUsuario);
 
     if (imagemPerfil) {
       const filename = imagemPerfil.split('/').pop();
@@ -114,7 +116,7 @@ function Cadastro() {
           .map(msg => `- ${msg}`)
           .join('\n');
 
-        Alert.alert('Erro', mensagens); // <<-- Título definido como "Erro"
+        Alert.alert('Erro', mensagens);
       } else {
         Alert.alert('Erro', 'Ocorreu um erro desconhecido.');
       }
@@ -134,8 +136,41 @@ function Cadastro() {
           <MainHeader />
 
           <Text style={estilo.title}>Cadastro</Text>
+
+           {/* Seletor de tipo de usuário */}
+          <Text style={{ color: '#fff', fontSize: 16, marginTop: 16, marginBottom: 8 }}>Sou um:</Text>
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
+            <TouchableOpacity
+              style={[
+                {
+                  flex: 1,
+                  padding: 12,
+                  backgroundColor: tipoUsuario === 'skater' ? '#F5D907' : '#333',
+                  borderRadius: 10,
+                },
+              ]}
+              onPress={() => setTipoUsuario('skater')}
+            >
+              <Text style={{ textAlign: 'center', color: '#fff', fontWeight: 'bold' }}>Skatista</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                {
+                  flex: 1,
+                  padding: 12,
+                  backgroundColor: tipoUsuario === 'owner' ? '#F5D907' : '#333',
+                  borderRadius: 10,
+                },
+              ]}
+              onPress={() => setTipoUsuario('owner')}
+            >
+              <Text style={{ textAlign: 'center', color: '#fff', fontWeight: 'bold' }}>Lojista</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={estilo.subtitle}>
-            Encontre os melhores spots, descubra eventos e junte-se a comunidade!
+            {tipoUsuario === 'owner'
+              ? 'Divulgue sua loja, conecte-se com skatistas e fortaleça a comunidade!'
+              : 'Encontre os melhores spots, descubra eventos e junte-se a comunidade!'}
           </Text>
 
           <TouchableOpacity onPress={selecionarImagem} style={{ marginBottom: 24 }}>

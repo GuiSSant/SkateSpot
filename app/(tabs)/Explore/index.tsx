@@ -23,6 +23,7 @@ import HeaderNavi from "@/components/common/HeaderNavi";
 import ModalExplore from "./Modal/modal";
 import api from "@/lib/api";
 import { router } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
@@ -43,6 +44,10 @@ interface Result {
   images: string;
 }
 
+interface filtrosPista {
+  modalidade: string[];
+  estrutura: string[];
+}
 
 type RootStackParamList = {
   Explore: { newLocation?: Location };
@@ -55,17 +60,12 @@ export default function Explore() {
   const navigation = useNavigation();
   const route = useRoute<ExploreRouteProp>();
 
-interface filtrosPista {
-  modalidade: string[];
-  estrutura: string[];
-}
-
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<string[]>([]);
-const [subfilters, setSubfilters] = useState<filtrosPista>({
-  modalidade: [],
-  estrutura: []
-});
+  const [subfilters, setSubfilters] = useState<filtrosPista>({
+    modalidade: [],
+    estrutura: []
+  });
   const [showSubfilterModal, setShowSubfilterModal] = useState(false);
   const [currentSubfilterType, setCurrentSubfilterType] = useState<'modalidade' | 'estrutura' | null>(null);
   const [userLocation, setUserLocation] = useState<Location>({
@@ -136,6 +136,30 @@ const [subfilters, setSubfilters] = useState<filtrosPista>({
 
   useEffect(() => {
     requestLocationPermission();
+  }, []);
+
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken"); // ou onde você armazenou
+        console.log("TOKEN:", token);
+        const response = await axios.get(`${API_URL}/api/auth/user/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log("Dados do usuário:", response.data);
+        if (response.data.profile_picture) {
+          setProfilePictureUrl(`${response.data.profile_picture}`);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -388,6 +412,17 @@ const [subfilters, setSubfilters] = useState<filtrosPista>({
                       longitude: result.longitude,
                     }}
                     title={result.name}
+                    onPress={ () =>router.push({pathname: '/(tabs)/Explore/LocalDetails', params: {
+                    id: result.id,
+                    name: result.name,
+                    type: result.type,
+                    latitude: result.latitude,
+                    longitude: result.longitude,
+                    distance: result.distance,
+                    description: result.description,
+                    main_image: result.main_image,
+                    images: result.images,
+                  }})}
                   >
                     {result.type == 'spot' ? (
                       <Image
