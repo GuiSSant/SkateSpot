@@ -1,27 +1,27 @@
 import { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator, Text, Pressable } from 'react-native';
 import { router } from 'expo-router';
-import { getModalities } from '@/lib/api';
+import { getShops } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from "@/components/common/MainHeader";
 
 
-type Modality = {
+type Shop = {
   id: number;
   name: string;
 };
 
-export default function ModalitiesList() {
-  const [modalities, setModalities] = useState<Modality[]>([]);
+export default function ShopsList() {
+  const [shops, setShops] = useState<Shop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchModalities = async () => {
       try {
-        const res = await getModalities();
-        setModalities(res.data);
+        const res = await getShops();
+        setShops(res.data);
       } catch (error) {
         console.error('Erro:', error);
       } finally {
@@ -45,34 +45,16 @@ export default function ModalitiesList() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <MainHeader />
         <View style={styles.container}>
-          <Text style={styles.title}>Modalidades</Text>
-          <Text style={styles.subtitle}>
-             Edite ou crie modalidades 
-          </Text>
+          <Text style={styles.title}>Lojas</Text>
 
-          <ButtonMain
-            title="Nova"
-            onPress={() => router.push('/Modalities/new')}
-            style={styles.nova}
-          />
           <FlatList
-            data={modalities}
+            data={shops}
             scrollEnabled={false}
             contentContainerStyle={styles.listContainer}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.modalityItem,
-                  { opacity: pressed ? 0.6 : 1 }
-                ]}
-                onPress={() =>
-                  router.push({ pathname: '/Modalities/detail', params: { id: item.id } })
-                }
-              >
-                <Text style={styles.text}>Modalidade {item.name}</Text>
-                <Text style={styles.details}>+</Text>
-              </Pressable>
+                <Text style={styles.text}>Loja {item.name}</Text>
+             
             )}
           />
         </View>

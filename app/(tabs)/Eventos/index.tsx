@@ -6,7 +6,7 @@ import { getEvents } from '@/lib/api';
 import MainHeader from '../../../components/common/MainHeader';
 
 
-type Event = {
+type Eventos = {
   name: string;
   description: string;
   start_date: string;
@@ -44,7 +44,10 @@ export default function Eventos() {
           <View style={styles.container}>
           <MainHeader />
 
-            <Text style={styles.eventsTitle}>Eventos</Text>
+          <Text style={styles.title}>Eventos</Text>
+           <Text style={styles.subtitle}>
+               Descubra eventos por perto! </Text>
+          
             
             {events.length > 0 ? (
               <FlatList
@@ -83,23 +86,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0C0A14',
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 40,
+    marginBottom: 20,
+  },  title: {
+    color: '#F5D907',
+    fontFamily: 'Quicksand-Bold',
+    fontSize: 22,
+    lineHeight: 27.5,
+    letterSpacing: 0.11,
+    marginBottom: 12,
+    marginTop: 80
   },
-    eventsTitle: {
-      color: '#9747FF',
-      fontFamily: 'Quicksand-Bold',
-      fontSize: 22,
-      marginBottom: 20,
-      paddingLeft: 8,
-      marginTop: 80
-    },
+   subtitle: {
+    color: "#fff",
+    fontFamily: "Quicksand-Regular",
+    fontSize: 14,
+    lineHeight: 17.5,
+    letterSpacing: 0.11,
+    textAlign: "center",
+    marginHorizontal: 28,
+    marginBottom: 32
+  },
     eventCard: {
       backgroundColor: '#1E1B2B',
       borderRadius: 12,
       padding: 20,
       marginBottom: 16,
+      marginTop: 20,
+
     },
     eventName: {
       color: '#F5D907',
