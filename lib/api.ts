@@ -54,7 +54,7 @@ export const createEvents = (data: {
   end_date: string ;
   create_date:  string;
   location_id: number;
-}) => api.post('/events/', data);
+}) => api.post('/skate-events/', data);
 //  PUT
 export const updateEvent= (
   id: number,
@@ -77,6 +77,29 @@ export const getSpots = () => api.get("/skate-spots/");
 export const getSpot = (id: number) => api.get(`/skate-spots/${id}/`);
 
 // Lojas
+// GETS
 export const getShops = () => api.get("/skate-shops")
+// POSTS
+export const createShops = (data: {
+  id: number;
+  name: string;
+  description: string;
+  start_date: string;
+  location_id: number;
+}) => api.post('/skate-shops', data);
+// PUT
+//  PUT
+export const updateShop = (
+  id: number,
+  data: {
+    id: number;
+    name: string;
+
+   location_id: number;
+  }
+) => api.put(`/skate-shops/${id}/`, data);
+// DELETE
+export const deleteShop = (id: number) => api.delete(`/skate-shops/${id}/`);
+
 
 export default api;

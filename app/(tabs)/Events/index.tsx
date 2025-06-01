@@ -4,9 +4,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getEvents } from '@/lib/api'; 
 import MainHeader from '../../../components/common/MainHeader';
+import { ButtonMain } from '@/components/common/ButtonMain';
+import { router } from 'expo-router';
 
 
-type Eventos = {
+type Event = {
   name: string;
   description: string;
   start_date: string;
@@ -16,7 +18,7 @@ type Eventos = {
 
 };
 
-export default function Eventos() {
+export default function Events() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +49,10 @@ export default function Eventos() {
           <Text style={styles.title}>Eventos</Text>
            <Text style={styles.subtitle}>
                Descubra eventos por perto! </Text>
-          
+                <ButtonMain
+                      title="Novo" 
+                      onPress={() => router.push({ pathname: '/Events/new' })}
+                    />
             
             {events.length > 0 ? (
               <FlatList

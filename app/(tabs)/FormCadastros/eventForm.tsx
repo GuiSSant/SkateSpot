@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ButtonMain } from '@/components/common/ButtonMain';
-//import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from 'react-native-date-picker';
 
 type EventFormProps = {
   onSubmit: (data: { 
@@ -37,7 +37,7 @@ export default function EventForm({
   const [showEndPicker, setShowEndPicker] = useState(false);
 
   const formatDate = (date: Date) => {
-    return date.toISOString(); // Or format as needed
+    return date.toISOString();
   };
 
   const handleSubmit = () => {
@@ -54,7 +54,7 @@ export default function EventForm({
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          {}
+          {/* Name Field */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Nome do Evento</Text>
             <TextInput
@@ -66,7 +66,7 @@ export default function EventForm({
             />
           </View>
 
-          {}
+          {/* Description Field */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Descrição</Text>
             <TextInput
@@ -80,7 +80,7 @@ export default function EventForm({
             />
           </View>
 
-          {}
+          {/* Start Date Field */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Data de Início</Text>
             <Pressable
@@ -91,20 +91,29 @@ export default function EventForm({
                 {startDate.toLocaleDateString('pt-BR')}
               </Text>
             </Pressable>
-            {/*showStartPicker && (
-              <DateTimePicker
-                value={startDate}
+            {showStartPicker && (
+              <DatePicker
+                date={startDate}
+                onDateChange={setStartDate}
                 mode="datetime"
-                display="default"
-                onChange={(event, selectedDate) => {
+                locale="pt-BR"
+                modal
+                open={showStartPicker}
+                onConfirm={(date) => {
+                  setStartDate(date);
                   setShowStartPicker(false);
-                  if (selectedDate) setStartDate(selectedDate);
                 }}
+                onCancel={() => {
+                  setShowStartPicker(false);
+                }}
+                confirmText="Confirmar"
+                cancelText="Cancelar"
+                theme="dark"
               />
-            )*/}
+            )}
           </View>
 
-          {}
+          {/* End Date Field */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Data de Término</Text>
             <Pressable
@@ -116,19 +125,28 @@ export default function EventForm({
               </Text>
             </Pressable>
             {showEndPicker && (
-              <DateTimePicker
-                value={endDate}
+              <DatePicker
+                date={endDate}
+                onDateChange={setEndDate}
                 mode="datetime"
-                display="default"
-                onChange={(event, selectedDate) => {
+                locale="pt-BR"
+                modal
+                open={showEndPicker}
+                onConfirm={(date) => {
+                  setEndDate(date);
                   setShowEndPicker(false);
-                  if (selectedDate) setEndDate(selectedDate);
                 }}
+                onCancel={() => {
+                  setShowEndPicker(false);
+                }}
+                confirmText="Confirmar"
+                cancelText="Cancelar"
+                theme="dark"
               />
             )}
           </View>
 
-          {}
+          {/* Location ID Field */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>ID do Local</Text>
             <TextInput
@@ -141,7 +159,7 @@ export default function EventForm({
             />
           </View>
 
-          {}
+          {/* Submit Button */}
           {children ? children({ handleSubmit }) : (
             <ButtonMain
               title="Salvar Evento"
