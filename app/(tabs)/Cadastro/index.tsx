@@ -13,8 +13,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator } from 'expo-image-manipulator'; // opcional se quiser tratar recorte mais avançado
 import MainHeader from '../../../components/common/MainHeader';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
+import api from "@/lib/api";
 
-const API_URL = "http://34.231.200.200:8000";
+const API_URL = api.defaults.baseURL || "http:// ";
 
 function Cadastro() {
   const [loaded] = useFonts({

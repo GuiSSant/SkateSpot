@@ -10,8 +10,9 @@ import { ButtonMain } from "@/components/common/ButtonMain";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Form } from "@/components/common/Form";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from "@/lib/api";
 
-const API_URL = "http://34.231.200.200:8000";
+const API_URL = api.defaults.baseURL || "http:// ";
 
 export default function Login() {
   const [loaded] = useFonts({

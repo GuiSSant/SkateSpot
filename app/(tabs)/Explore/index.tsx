@@ -362,7 +362,7 @@ export default function Explore() {
                     distance: item.distance,
                     description: item.description,
                     main_image: item.main_image,
-                    images: item.images,
+                    images: JSON.stringify(item.images),
                   }})
                 }
               >

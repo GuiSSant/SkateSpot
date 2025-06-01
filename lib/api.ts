@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://34.231.200.200:8000',
+  baseURL: 'http://192.168.0.6:8000',
 });
 
 export const getModalities = () => api.get('/modalities/');
