@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-nativ
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getEvents } from '@/lib/api'; 
+import { router } from 'expo-router';
 import MainHeader from '../../../components/common/MainHeader';
 import { ButtonMain } from '@/components/common/ButtonMain';
-import { router } from 'expo-router';
 
 
 type Event = {
@@ -53,7 +53,7 @@ export default function Events() {
                       title="Novo" 
                       onPress={() => router.push({ pathname: '/Events/new' })}
                     />
-            
+
             {events.length > 0 ? (
               <FlatList
                 data={events}
@@ -163,6 +163,10 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#0C0A14',
+    },
+     nova: {
+      width: '40%',
+      marginBottom: 24,
     },
 
   });

@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, TouchableOpacity, Text, Pressable, Modal } from "react-native";
 import { router } from "expo-router";
+import api from "@/lib/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+
+const API_URL = api.defaults.baseURL || "http:// ";
 
 interface MenuItem {
   name: string;
@@ -8,6 +13,30 @@ interface MenuItem {
 }
 
 export default function HeaderNavi() {
+
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        const response = await axios.get(`${API_URL}/api/auth/user/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log("Dados do usuário:", response.data);
+        if (response.data.profile_picture) {
+          setProfilePictureUrl(`${response.data.profile_picture}`);
+        }
+      } catch (error) {
+        console.log("Erro ao carregar imagem de perfil:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const [menuVisible, setMenuVisible] = useState(false);
 
   const menuItems: MenuItem[] = [
@@ -48,8 +77,12 @@ export default function HeaderNavi() {
         style={styles.profileButton}
       >
         <Image
-          source={require("@/assets/images/Profile.png")}
           style={styles.profileIcon}
+          source={
+            profilePictureUrl
+              ? { uri: profilePictureUrl }
+              : require("@/assets/images/Profile.png")
+          }
         />
       </TouchableOpacity>
 
@@ -127,6 +160,8 @@ const styles = StyleSheet.create({
   },
   profileIcon: {
     height: 28,
+    width: 28,
+    borderRadius: 14,
     resizeMode: "contain",
   },
   modalContainer: {

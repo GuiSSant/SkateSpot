@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -12,8 +12,44 @@ import { useFonts } from "expo-font";
 import Carrossel from "../../../components/common/Carrossel";
 import Midia from "../../../components/common/Midia";
 import MainHeader from "../../../components/common/MainHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import api from "@/lib/api";
+
+const API_URL = api.defaults.baseURL || "http:// ";
 
 export default function UserProfile() {
+
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        const response = await axios.get(`${API_URL}/api/auth/user/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log("Dados do usuário:", response.data);
+        if (response.data.profile_picture) {
+          setProfilePictureUrl(`${response.data.profile_picture}`);
+        }
+        setFirstName(response.data.first_name || "");
+        setLastName(response.data.last_name || "");
+        setUsername(response.data.username || "");
+      } catch (error) {
+        console.log("Erro ao carregar imagem de perfil:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
   const [loaded, error] = useFonts({
     "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
     "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf"),
@@ -36,11 +72,20 @@ export default function UserProfile() {
                 <TouchableHighlight style={styles.HandlerProfilePicture}>
                   <Image
                     style={styles.HandlerProfilePicture}
-                    source={require("../../../assets/images/ProfileImage.png")}
+                    source={
+                      profilePictureUrl
+                        ? { uri: profilePictureUrl }
+                        : require("../../../assets/images/Profile.png")
+                    }
                   />
                 </TouchableHighlight>
                 <View style={styles.profileContent}>
-                  <Text style={styles.nameProfile}>Giovanna Mendes</Text>
+                  <Text style={styles.nameProfile}>
+                    {firstName || "Nome"} {lastName || "Sobrenome"}
+                  </Text>
+                  <Text style={styles.UsernameTag}>
+                    @{username}
+                  </Text>
                   <Carrossel title="Minhas Pistas"/>
                   <Midia />
                 </View>
@@ -95,5 +140,11 @@ const styles = StyleSheet.create({
     marginTop: 66,
     lineHeight: 27.5,
     fontFamily: "Quicksand-Bold",
+  },
+    UsernameTag: {
+    fontSize: 14,
+    color: "#888", // cinza claro
+    marginTop: 4,
+    alignSelf: "center",
   },
 });

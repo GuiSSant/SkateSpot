@@ -17,9 +17,11 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
 import { TextInputMask } from 'react-native-masked-text';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
+import api from "@/lib/api";
 
-
-const API_URL = "http://34.231.200.200:8000";
+const API_URL = api.defaults.baseURL || "http:// ";
 
 
 const dropdownLocal = [

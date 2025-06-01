@@ -9,8 +9,10 @@ import MainHeader from "@/components/common/MainHeader";
 import { ButtonMain } from "@/components/common/ButtonMain";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Form } from "@/components/common/Form";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from "@/lib/api";
 
-const API_URL = "http://34.231.200.200:8000";
+const API_URL = api.defaults.baseURL || "http:// ";
 
 export default function Login() {
   const [loaded] = useFonts({
@@ -19,7 +21,7 @@ export default function Login() {
   });
 
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleShowPassword = () => { setShowPassword(!showPassword); };
@@ -29,13 +31,22 @@ export default function Login() {
     try {
       const res = await axios.post(`${API_URL}/api/auth/login/`, {
         email,
-        senha,
+        password,
       });
+
       console.log(res);
-      await SecureStore.setItemAsync("userToken", res.data.key);
-      router.replace("/(tabs)/Explore");
+      const token = res.data.key;
+
+      if (token) {
+        await AsyncStorage.setItem("authToken", token);
+        console.log("Token salvo com sucesso:", token);
+        router.replace("/(tabs)/Explore");
+      } else {
+        console.error("Token ausente na resposta.");
+      }
+
     } catch (error) {
-      Alert.alert("Erro", "E-mail ou senha incorretos.");
+      Alert.alert("Erro", "E-mail ou senha incorretoss.");
     }
   };
 
@@ -55,7 +66,7 @@ export default function Login() {
             <Form label="E-mail" keyboardType="email-address" value={email} onChangeText={setEmail} />
 
             <View style={{ flexDirection: "row", alignItems: "center", position: "relative" }}>
-              <Form label="Senha" secureTextEntry={!showPassword} placeholder="********" value={senha} onChangeText={setSenha}  />
+              <Form label="Senha" secureTextEntry={!showPassword} placeholder="********" value={password} onChangeText={setPassword}  />
               <MaterialCommunityIcons name={showPassword ? "eye-off" : "eye"} size={24} color="#000" onPress={toggleShowPassword} style={{ position: "absolute", right: 16, top: 40}} />
             </View>
 

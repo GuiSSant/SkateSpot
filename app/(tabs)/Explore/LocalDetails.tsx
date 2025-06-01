@@ -9,7 +9,7 @@ import {
 import { useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../_layout";
 import { RouteProp } from "@react-navigation/native";
-import DefaultLayout from "../../../components/common/MainHeader";
+import MainHeader from "../../../components/common/MainHeader";
 import api from "@/lib/api";
 
 type LocalDetailsRouteProp = RouteProp<RootStackParamList, "LocalDetails">;
@@ -24,8 +24,13 @@ export default function LocalDetails() {
     name,
     description,
     main_image,
-    images,
+    images: imagesString,
   } = route.params;
+
+  const images = JSON.parse(imagesString);
+
+  console.log(main_image)
+  console.log(images)
 
   // Função para renderizar cada card de imagem
   const renderImageCard = ({ item }) => (
@@ -39,9 +44,9 @@ export default function LocalDetails() {
 
   return (
     <View style={styles.container}>
-      <DefaultLayout {...["explore"]} />
+      <MainHeader/>
       <Text style={styles.title}>{name}</Text>
-      <Image source={main_image} style={styles.image} />
+      <Image source={{ uri: `${API_URL}${main_image}` }} style={styles.image} />
       <Text style={styles.description}>{description}</Text>
 
       {/* Seção para os cards de imagens */}
