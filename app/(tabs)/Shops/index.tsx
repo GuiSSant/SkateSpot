@@ -1,27 +1,27 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator, Text, Pressable } from 'react-native';
 import { router } from 'expo-router';
-import { getModalities } from '@/lib/api';
+import { getShops } from '@/lib/api';
 import { ButtonMain } from '@/components/common/ButtonMain';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from "@/components/common/MainHeader";
 
-
-type Modality = {
+type Shop = {
   id: number;
   name: string;
+  description: string;
 };
 
-export default function ModalitiesList() {
-  const [modalities, setModalities] = useState<Modality[]>([]);
+export default function ShopsList() {
+  const [shops, setShops] = useState<Shop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchModalities = async () => {
+    const fetchShops = async () => {
       try {
-        const res = await getModalities();
-        setModalities(res.data);
+        const res = await getShops();
+        setShops(res.data);
       } catch (error) {
         console.error('Erro:', error);
       } finally {
@@ -29,7 +29,7 @@ export default function ModalitiesList() {
       }
     };
 
-    fetchModalities();
+    fetchShops();
   }, []);
 
   if (isLoading) {
@@ -45,36 +45,36 @@ export default function ModalitiesList() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <MainHeader />
         <View style={styles.container}>
-          <Text style={styles.title}>Modalidades</Text>
-          <Text style={styles.subtitle}>
-             Edite ou crie modalidades 
-          </Text>
-
-          <ButtonMain
-            title="Nova"
-            onPress={() => router.push('/Modalities/new')}
-            style={styles.nova}
-          />
-          <FlatList
-            data={modalities}
-            scrollEnabled={false}
-            contentContainerStyle={styles.listContainer}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.modalityItem,
-                  { opacity: pressed ? 0.6 : 1 }
-                ]}
-                onPress={() =>
-                  router.push({ pathname: '/Modalities/detail', params: { id: item.id } })
-                }
-              >
-                <Text style={styles.text}>Modalidade {item.name}</Text>
-                <Text style={styles.details}>+</Text>
-              </Pressable>
-            )}
-          />
+          <Text style={styles.title}>Lojas</Text>
+          
+          {shops.length > 0 ? (
+            <FlatList
+              data={shops}
+              scrollEnabled={false}
+              contentContainerStyle={styles.listContainer}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.modalityItem,
+                    { opacity: pressed ? 0.6 : 1 }
+                  ]}
+                  onPress={() => router.push({ 
+                    pathname: '/Shops', 
+                    params: { id: item.id } 
+                  })}
+                >
+                  <View style={styles.textContainer}>
+                    <Text style={styles.text}>{item.name}</Text>
+                    <Text style={styles.subtitle}>{item.description}</Text>
+                  </View>
+                  <Text style={styles.details}>+</Text>
+                </Pressable>
+              )}
+            />
+          ) : (
+            <Text style={styles.emptyText}>Nenhuma loja encontrada</Text>
+          )}
         </View>
       </ScrollView>
     </GestureHandlerRootView>
@@ -107,47 +107,42 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 17.5,
     letterSpacing: 0.11,
-    textAlign: 'center',
-    marginHorizontal: 28,
-    marginBottom: 32,
   },
   text: {
-  color: '#fff',
+    color: '#fff',
     fontFamily: 'Quicksand-Bold',
     fontSize: 18,
     lineHeight: 17.5,
     letterSpacing: 0.11,
-    textAlign: 'center',
   },
-  nova: {
-    width: '40%',
-    marginBottom: 20,
+  textContainer: {
+    flex: 1,
+  },
+  emptyText: {
+    color: '#fff',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+    marginTop: 20,
   },
   listContainer: {
     width: '100%',
   },
   modalityItem: {
+    backgroundColor: '#1E1B2B',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  modalityName: {
-    color: '#fff',
-    fontFamily: 'Quicksand-Bold',
-    fontSize: 16,
-    flex: 1,
+    width: '100%',
   },
   details: {
-    textAlign: 'center',
     fontSize: 18,
     lineHeight: 17.5,
     letterSpacing: 0.11,
     color: '#9747FF',
     fontFamily: 'Quicksand-Regular',
-    marginLeft: 16,
   },
   loadingContainer: {
     flex: 1,

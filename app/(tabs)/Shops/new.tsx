@@ -1,46 +1,50 @@
 import { router } from 'expo-router';
 import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { createModality } from '@/lib/api';
+import ShopForm from "../FormCadastros/ShopForm";
+import { getShops, createShops } from '../../../lib/api';
+import MainHeader from "../../../components/common/MainHeader";
+import { GestureHandlerRootViewProps } from 'react-native-gesture-handler/lib/typescript/components/GestureHandlerRootView';
+import StructureForm from '../FormCadastros/StructureForm';
 import { ButtonMain } from '@/components/common/ButtonMain';
-import MainHeader from "@/components/common/MainHeader";
-import ModalityForm from '../FormCadastros/ModalityForm';
 
-
-export default function CreateModality() {
+export default function CreateShop() {
   const handleSubmit = async (data: any) => {
+
     try {
-      await createModality(data);
-      router.push('/Modalities');
+      await createShops(data);
+      router.push('/Shops');
     } catch (error) {
       console.error('Erro:', error);
     }
+
   };
 
-  return (
+   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <MainHeader />
         <View style={styles.container}>
-          <Text style={styles.title}>Nova Modalidade</Text>
+          <Text style={styles.title}>Nova loja</Text>
           <Text style={styles.subtitle}>
-            Cria uma nova modalidade
+            Cria uma nova loja
           </Text>
 
-          <ModalityForm onSubmit={handleSubmit}>
+          <ShopForm onSubmit={handleSubmit}>
             {({ handleSubmit }) => (
               <ButtonMain
-                title="Criar"
+                title="Criar Loja"
                 onPress={handleSubmit}
                 style={styles.submitButton}
               />
             )}
-          </ModalityForm>
+          </ShopForm>
         </View>
       </ScrollView>
     </GestureHandlerRootView>
   );
 }
+
 
 const styles = StyleSheet.create({
   scrollContainer: {
@@ -59,9 +63,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 27.5,
     letterSpacing: 0.11,
-    marginBottom: 12,
-    marginTop: 80
-
+    marginTop: 80,
+    marginBottom: 12
   },
   subtitle: {
     color: '#fff',

@@ -230,258 +230,238 @@ export default function Explore() {
   };
 
   return (
-    <View style={styles.container}>
+<View style={styles.container}>
+  <HeaderNavi />
 
-      <HeaderNavi />
+  <TextInput
+    style={styles.searchBar}
+    placeholder="Pesquisar..."
+    value={searchQuery}
+    onChangeText={(text) => {
+      setSearchQuery(text);
+      setIsTyping(text.length > 0);
+    }}
+    onBlur={() => setIsTyping(false)}
+  />
 
+  <View style={styles.filterContainer}>
+    <ScrollView horizontal contentContainerStyle={styles.subfilterContent}  >
+      <TouchableOpacity
+        style={[
+          styles.filterButton,
+          filters.includes("spots") && styles.activeFilter,
+        ]}
+        onPress={() => toggleFilter("spots")}
+      >
+        <Text style={[styles.filterText, filters.includes("spots") && styles.activeTextFilter]}>
+          Pistas
+        </Text>
+      </TouchableOpacity>
 
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Pesquisar..."
-        value={searchQuery}
-        onChangeText={(text) => {
-          setSearchQuery(text);
-          setIsTyping(text.length > 0);
-        }}
-        onBlur={() => setIsTyping(false)}
-      />
+      <TouchableOpacity
+        style={[
+          styles.filterButton,
+          filters.includes("shops") && styles.activeFilter,
+        ]}
+        onPress={() => toggleFilter("shops")}
+      >
+        <Text style={[styles.filterText, filters.includes("shops") && styles.activeTextFilter]}>
+          Lojas
+        </Text>
+      </TouchableOpacity>
 
-      <ScrollView horizontal style={styles.filterContainer}>
+      <TouchableOpacity
+        style={[
+          styles.filterButton,
+          filters.includes("events") && styles.activeFilter,
+        ]}
+        onPress={() => toggleFilter("events")}
+      >
+        <Text style={[styles.filterText, filters.includes("events") && styles.activeTextFilter]}>
+          Eventos
+        </Text>
+      </TouchableOpacity>
+    </ScrollView>
+
+    {filters.includes("spots") && (
+      <ScrollView horizontal style={styles.subfilterScroll} >
         <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filters.includes("spots") && styles.activeFilter,
-          ]}
-          onPress={() => toggleFilter("spots")}
+          style={styles.subfilterButton}
+          onPress={() => {
+            setCurrentSubfilterType("modalidade");
+            setShowSubfilterModal(true);
+          }}
         >
-          <Text
-            style={[
-              styles.filterText,
-              filters.includes("spots") && styles.activeTextFilter,
-            ]}
-          >
-            Pistas
-          </Text>
+          <Text style={styles.subfilterText}>Modalidade</Text>
+          {subfilters.modalidade.length > 0 && (
+            <View style={styles.subfilterBadge}>
+              <Text style={styles.subfilterBadgeText}>{subfilters.modalidade.length}</Text>
+            </View>
+          )}
         </TouchableOpacity>
-        
-        {filters.includes("spots") && (
-          <>
-            <TouchableOpacity
-              style={styles.subfilterButton}
-              onPress={() => {
-                setCurrentSubfilterType('modalidade');
-                setShowSubfilterModal(true);
-              }}
-            >
-              <Text style={styles.subfilterText}>Modalidade</Text>
-              {subfilters.modalidade.length > 0 && (
-                <View style={styles.subfilterBadge}>
-                  <Text style={styles.subfilterBadgeText}>{subfilters.modalidade.length}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={styles.subfilterButton}
-              onPress={() => {
-                setCurrentSubfilterType('estrutura');
-                setShowSubfilterModal(true);
-              }}
-            >
-              <Text style={styles.subfilterText}>Estrutura</Text>
-              {subfilters.estrutura.length > 0 && (
-                <View style={styles.subfilterBadge}>
-                  <Text style={styles.subfilterBadgeText}>{subfilters.estrutura.length}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          </>
-        )}
-        
+
         <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filters.includes("shops") && styles.activeFilter,
-          ]}
-          onPress={() => toggleFilter("shops")}
+          style={styles.subfilterButton}
+          onPress={() => {
+            setCurrentSubfilterType("estrutura");
+            setShowSubfilterModal(true);
+          }}
         >
-          <Text
-            style={[
-              styles.filterText,
-              filters.includes("shops") && styles.activeTextFilter,
-            ]}
-          >
-            Lojas
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filters.includes("events") && styles.activeFilter,
-          ]}
-          onPress={() => toggleFilter("events")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              filters.includes("events") && styles.activeTextFilter,
-            ]}
-          >
-            Eventos
-          </Text>
+          <Text style={styles.subfilterText}>Estrutura</Text>
+          {subfilters.estrutura.length > 0 && (
+            <View style={styles.subfilterBadge}>
+              <Text style={styles.subfilterBadgeText}>{subfilters.estrutura.length}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </ScrollView>
+    )}
+  </View> 
 
-      <View style={styles.divider} />
-      <TouchableOpacity
-        style={styles.locationButton}
-        onPress={() => navigation.navigate("LocationSearch" as never)}
-      >
-        <Icon name="map-pin" size={20} color="#F5D907" />
-        <Text style={styles.locationButtonText}>Localização Atual</Text>
-      </TouchableOpacity>
-      <View style={styles.divider} />
+  <View style={styles.divider} />
+  <TouchableOpacity
+    style={styles.locationButton}
+    onPress={() => navigation.navigate("LocationSearch" as never)}
+  >
+    <Icon name="map-pin" size={20} color="#F5D907" />
+    <Text style={styles.locationButtonText}>Localização Atual</Text>
+  </TouchableOpacity>
+  <View style={styles.divider} />
 
-      <View style={styles.containerMap}>
-        <Text style={styles.sectionTitle}>Perto de você</Text>
-
-        <View style={{ flex: 1 }}>
-          <FlatList
-            horizontal
-            data={results}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({pathname: '/(tabs)/Explore/LocalDetails', params: {
-                    id: item.id,
-                    name: item.name,
-                    type: item.type,
-                    latitude: item.latitude,
-                    longitude: item.longitude,
-                    distance: item.distance,
-                    description: item.description,
-                    main_image: item.main_image,
-                    images: JSON.stringify(item.images),
-                  }})
-                }
-              >
-                <View style={styles.card}>
-                  <Image
-                    source={{ uri: `${API_URL}${item.main_image}` }}
-                    style={styles.cardImage}
-                  />
-                  <Text style={styles.cardTitle}>{item.name}</Text>
-                  <View style={styles.cardDistanceContainer}>
-                    <Icon name="map-pin" size={12} color="#666" />
-                    <Text style={styles.cardDistance}>
-                      {item.distance.toFixed(2)} km
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )}
-            contentContainerStyle={styles.horizontalList}
-          />
-        </View>
-
-        {!isKeyboardOpen && (
-          <View>
-            {initialRegion ? (
-              <MapView
-                showsUserLocation={true}
-                showsMyLocationButton={true}
-                style={[
-                  styles.map,
-                  mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
-                  { flexGrow: 1 },
-                ]}
-                initialRegion={{
-                  latitude: initialRegion?.latitude || 0,
-                  longitude: initialRegion?.longitude || 0,
-                  latitudeDelta: 0.1,
-                  longitudeDelta: 0.1,
-                }}
-                customMapStyle={DarkStyleMap}
-              >
-                {results.map((result) => (
-                  <Marker
-                    key={result.id}
-                    coordinate={{
-                      latitude: result.latitude,
-                      longitude: result.longitude,
-                    }}
-                    title={result.name}
-                    onPress={ () =>router.push({pathname: '/(tabs)/Explore/LocalDetails', params: {
-                    id: result.id,
-                    name: result.name,
-                    type: result.type,
-                    latitude: result.latitude,
-                    longitude: result.longitude,
-                    distance: result.distance,
-                    description: result.description,
-                    main_image: result.main_image,
-                    images: result.images,
-                  }})}
-                  >
-                    {result.type == 'spot' ? (
-                      <Image
-                        source={require("../../../assets/images/skateRoxo.png")}
-                        style={{ width: 30, height: 35 }}
-                        resizeMode="contain"
-                      />
-                    ) : result.type == 'shop' ? (
-                      <Image
-                        source={require("../../../assets/images/shopRoxo.png")}
-                        style={{ width: 30, height: 35 }}
-                        resizeMode="contain"
-                      />
-                    ) : (
-                      <Image
-                        source={require("../../../assets/images/eventoAmarelo.png")}
-                        style={{ width: 30, height: 35 }}
-                        resizeMode="contain"
-                      />
-                    )}
-                  </Marker>
-                ))}
-              </MapView>
-            ) : (
-              <ActivityIndicator
-                size={75}
-                color="#F5D907"
-                style={{ marginVertical: "50%" }}
-              />
-            )}
+  <View style={styles.containerMap}>
+    <Text style={styles.sectionTitle}>Perto de você</Text>
+    <FlatList
+      horizontal
+      data={results}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/(tabs)/Explore/LocalDetails",
+              params: {
+                id: item.id,
+                name: item.name,
+                type: item.type,
+                latitude: item.latitude,
+                longitude: item.longitude,
+                distance: item.distance,
+                description: item.description,
+                main_image: item.main_image,
+                images: item.images,
+              },
+            })
+          }
+        >
+          <View style={styles.card}>
+            <Image
+              source={{ uri: `${API_URL}${item.main_image}` }}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>{item.name}</Text>
+            <View style={styles.cardDistanceContainer}>
+              <Icon name="map-pin" size={12} color="#666" />
+              <Text style={styles.cardDistance}>{item.distance.toFixed(2)} km</Text>
+            </View>
           </View>
+        </TouchableOpacity>
+      )}
+      contentContainerStyle={styles.horizontalList}
+    />
+
+    {!isKeyboardOpen && (
+      <View>
+        {initialRegion ? (
+          <MapView
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            style={[
+              styles.map,
+              mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
+              { flexGrow: 1 },
+            ]}
+            initialRegion={{
+              latitude: initialRegion?.latitude || 0,
+              longitude: initialRegion?.longitude || 0,
+              latitudeDelta: 0.1,
+              longitudeDelta: 0.1,
+            }}
+            customMapStyle={DarkStyleMap}
+          >
+            {results.map((result) => (
+              <Marker
+                key={result.id}
+                coordinate={{
+                  latitude: result.latitude,
+                  longitude: result.longitude,
+                }}
+                title={result.name}
+              >
+                {result.type == "spot" ? (
+                  <Image
+                    source={require("../../../assets/images/skateRoxo.png")}
+                    style={{ width: 30, height: 35 }}
+                    resizeMode="contain"
+                  />
+                ) : result.type == "shop" ? (
+                  <Image
+                    source={require("../../../assets/images/shopRoxo.png")}
+                    style={{ width: 30, height: 35 }}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Image
+                    source={require("../../../assets/images/eventoAmarelo.png")}
+                    style={{ width: 30, height: 35 }}
+                    resizeMode="contain"
+                  />
+                )}
+              </Marker>
+            ))}
+          </MapView>
+        ) : (
+          <ActivityIndicator
+            size={75}
+            color="#F5D907"
+            style={{ marginVertical: "50%" }}
+          />
         )}
       </View>
-        <ModalExplore
-       visible={showSubfilterModal}
-  type={currentSubfilterType}
-  onClose={() => setShowSubfilterModal(false)}
-  onSelect={(option: string) => {
-    if (currentSubfilterType) {
-      setSubfilters(prev => ({
-        ...prev,
-        [currentSubfilterType]: prev[currentSubfilterType].includes(option)
-          ? prev[currentSubfilterType].filter(item => item !== option)
-          : [...prev[currentSubfilterType], option]
-      }));
-    }
-  }}
-  selectedFilters={currentSubfilterType ? subfilters[currentSubfilterType] : []}
-      />
+    )}
+  </View> 
 
-    </View>
+  <ModalExplore
+    visible={showSubfilterModal}
+    type={currentSubfilterType}
+    onClose={() => setShowSubfilterModal(false)}
+    onSelect={(option: string) => {
+      if (currentSubfilterType) {
+        setSubfilters((prev) => ({
+          ...prev,
+          [currentSubfilterType]: prev[currentSubfilterType].includes(option)
+            ? prev[currentSubfilterType].filter((item) => item !== option)
+            : [...prev[currentSubfilterType], option],
+        }));
+      }
+    }}
+    selectedFilters={currentSubfilterType ? subfilters[currentSubfilterType] : []}
+  />
+</View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 16,    
     backgroundColor: "#0C0A14",
+  },
+  subfilterScroll: {
+    marginTop: 10,
+    marginLeft: 15 
+  },
+  subfilterContent: {
+    paddingHorizontal: 16,
   },
   searchBar: {
     backgroundColor: "#fff",
@@ -491,9 +471,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   filterContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     marginVertical: 10,
     marginBottom: 15,
+    marginTop: 20,
+
   },
   filterButton: {
     paddingHorizontal: 12,

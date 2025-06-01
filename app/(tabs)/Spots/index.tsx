@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native';
-import { getStructures } from '@/lib/api';
+import { getSpots } from '@/lib/api';
 import { router } from 'expo-router';
-import { ButtonMain } from '@/components/common/ButtonMain';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from "@/components/common/MainHeader";
 
 
-type Structure = {
+type Spots  = {
   id: number;
   name: string;
 };
 
-export default function StructureList() {
-  const [structures, setStructures] = useState<Structure[]>([]);
+export default function Spots() {
+  const [spots, setSpots] = useState<Spots[]>([]);
 
   useEffect(() => {
-    getStructures().then((res) => setStructures(res.data));
+    getSpots().then((res) => setSpots(res.data));
   }, []);
 
   return (
@@ -26,25 +25,18 @@ export default function StructureList() {
         <View style={styles.container}>
         <MainHeader />
 
-          <Text style={styles.title}>Estruturas</Text>
-          <Text style={styles.subtitle}>
-            Gerencie ou crie novas estruturas
-          </Text>
+          <Text style={styles.title}>Pistas</Text>
 
-          <ButtonMain 
-            title="Nova" 
-            onPress={() => router.push({ pathname: '/Structure/new' })}
-            style={styles.nova} 
-          />
-
+        {spots.length > 0 ? (
           <FlatList
-            data={structures}
+            data={spots}
             scrollEnabled={false}
             contentContainerStyle={styles.listContainer}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => router.push({ pathname: '/Structure/detail', params: { id: item.id } })}
+              //  ADICIONAR ROUTE
+                //onPress={() => router.push({ pathname: '', params: { id: item.id } })}
                 style={({ pressed }) => [
                   styles.structureItem,
                   { opacity: pressed ? 0.6 : 1 }
@@ -55,7 +47,9 @@ export default function StructureList() {
                 <Text style={styles.details}>+</Text>
               </Pressable>
             )}
-          />
+          /> ) : (
+                      <Text style={styles.subtitle}>Nenhuma pista encontrada</Text>
+          )}
         </View>
       </ScrollView>
     </GestureHandlerRootView>

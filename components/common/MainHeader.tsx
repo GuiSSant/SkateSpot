@@ -28,7 +28,7 @@ export default function Header() {
       
       <TouchableOpacity onPress={() => router.back()} style={styles.icon_right}>
         <Image
-          source={require("../../assets/images/config.png")}
+          source={require("../../assets/images/back.png")}
           style={{
             height: 28,
             resizeMode: "contain",
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   },
   icon_left: {
     position: "absolute",
+    color: "red",
     left: 16,
     top: 20,
     zIndex: 100,

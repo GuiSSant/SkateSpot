@@ -41,7 +41,7 @@ export default function HeaderNavi() {
 
   const menuItems: MenuItem[] = [
     { name: "PISTAS", route: "/Spots" },
-    { name: "EVENTOS", route: "/Evento" },
+    { name: "EVENTOS", route: "/Eventos" },
     { name: "LOJAS", route: "/Shops" },
     { name: "MODALIDADES", route: "/Modalities" },
     { name: "ESTRUTURAS", route: "/Structure" },
@@ -89,7 +89,7 @@ export default function HeaderNavi() {
       <Modal
         visible={menuVisible}
         transparent={true}
-        animationType="slide"
+        animationType="none"
         onRequestClose={() => setMenuVisible(false)}
       >
         <View style={styles.modalContainer}>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.8)",
   },
   menuHeader: {
     flexDirection: "row",

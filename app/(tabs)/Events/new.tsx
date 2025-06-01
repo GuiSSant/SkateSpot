@@ -7,7 +7,7 @@ import { ButtonMain } from '../../../components/common/ButtonMain';
 import { Form } from '../../../components/common/Form';
 import MainHeader from '../../../components/common/MainHeader';
 
-type Event = {
+type NovoEvento = {
   name: string;
   start_date: string;
   end_date: string ;
@@ -46,7 +46,7 @@ function Evento() {
 
           <ButtonMain 
             title="Cadastrar" 
-            onPress={() => router.push('/(tabs)/UserProfile')}
+            onPress={() => router.push('/Explore')}
             
           />
         </View>
