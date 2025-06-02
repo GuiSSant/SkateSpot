@@ -17,7 +17,7 @@ export default function Settings() {
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [isLocationEnabled, setIsLocationEnabled] = useState(true);
+  //const [isLocationEnabled, setIsLocationEnabled] = useState(true);
   const [showBannerModal, setShowBannerModal] = useState(false);
 
   const bannerOptions = [
