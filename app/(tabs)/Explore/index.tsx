@@ -23,7 +23,7 @@ import HeaderNavi from "@/components/common/HeaderNavi";
 import ModalExplore from "./Modal/modal";
 import api from "@/lib/api";
 import { router } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
