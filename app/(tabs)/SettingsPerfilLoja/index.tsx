@@ -171,24 +171,32 @@ export default function Settings() {
           </View>
         </View>
       </Modal>
-
-      <View style={styles.section}>
+            
         <Text style={styles.sectionTitle}>Gerenciar</Text>
-        <View style={styles.preferenceItem}>
-          <Text style={styles.preferenceText}>Lojas</Text>
-        </View>
-      </View>
+         <View style={styles.logout}>
+          <Text style={styles.uploadText}>Lojas</Text>
+          <Image
+                   source={require("../../../assets/images/shop.png")}
+                   style={{
+                     height: 20,
+                     marginLeft:28,
+                     resizeMode: "contain",
+                   }}
+                 />
+        </View> 
+         <View style={styles.logout}>
+          <Text style={styles.uploadText}>Assinatura</Text>
+          <Image
+                   source={require("../../../assets/images/trophy.png")}
+                   style={{
+                     height: 28,
+                     resizeMode: "contain",
+                   }}
+                 />
+        </View> 
 
       <View style={styles.section}>
-        <View style={styles.preferenceItem}>
-          <Text style={styles.preferenceText}>Localização</Text>
-          <Switch
-            value={isLocationEnabled}
-            onValueChange={setIsLocationEnabled}
-            trackColor={{ false: '#767577', true: '#9747FF' }}
-            thumbColor={isLocationEnabled ? '#f4f3f4' : '#f4f3f4'}
-          />
-        </View>
+        
          
         <View style={styles.preferenceItem}>
           <Text style={styles.preferenceText}>Notificações</Text>
@@ -201,22 +209,14 @@ export default function Settings() {
         </View>
         <TouchableOpacity onPress={() => router.push({ pathname: '/Login'})}>
 
-        <View style={styles.logout}>
-          <Text style={styles.preferenceIcon}>Sair</Text>
-          <Image
-                   source={require("../../../assets/images/logout.png")}
-                   style={{
-                     height: 28,
-                     resizeMode: "contain",
-                   }}
-                 />
-        </View> 
+          <Text style={styles.modalTitle}>Sair</Text>
+          
         </TouchableOpacity>
       </View> 
-       
+      
 
       <ButtonMain 
-        title="Salvar Alterações" 
+        title="Salvar" 
         onPress={handleSubmit}
         style={styles.saveButton}
       />
@@ -274,7 +274,8 @@ const styles = StyleSheet.create({
   uploadText: {
     color: '#fff',
     marginTop: 8,
-    fontSize: 14,
+    marginLeft:8,
+    fontSize: 18,
   },
   input: {
     backgroundColor: '#fff',
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
 
   },
   saveButton: {
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 40,
   },
   modalContainer: {
@@ -362,7 +363,9 @@ const styles = StyleSheet.create({
     color: '#F5D907',
     fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 8,
     marginBottom: 20,
+    marginLeft:8
   },
   bannerOption: {
     width: '100%',
