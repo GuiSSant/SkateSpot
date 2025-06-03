@@ -4,8 +4,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ShopForm from "../FormCadastros/ShopForm";
 import { getShops, createShops } from '../../../lib/api';
 import MainHeader from "../../../components/common/MainHeader";
-import { GestureHandlerRootViewProps } from 'react-native-gesture-handler/lib/typescript/components/GestureHandlerRootView';
-import StructureForm from '../FormCadastros/StructureForm';
 import { ButtonMain } from '@/components/common/ButtonMain';
 
 export default function CreateShop() {

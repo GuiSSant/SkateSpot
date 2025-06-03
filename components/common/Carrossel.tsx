@@ -1,5 +1,8 @@
+import api from "@/lib/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useFonts } from "expo-font";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,6 +10,7 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
+  FlatList,
 } from "react-native";
 
 interface CarrosselProps {
@@ -14,29 +18,60 @@ interface CarrosselProps {
   onPress?: () => void;
 }
 
-export default function Carrossel({ 
-  title, 
+
+
+export default function Carrossel({
+  title,
   onPress
 }: CarrosselProps) {
-    return (
-      <>
-        <View style={styles.container}>
-          <Text style={styles.textCarrossel}>{title}</Text>
+  const API_URL = api.defaults.baseURL || "http:// ";
+  const [favoriteSpots, setFavoriteSpots] = React.useState<any[]>([]);
 
-          <ScrollView horizontal style={styles.pistaContainer}>
-            <View>
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        const response = await axios.get(`${API_URL}/skate-spots`); // PEGANDO ID 2 COMO EXEMPLO
+        console.log("Dados da pista:", response.data);
+
+        setFavoriteSpots(Array.isArray(response.data) ? response.data : [response.data]);
+
+      } catch (error) {
+        console.log("Erro ao carregar imagem de perfil:", error);
+      }
+
+    };
+
+    fetchUserData();
+  }, []);
+
+  return (
+    <>
+      <View style={styles.container}>
+        <Text style={styles.textCarrossel}>{title}</Text>
+        <FlatList
+          data={favoriteSpots}
+          horizontal
+          contentContainerStyle={{ alignItems: 'center' }}
+          renderItem={({ item }) => (
+            <View style={styles.pistaContainer}>
               <TouchableHighlight >
                 <Image
                   style={styles.pistaImage}
                   source={require("@/assets/images/PARQUE_DA_JUVENTUDE_SANTO_ANDRE.jpg")}
                 ></Image>
               </TouchableHighlight>
-              <Text style={styles.pistaName}>Parque Juventude</Text>
+              <Text style={styles.pistaName}>{item?.name || "Item"}</Text>
+
             </View>
-          </ScrollView>
-        </View>
-      </>
-    );
+          )}
+          keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
+        />
+
+
+      </View>
+    </>
+  );
 }
 const styles = StyleSheet.create({
   container: {
@@ -49,7 +84,7 @@ const styles = StyleSheet.create({
     color: "#212121",
   },
   pistaContainer: {
-    width: '100%',
+    paddingHorizontal: 8,
   },
   pistaImage: {
     backgroundColor: "#C9C9C9",
