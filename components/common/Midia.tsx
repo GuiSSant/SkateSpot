@@ -9,40 +9,50 @@ import {
   TouchableHighlight,
   FlatList,
 } from "react-native";
-import { midiaAssets } from "../../app/(tabs)/UserProfile/midiaAssets";
 
-export default function Midia() {
+interface LocalImage {
+  id: number;
+  image: string;
+  main_image: boolean;
+  create_date: string;
+}
+
+interface MidiaProps {
+  imagens: LocalImage[];
+}
+
+export default function Midia({ imagens }: MidiaProps) {
   const windowWidth = Dimensions.get("window").width - 32;
 
+  if (!imagens || imagens.length === 0) {
+    return <Text style={styles.textMidia}>Nenhuma mídia disponível.</Text>;
+  }
 
-  const item = (
-    <FlatList
-      contentContainerStyle={{ alignSelf: "center", gap: 8 }}
-      numColumns={3}
-      data={midiaAssets}
-      scrollEnabled={false}
-      renderItem={({ item, index }) => (
-        <TouchableHighlight style={[styles.midiaImageHandler]}>
-          <Image style={[styles.midiaImage]} source={item.image}></Image>
-        </TouchableHighlight>
-      )}
-    />
+  const renderItem = ({ item }: { item: LocalImage }) => (
+    <TouchableHighlight style={[styles.midiaImageHandler]}>
+      <Image style={[styles.midiaImage]} source={{ uri: item.image }} />
+    </TouchableHighlight>
   );
 
-    return (
-      <>
-        <View style={styles.container}>
-          <Text style={styles.textMidia}>Mídia</Text>
-
-          {
-            <View style={styles.midiaContainer}>
-              <View style={styles.row}>{item}</View>
-            </View>
-          }
+  return (
+    <>
+      <View style={styles.container}>
+        <Text style={styles.textMidia}>Mídia</Text>
+        <View style={styles.midiaContainer}>
+          <FlatList
+            contentContainerStyle={{ alignSelf: "center", gap: 8 }}
+            numColumns={3}
+            data={imagens}
+            scrollEnabled={false}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+          />
         </View>
-      </>
-    );
+      </View>
+    </>
+  );
 }
+
 const styles = StyleSheet.create({
   container: {
     marginVertical: 32,
@@ -56,10 +66,6 @@ const styles = StyleSheet.create({
   midiaContainer: {
     width: "100%",
   },
-  row: {
-    flexDirection: "row",
-    width: "100%",
-  },
   midiaImageHandler: {
     marginHorizontal: 8,
   },
@@ -69,12 +75,5 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     width: 110,
     height: 110,
-  },
-  pistaName: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 16,
-    lineHeight: 20,
-    color: "#212121",
-    textAlign: "center",
   },
 });
