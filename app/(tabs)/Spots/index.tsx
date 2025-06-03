@@ -1,65 +1,76 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Pressable, FlatList, StyleSheet, Image } from 'react-native';
 import { getSpots } from '@/lib/api';
 import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from "@/components/common/MainHeader";
+import api from "@/lib/api";
 
+const API_URL = api.defaults.baseURL || "http://";
 
-type Spots  = {
+type Spots = {
   id: number;
   name: string;
+  distance?: number; 
+  main_image: string;
 };
 
 export default function Spots() {
   const [spots, setSpots] = useState<Spots[]>([]);
 
+
   useEffect(() => {
-    getSpots().then((res) => setSpots(res.data));
+    getSpots().then((res) => {
+      setSpots(res.data || []);  
+    })
   }, []);
+
+  const renderSpotItem = ({ item }: { item: Spots }) => {
+    return (
+      <Pressable
+        onPress={() => router.push({ pathname: '/(tabs)/Spots/detail', params: { id: item.id } })}
+        style={({ pressed }) => [
+          styles.spotCard,
+          { opacity: pressed ? 0.6 : 1 }
+        ]}
+      >
+          <Image
+            source={{ uri: `${API_URL}${item.main_image}` }}            
+            style={styles.spotImage}
+            resizeMode="cover"
+          />
+        <View style={styles.spotInfoContainer}>
+          <Text style={styles.spotName}>{item.name || "Sem nome"}</Text>
+          <Text style={styles.subtitle}>{item.distance || "Sem distância"}</Text>
+        </View>
+      </Pressable>
+    );
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.container}>
-        <MainHeader />
-
-          <Text style={styles.title}>Pistas</Text>
-
-        {spots.length > 0 ? (
-          <FlatList
-            data={spots}
-            scrollEnabled={false}
-            contentContainerStyle={styles.listContainer}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <Pressable
-              //  ADICIONAR ROUTE
-                //onPress={() => router.push({ pathname: '', params: { id: item.id } })}
-                style={({ pressed }) => [
-                  styles.structureItem,
-                  { opacity: pressed ? 0.6 : 1 }
-                ]}
-              >
-                
-                <Text style={styles.text}>{item.name}</Text>
-                <Text style={styles.details}>+</Text>
-              </Pressable>
-            )}
-          /> ) : (
-                      <Text style={styles.subtitle}>Nenhuma pista encontrada</Text>
-          )}
-        </View>
-      </ScrollView>
+      <View style={styles.container}>
+        <FlatList
+          data={spots}
+          contentContainerStyle={styles.listContainer}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderSpotItem}
+          ListHeaderComponent={
+            <>
+              <MainHeader />
+              <Text style={styles.title}>Pistas</Text>
+            </>
+          }
+          ListEmptyComponent={
+            <Text style={styles.subtitle}>Nenhuma pista encontrada</Text>
+          }
+        />
+      </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -69,6 +80,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#F5D907",
+    textAlign: "center",
     fontFamily: "Quicksand-Bold",
     fontSize: 22,
     lineHeight: 27.5,
@@ -76,52 +88,51 @@ const styles = StyleSheet.create({
     marginTop: 80,
     marginBottom: 12
   },
-    text: {
-  color: '#fff',
-    fontFamily: 'Quicksand-Bold',
-    fontSize: 18,
-    lineHeight: 17.5,
-    letterSpacing: 0.11,
-    textAlign: 'center',
-  },
   subtitle: {
     color: "#fff",
     fontFamily: "Quicksand-Regular",
-    fontSize: 14,
+    fontSize: 10,
     lineHeight: 17.5,
     letterSpacing: 0.11,
-    textAlign: "center",
+    textAlign: "right",
     marginHorizontal: 28,
-    marginBottom: 32
-  },
-  nova: {
-    width: '40%',
-    marginBottom: 24,
+    marginTop: 10,
+    marginBottom: 10
   },
   listContainer: {
     width: '100%',
   },
-  structureItem: {
-    backgroundColor: '#0C0A14',
+  spotCard: {
+    backgroundColor: '#1E1B2B',
     borderRadius: 8,
-    padding: 16,
     marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    overflow: 'hidden',
+    width: "300" 
+  },
+  spotImage: {
+    width: 300,
+    height: 150,
+    backgroundColor: '#333' 
+  },
+  placeholderImage: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  structureName: {
+  placeholderText: {
+    color: '#777',
+    fontFamily: 'Quicksand-Regular',
+    fontSize: 16,
+  },
+  spotInfoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+  },
+  spotName: {
     color: "#fff",
     fontFamily: "Quicksand-Bold",
-    fontSize: 16,
-    flex: 1,
-  },
-  details: {
-    color: "#9747FF",
+    textAlign: "center",
     fontSize: 18,
-    lineHeight: 17.5,
-    letterSpacing: 0.11,
-    fontFamily: "Quicksand-Bold",
-    marginLeft: 16,
   }
 });

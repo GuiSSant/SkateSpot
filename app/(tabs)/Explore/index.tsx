@@ -459,8 +459,8 @@ const styles = StyleSheet.create({
   searchBar: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    height: 38,
-    marginTop: 80,
+    height: 30,
+    marginTop: 15,
     paddingHorizontal: 16,
   },
   filterContainer: {
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#333",
     marginRight: 12,
-    height: 32,
+    height: 28,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5D907',
     borderRadius: 10,
     width: 18,
-    height: 18,
+    height: 15,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 5,
@@ -522,7 +522,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     marginTop: 10,
-    marginBottom: 8,
+    marginBottom: 5
+    ,
     color: "#fff",
     fontFamily: "Quicksand-Bold",
   },

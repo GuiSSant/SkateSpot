@@ -10,6 +10,7 @@ const API_URL = api.defaults.baseURL || "http:// ";
 interface MenuItem {
   name: string;
   route?: string;
+  color?: string;
 }
 
 export default function HeaderNavi() {
@@ -40,12 +41,12 @@ export default function HeaderNavi() {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const menuItems: MenuItem[] = [
+    { name: "ASSINATURA", route: "/Premium", color: "#9747FF" },
     { name: "PISTAS", route: "/Spots" },
     { name: "EVENTOS", route: "/Eventos" },
     { name: "LOJAS", route: "/Shops" },
     { name: "MODALIDADES", route: "/Modalities" },
     { name: "ESTRUTURAS", route: "/Structure" },
-    { name: "SOBRE", route: "/About" },
   ];
 
   const handleMenuItemPress = (route?: string) => {
@@ -110,7 +111,7 @@ export default function HeaderNavi() {
                 style={styles.menuItem}
                 onPress={() => handleMenuItemPress(item.route)}
               >
-                <Text style={styles.menuText}>{item.name}</Text>
+                <Text style={[styles.menuText, item.color ? { color: item.color } : {}]}>{item.name}</Text>
               </Pressable>
             ))}
           </View>
