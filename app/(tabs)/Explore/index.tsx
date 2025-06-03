@@ -336,22 +336,15 @@ export default function Explore() {
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: "/(tabs)/Explore/LocalDetails",
-              params: {
-                id: item.id,
-                name: item.name,
-                type: item.type,
-                latitude: item.latitude,
-                longitude: item.longitude,
-                distance: item.distance,
-                description: item.description,
-                main_image: item.main_image,
-                images: JSON.stringify(item.images),
-              },
-            })
-          }
+          onPress={() => {
+            if (item.type === "spot") {
+              router.push({ pathname: "/(tabs)/Spots/detail", params: { id: item.id } });
+            } else if (item.type === "event") {
+              // router.push({ pathname: "/Events/detail", params: { id: item.id } });
+            } else if (item.type === "shop") {
+              // router.push({ pathname: "/Shops/detail", params: { id: item.id } });
+            }
+          }}
         >
           <View style={styles.card}>
             <Image
