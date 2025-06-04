@@ -16,7 +16,6 @@ import {
 import { useFonts } from "expo-font";
 import Carrossel from "../../../components/common/Carrossel";
 import Midia from "../../../components/common/Midia";
-import UploadImages from "../../../components/common/UploadImages";
 import MainHeader from "../../../components/common/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -70,7 +69,7 @@ export default function SkateSpot() {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsMultipleSelection: true,
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,  // Correção segura e testada
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
       });
 
