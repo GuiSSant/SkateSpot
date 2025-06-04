@@ -60,11 +60,6 @@ export default function SkateSpot() {
   const [selectedImages, setSelectedImages] = useState([]);
 	const [showConfirmation, setShowConfirmation] = useState(false);
 
-
-	
-
-  
-
   const handleAddPhotos = async () => {
     try {
       const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
