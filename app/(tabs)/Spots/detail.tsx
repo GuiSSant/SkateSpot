@@ -10,7 +10,8 @@ import {
   FlatList,
   Modal,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  Alert
 } from "react-native";
 import { useFonts } from "expo-font";
 import Carrossel from "../../../components/common/Carrossel";
@@ -60,14 +61,93 @@ export default function SkateSpot() {
 	const [showConfirmation, setShowConfirmation] = useState(false);
 
 
-	const handleAddPhotos = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsMultipleSelection: true,
-      mediaTypes: [ImagePicker.MediaType.Image],
-    });
-    if (!result.canceled) {
-      setSelectedImages(result.assets);
-      setShowConfirmation(true);  // Abre a telinha de confirmação
+	
+
+  
+
+  const handleAddPhotos = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('Permissão negada', 'Você precisa permitir o acesso à galeria para selecionar fotos.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsMultipleSelection: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,  // Correção segura e testada
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        console.log("Seleção de fotos cancelada pelo usuário.");
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        setSelectedImages(result.assets);
+        setShowConfirmation(true);
+      } else {
+        Alert.alert('Erro', 'Nenhuma foto selecionada.');
+      }
+    } catch (error) {
+      console.error("Erro ao abrir a galeria:", error);
+      Alert.alert('Erro', 'Ocorreu um erro ao abrir a galeria.');
+    }
+  };
+
+
+  const removeImage = (uri) => {
+    const updatedImages = selectedImages.filter(img => img.uri !== uri);
+    setSelectedImages(updatedImages);
+    if (updatedImages.length === 0) {
+      setShowConfirmation(false);  // Fecha o modal se todas as fotos forem removidas
+    }
+  };
+
+  const confirmUpload = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+
+      if (!token) {
+        Alert.alert("Erro", "Token de autenticação não encontrado.");
+        return;
+      }
+
+      console.log("Token: ", token)
+      console.log("skatespot_id: ", id)
+      
+      for (const img of selectedImages) {
+        const formData = new FormData();
+        formData.append('image', {
+          uri: img.uri,
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+        });
+
+        formData.append('skatespot_id', id);
+
+        console.log("FormData sendo enviado:", formData);
+
+        await axios.post(`${API_URL}/local-images/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Token ${token}`,
+          },
+        });
+      }
+
+      Alert.alert('Sucesso', 'Fotos enviadas com sucesso!');
+
+      setSelectedImages([]);
+      setShowConfirmation(false);
+
+      const response = await api.get(`/skate-spots/${id}/`);
+      setImages(response.data.images);
+
+    } catch (error) {
+      console.error('Erro ao enviar fotos:', error);
+      Alert.alert('Erro', 'Erro ao enviar fotos');
     }
   };
 
@@ -197,13 +277,25 @@ export default function SkateSpot() {
                     >
                       <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
-                          <UploadImages
-                            localId={id}
-                            tipo="skatespot"
-                            selectedImages={selectedImages}
-                            setSelectedImages={setSelectedImages}
-                            onClose={() => setShowConfirmation(false)}
+                          <FlatList
+                            data={selectedImages}
+                            keyExtractor={(item) => item.uri}
+                            renderItem={({ item }) => (
+                              <View style={styles.imageContainer}>
+                                <Image source={{ uri: item.uri }} style={styles.image} />
+                                <TouchableOpacity
+                                  onPress={() => removeImage(item.uri)}
+                                  style={styles.removeButton}
+                                >
+                                  <Text style={styles.removeButtonText}>X</Text>
+                                </TouchableOpacity>
+                              </View>
+                            )}
+                            horizontal
                           />
+                          <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
+                            <Text style={styles.confirmButtonText}>Confirmar</Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
                     </Modal>
@@ -335,5 +427,38 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Bold",
     color: "#fff",
     fontSize: 16,
+  },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
+  imageContainer: {
+    marginRight: 8,
+    position: "relative",
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 16,
+  },
+  removeButton: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+  },
+  removeButtonText: {
+    color: "white",
+    fontSize: 12,
+  },
+  confirmButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#FF6F61",
+    borderRadius: 10,
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

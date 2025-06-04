@@ -24,6 +24,7 @@ export default function UserProfile() {
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -41,6 +42,7 @@ export default function UserProfile() {
         setFirstName(response.data.first_name || "");
         setLastName(response.data.last_name || "");
         setUsername(response.data.username || "");
+        setUploadedImages(response.data.uploaded_images);
       } catch (error) {
         console.log("Erro ao carregar imagem de perfil:", error);
       }
@@ -87,7 +89,7 @@ export default function UserProfile() {
                     @{username}
                   </Text>
                   <Carrossel title="Minhas Pistas"/>
-                  <Midia />
+                  <Midia imagens={uploadedImages} />
                 </View>
               </View>
             </View>
