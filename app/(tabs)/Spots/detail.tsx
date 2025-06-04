@@ -260,10 +260,8 @@ export default function SkateSpot() {
                     </View>
                     <Midia imagens={images} />
 
-                    {/* Botão para exibir o UploadImages */}
                     <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} />
 
-                    {/* Exibir UploadImages em um Modal */}
                     <Modal
                       visible={showConfirmation}
                       transparent
@@ -295,7 +293,6 @@ export default function SkateSpot() {
                       </View>
                     </Modal>
 
-                    {/* <ButtonMain title={"Adicionar Fotos"} style={{marginBottom: 32}} onPress={() => {alert("Imagem adicionada"); }} /> */}
                   </View>
                 </View>
               </View>
