@@ -340,9 +340,9 @@ export default function Explore() {
             if (item.type === "spot") {
               router.push({ pathname: "/(tabs)/Spots/detail", params: { id: item.id } });
             } else if (item.type === "event") {
-              // router.push({ pathname: "/Events/detail", params: { id: item.id } });
+              // router.push({ pathname: "/(tabs)/Events/detail", params: { id: item.id } });
             } else if (item.type === "shop") {
-              // router.push({ pathname: "/Shops/detail", params: { id: item.id } });
+              router.push({ pathname: "/(tabs)/Shops/detail", params: { id: item.id } });
             }
           }}
         >

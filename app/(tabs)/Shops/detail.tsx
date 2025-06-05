@@ -19,22 +19,12 @@ import Midia from "../../../components/common/Midia";
 import MainHeader from "../../../components/common/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import api, { getModalities, getStructures, getSpot } from "@/lib/api";
+import api, {getShop } from "@/lib/api";
 import { ButtonMain } from "@/components/common/ButtonMain";
 import { useRoute } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 
 const API_URL = api.defaults.baseURL || "http:// ";
-
-type Structure = {
-  id: number;
-  name: string;
-};
-
-type Modality = {
-  id: number;
-  name: string;
-};
 
 type RouteParams = {
   id: number;
@@ -43,17 +33,12 @@ type RouteParams = {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export default function SkateSpot() {
+export default function SkateShop() {
   const route = useRoute();
   const { id } = route.params as RouteParams;
 
-  const [spotName, setspotName] = useState<string | null>(null);
+  const [shopName, setshopName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
-  const [bathroom, setBathroom] = useState<boolean>(false);
-  const [water, setwater] = useState<boolean>(false);
-  const [lighting, setLighting] = useState<boolean>(false);
-  const [modalities, setModalities] = useState<Modality[]>([]);
-  const [structures, setStructures] = useState<Structure[]>([]);
   const [images, setImages] = useState<any[]>([]);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [selectedImages, setSelectedImages] = useState([]);
@@ -109,7 +94,7 @@ export default function SkateSpot() {
       }
 
       console.log("Token: ", token)
-      console.log("skatespot_id: ", id)
+      console.log("skateshop_id: ", id)
       
       for (const img of selectedImages) {
         const formData = new FormData();
@@ -119,7 +104,7 @@ export default function SkateSpot() {
           type: 'image/jpeg',
         });
 
-        formData.append('skatespot_id', id);
+        formData.append('skateshop_id', id);
 
         console.log("FormData sendo enviado:", formData);
 
@@ -136,7 +121,7 @@ export default function SkateSpot() {
       setSelectedImages([]);
       setShowConfirmation(false);
 
-      const response = await api.get(`/skate-spots/${id}/`);
+      const response = await api.get(`/skate-shops/${id}/`);
       setImages(response.data.images);
 
     } catch (error) {
@@ -146,35 +131,24 @@ export default function SkateSpot() {
   };
 
   useEffect(() => {
-    getStructures().then((res) => setStructures(res.data));
-  }, []);
-
-  useEffect(() => {
-    getModalities().then((res) => setModalities(res.data));
-  }, []);
-
-  useEffect(() => {
-    const fetchSpotData = async () => {
+    const fetchShopData = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-        const response = await getSpot(id);
-        console.log("Dados da pista:", response.data);
+        const response = await getShop(id);
+        console.log("Dados da loja:", response.data);
 
-        setspotName(response.data.name || "");
+        setshopName(response.data.name || "");
         setDescription(response.data.description || "");
-        setBathroom(response.data.bathroom || false);
-        setwater(response.data.water || false);
-        setLighting(response.data.lighting || false);
         setImages(response.data.images || []);
         const mainImgObj = response.data.images?.find((img: any) => img.main_image);
         setMainImage(mainImgObj ? mainImgObj.image : null);                     
       } catch (error) {
-        console.log("Erro ao carregar dados da pista:", error);
+        console.log("Erro ao carregar dados da loja:", error);
       }
 
     };
 
-    fetchSpotData();
+    fetchShopData();
   }, []);
 
 
@@ -199,8 +173,8 @@ export default function SkateSpot() {
               <View style={styles.UserContainer}>
                 <View style={styles.profileContent}>
                   <View style={{ flexDirection: "row", alignItems: "center", marginTop: 64, paddingHorizontal: 16 }}>
-                    <Text style={styles.nameSpot}>
-                      {spotName || "Sem Nome"}
+                    <Text style={styles.nameShop}>
+                      {shopName || "Sem Nome"}
                     </Text>
                     <Text style={styles.descriptionText}>
                       {"(4,0)"} {// Avaliação Exemplo
@@ -214,49 +188,7 @@ export default function SkateSpot() {
 
 
                   <View style={{ flex: 1 }}>
-                    <Text style={[styles.textSection, { marginTop: 16, paddingHorizontal: 16 }]}>
-                      {"Modalidades"}
-                    </Text>
-                    <FlatList
-                      data={modalities}
-                      numColumns={3}
-                      contentContainerStyle={{ alignItems: 'center' }}
-                      renderItem={({ item }) => (
-                        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16, paddingHorizontal: 16 }}>
-                          <Text style={styles.modalityText}>{item?.name || "Item"}</Text>
-                        </View>
-                      )}
-                      keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-                    />
-                    <Text style={[styles.textSection, { marginTop: 16, paddingHorizontal: 16 }]}>
-                      {"Estruturas"}
-                    </Text>
-                    <FlatList
-                      data={structures}
-                      numColumns={3}
-                      contentContainerStyle={{ alignItems: 'center' }}
-                      renderItem={({ item }) => (
-                        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16, paddingHorizontal: 16 }}>
-                          <Text style={styles.structureText}>{item?.name || "Item"}</Text>
-                        </View>
-                      )}
-                      keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-                    />
-
-                    <Text style={[styles.textSection, { marginTop: 16, paddingHorizontal: 16 }]}>
-                      {"Infraestrutura"}
-                    </Text>
-                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16, paddingHorizontal: 32, justifyContent: 'space-between', width: "100%" }}>
-                      <Text style={bathroom ? styles.infraTextActive : styles.infraTextNotActive}>
-                        {"Banheiro"}
-                      </Text>
-                      <Text style={lighting ? styles.infraTextActive : styles.infraTextNotActive}>
-                        {"Iluminação"}
-                      </Text>
-                      <Text style={water ? styles.infraTextActive : styles.infraTextNotActive}>
-                        {"Água"}
-                      </Text>
-                    </View>
+                    
                     <Midia imagens={images} />
 
                     <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} />
@@ -338,7 +270,7 @@ const styles = StyleSheet.create({
     marginTop: -60,
     paddingHorizontal: 16,
   },
-  nameSpot: {
+  nameShop: {
     fontSize: 28,
     color: "#212121",
     alignSelf: "center",
