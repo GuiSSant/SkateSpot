@@ -36,16 +36,24 @@ const PagamentoScreen = () => {
   {
     id: '2',
     title: 'PIX',
-    tag: 'Profissa',
-    description: "Um QR Code será encaminhado ao seu e-mail. Faça o pagamento",
+    tag: '1',
+    description: "Um QR Code será encaminhado ao seu e-mail. Faça o pagamento no tempo estipulado.",
+    expanded: false
+
+  },
+   {
+    id: '1',
+    title: 'Boleto',
+    tag: '3',
+    description: "Um boleto será encaminhado ao seu e-mail. Faça o pagamento antes da data de vencimento.",
     expanded: false
 
   },
   {
     id: '3',
     title: 'Paypal',
-    tag: 'Lenda',
-    description: "Uma cobrança chegará ao seu e-mail. Faça o pagamento",     
+    tag: '2',
+    description: "Uma cobrança chegará ao seu e-mail. Faça o pagamento para a conta que será informada",     
     expanded: false
   }
 ]);
@@ -103,7 +111,7 @@ const PagamentoScreen = () => {
           </Animated.View>
         ))}
 
-       <ButtonMain title="Pagamento" onPress={() => router.push("/Premium/payment")}  />
+        <ButtonMain title={"Pagar"} style={{marginBottom: 32, marginTop: 60}} onPress={() => {alert("E-mail com instruções de pagamento enviado. Verifique sua caixa de entrada."); }} />
 
       </ScrollView>
     </GestureHandlerRootView>

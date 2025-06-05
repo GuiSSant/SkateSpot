@@ -70,7 +70,8 @@ export default function Login() {
               <MaterialCommunityIcons name={showPassword ? "eye-off" : "eye"} size={24} color="#000" onPress={toggleShowPassword} style={{ position: "absolute", right: 16, top: 40}} />
             </View>
 
-            <Text style={[styles.infoText, { alignSelf: "flex-end" }]}>Esqueci a senha</Text>
+            <Text style={[styles.infoText, { alignSelf: "flex-end" }]}  onPress={() => {alert("E-mail com instruções de mudança de senha enviado. Verifique sua caixa de entrada.")}}>Esqueci a senha</Text>
+
           </View>
 
           <View style={{ marginTop: 32 }}>
