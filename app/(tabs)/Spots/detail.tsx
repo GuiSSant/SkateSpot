@@ -184,15 +184,17 @@ export default function SkateSpot() {
   });
 
   if (loaded)
-    return (
-      <>
-        <ImageBackground
-          source={mainImage ? { uri: mainImage } : require("../../../assets/images/profileBackgroundImage.jpg")}
-          resizeMode="cover"
-          style={styles.profileBackgroundImage}
-          imageStyle={{ opacity: 0.3 }}
-        >
-          <ScrollView>
+  return (
+    <>
+      <ImageBackground
+        source={mainImage ? { uri: mainImage } : require("../../../assets/images/profileBackgroundImage.jpg")}
+        resizeMode="cover"
+        style={styles.profileBackgroundImage}
+        imageStyle={{ opacity: 0.3 }}
+      >
+        <FlatList
+          data={[]} // FlatList vazia, usamos apenas o header aqui
+          ListHeaderComponent={
             <View style={styles.container}>
               <MainHeader />
 
@@ -203,103 +205,93 @@ export default function SkateSpot() {
                       {spotName || "Sem Nome"}
                     </Text>
                     <Text style={styles.descriptionText}>
-                      {"(4,0)"} {// Avaliação Exemplo
-}
+                      {"(4,0)"}
                     </Text>
                   </View>
                   <Text style={[styles.descriptionText, { marginTop: 16 }]}>
                     {description || "Sem Descrição"}
                   </Text>
 
-
-
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.textSection, { marginTop: 16, paddingHorizontal: 16 }]}>
-                      {"Modalidades"}
-                    </Text>
-                    <FlatList
-                      data={modalities}
-                      numColumns={3}
-                      contentContainerStyle={{ alignItems: 'center' }}
-                      renderItem={({ item }) => (
-                        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16, paddingHorizontal: 16 }}>
-                          <Text style={styles.modalityText}>{item?.name || "Item"}</Text>
+                  {/* Modalidades */}
+                  <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+                    <Text style={styles.textSection}>Modalidades</Text>
+                    <View style={styles.cardBox}>
+                      {modalities.map((item) => (
+                        <View key={item.id} style={styles.chip}>
+                          <Text style={styles.chipText}>{item.name}</Text>
                         </View>
-                      )}
-                      keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-                    />
-                    <Text style={[styles.textSection, { marginTop: 16, paddingHorizontal: 16 }]}>
-                      {"Estruturas"}
-                    </Text>
-                    <FlatList
-                      data={structures}
-                      numColumns={3}
-                      contentContainerStyle={{ alignItems: 'center' }}
-                      renderItem={({ item }) => (
-                        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16, paddingHorizontal: 16 }}>
-                          <Text style={styles.structureText}>{item?.name || "Item"}</Text>
-                        </View>
-                      )}
-                      keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-                    />
-
-                    <Text style={[styles.textSection, { marginTop: 16, paddingHorizontal: 16 }]}>
-                      {"Infraestrutura"}
-                    </Text>
-                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16, paddingHorizontal: 32, justifyContent: 'space-between', width: "100%" }}>
-                      <Text style={bathroom ? styles.infraTextActive : styles.infraTextNotActive}>
-                        {"Banheiro"}
-                      </Text>
-                      <Text style={lighting ? styles.infraTextActive : styles.infraTextNotActive}>
-                        {"Iluminação"}
-                      </Text>
-                      <Text style={water ? styles.infraTextActive : styles.infraTextNotActive}>
-                        {"Água"}
-                      </Text>
+                      ))}
                     </View>
-                    <Midia imagens={images} />
-
-                    <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} />
-
-                    <Modal
-                      visible={showConfirmation}
-                      transparent
-                      animationType="fade"
-                      onRequestClose={() => setShowConfirmation(false)}
-                    >
-                      <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                          <FlatList
-                            data={selectedImages}
-                            keyExtractor={(item) => item.uri}
-                            renderItem={({ item }) => (
-                              <View style={styles.imageContainer}>
-                                <Image source={{ uri: item.uri }} style={styles.image} />
-                                <TouchableOpacity
-                                  onPress={() => removeImage(item.uri)}
-                                  style={styles.removeButton}
-                                >
-                                  <Text style={styles.removeButtonText}>X</Text>
-                                </TouchableOpacity>
-                              </View>
-                            )}
-                            horizontal
-                          />
-                          <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
-                            <Text style={styles.confirmButtonText}>Confirmar</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </Modal>
-
                   </View>
+
+                  {/* Estruturas */}
+                  <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+                    <Text style={styles.textSection}>Estruturas</Text>
+                    <View style={styles.cardBox}>
+                      {structures.map((item) => (
+                        <View key={item.id} style={styles.chip}>
+                          <Text style={styles.chipText}>{item.name}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+
+                  {/* Infraestrutura */}
+                  <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+                    <Text style={styles.textSection}>Infraestrutura</Text>
+                    <View style={[styles.cardBox, { justifyContent: "space-between", paddingHorizontal: 16 }]}>
+                      <Text style={bathroom ? styles.infraTextActive : styles.infraTextNotActive}>Banheiro</Text>
+                      <Text style={lighting ? styles.infraTextActive : styles.infraTextNotActive}>Iluminação</Text>
+                      <Text style={water ? styles.infraTextActive : styles.infraTextNotActive}>Água</Text>
+                    </View>
+                  </View>
+
+
+
+                  {/* Mídia e botão */}
+                  <Midia imagens={images} />
+                  <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} style={{ marginBottom: 32 }}/>
                 </View>
               </View>
             </View>
-          </ScrollView>
-        </ImageBackground>
-      </>
-    );
+          }
+          contentContainerStyle={{ paddingBottom: 40 }}
+        />
+
+        {/* Modal de envio de imagens */}
+        <Modal
+          visible={showConfirmation}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowConfirmation(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <FlatList
+                data={selectedImages}
+                keyExtractor={(item) => item.uri}
+                renderItem={({ item }) => (
+                  <View style={styles.imageContainer}>
+                    <Image source={{ uri: item.uri }} style={styles.image} />
+                    <TouchableOpacity
+                      onPress={() => removeImage(item.uri)}
+                      style={styles.removeButton}
+                    >
+                      <Text style={styles.removeButtonText}>X</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                horizontal
+              />
+              <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
+                <Text style={styles.confirmButtonText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ImageBackground>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -451,5 +443,28 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  cardBox: {
+    backgroundColor: "#F5F5F5",
+    borderRadius: 16,
+    padding: 12,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 12,
+  },
+
+  chip: {
+    backgroundColor: "#E0E0E0",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    margin: 4,
+  },
+
+  chipText: {
+    fontSize: 14,
+    color: "#212121",
+    fontFamily: "Quicksand-Regular",
   },
 });

@@ -138,30 +138,6 @@ export default function Explore() {
     requestLocationPermission();
   }, []);
 
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken"); // ou onde você armazenou
-        console.log("TOKEN:", token);
-        const response = await axios.get(`${API_URL}/api/auth/user/`, {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        console.log("Dados do usuário:", response.data);
-        if (response.data.profile_picture) {
-          setProfilePictureUrl(`${response.data.profile_picture}`);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
   useEffect(() => {
     if (route.params?.newLocation) {
       setUserLocation(route.params.newLocation);
@@ -333,7 +309,7 @@ export default function Explore() {
     <FlatList
       horizontal
       data={results}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => `${item.type}_${item.id}`}
       renderItem={({ item }) => (
         <TouchableOpacity
           onPress={() => {
@@ -383,7 +359,7 @@ export default function Explore() {
           >
             {results.map((result) => (
               <Marker
-                key={result.id}
+                key={`${result.type}_${result.id}`}
                 coordinate={{
                   latitude: result.latitude,
                   longitude: result.longitude,

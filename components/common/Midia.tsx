@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   },
   midiaImageHandler: {
     marginHorizontal: 8,
+    marginVertical: 8
   },
   midiaImage: {
     backgroundColor: "#C9C9C9",

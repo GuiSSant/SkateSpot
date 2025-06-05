@@ -5,25 +5,116 @@ import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MainHeader from "@/components/common/MainHeader";
 import api from "@/lib/api";
+import * as Location from "expo-location";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 
 const API_URL = api.defaults.baseURL || "http://";
 
 type Spots = {
   id: number;
   name: string;
-  distance?: number; 
+  distance: number; 
   main_image: string;
 };
 
+interface Result {
+  id: number;
+  name: string;
+  type: string;
+  latitude: number;
+  longitude: number;
+  main_image: string;
+  distance: number;
+  description: string;
+  images: string;
+}
+
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+interface filtrosPista {
+  modalidade: string[];
+  estrutura: string[];
+}
+
 export default function Spots() {
   const [spots, setSpots] = useState<Spots[]>([]);
+  const [results, setResults] = useState<Result[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<string[]>([]);
+  const [subfilters, setSubfilters] = useState<filtrosPista>({
+    modalidade: [],
+    estrutura: []
+  });
+  const [userLocation, setUserLocation] = useState<Location>({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [initialRegion, setInitialRegion] = useState<{
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  } | null>(null);
 
 
   useEffect(() => {
-    getSpots().then((res) => {
-      setSpots(res.data || []);  
-    })
-  }, []);
+      requestLocationPermission();
+    }, []);
+
+  useEffect(() => {
+    if (userLocation.latitude !== 0 && userLocation.longitude !== 0) {
+      fetchResults();
+    }
+  }, [userLocation, filters, searchQuery, subfilters]);
+
+  const requestLocationPermission = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permissão de localização negada");
+      return;
+    }
+
+    const location = await Location.getCurrentPositionAsync({});
+    setUserLocation({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
+  };
+
+  const fetchResults = async () => {
+    try {
+      const appliedFilters =
+        filters.length > 0 ? filters.join(",") : "spots";
+
+      const params: any = {
+        lat: userLocation.latitude,
+        lng: userLocation.longitude,
+        types: appliedFilters,
+        query: searchQuery,
+      };
+
+      if (filters.includes("spots")) {
+        if (subfilters.modalidade.length > 0) {
+          params.modalidade = subfilters.modalidade.join(",");
+        }
+        if (subfilters.estrutura.length > 0) {
+          params.estrutura = subfilters.estrutura.join(",");
+        }
+      }
+
+      const response = await axios.get<Result[]>(`${API_URL}/search/`, { params });
+      console.log("Response data:", response.data);
+      setResults(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar resultados:", error);
+    }
+  };
+
 
   const renderSpotItem = ({ item }: { item: Spots }) => {
     return (
@@ -35,13 +126,13 @@ export default function Spots() {
         ]}
       >
           <Image
-            source={{ uri: `${API_URL}${item.main_image}` }}            
+            source={{ uri: `${API_URL}${item.main_image}` }}
             style={styles.spotImage}
             resizeMode="cover"
           />
         <View style={styles.spotInfoContainer}>
           <Text style={styles.spotName}>{item.name || "Sem nome"}</Text>
-          <Text style={styles.subtitle}>{item.distance || "Sem distância"}</Text>
+          <Text style={styles.subtitle}>{item.distance.toFixed(2) || "?"} km</Text>
         </View>
       </Pressable>
     );
@@ -51,7 +142,7 @@ export default function Spots() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
         <FlatList
-          data={spots}
+          data={results}
           contentContainerStyle={styles.listContainer}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderSpotItem}
@@ -107,7 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     overflow: 'hidden',
-    width: "300" 
+    width: 300
   },
   spotImage: {
     width: 300,

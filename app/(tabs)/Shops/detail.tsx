@@ -166,69 +166,67 @@ export default function SkateShop() {
           style={styles.profileBackgroundImage}
           imageStyle={{ opacity: 0.3 }}
         >
-          <ScrollView>
-            <View style={styles.container}>
-              <MainHeader />
-
-              <View style={styles.UserContainer}>
-                <View style={styles.profileContent}>
-                  <View style={{ flexDirection: "row", alignItems: "center", marginTop: 64, paddingHorizontal: 16 }}>
-                    <Text style={styles.nameShop}>
-                      {shopName || "Sem Nome"}
-                    </Text>
-                    <Text style={styles.descriptionText}>
-                      {"(4,0)"} {// Avaliação Exemplo
-}
-                    </Text>
-                  </View>
-                  <Text style={[styles.descriptionText, { marginTop: 16 }]}>
-                    {description || "Sem Descrição"}
-                  </Text>
-
-
-
-                  <View style={{ flex: 1 }}>
-                    
+          <FlatList
+            data={[]} // FlatList vazia, usamos apenas o header aqui
+            ListHeaderComponent={
+              <View style={styles.container}>
+                <MainHeader />
+  
+                <View style={styles.UserContainer}>
+                  <View style={styles.profileContent}>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 64, paddingHorizontal: 16 }}>
+                      <Text style={styles.nameShop}>
+                        {shopName || "Sem Nome"}
+                      </Text>
+                      <Text style={styles.descriptionText}>
+                        {"(4,0)"}
+                      </Text>
+                    </View>
+                    <Text style={[styles.descriptionText, { marginTop: 16 }]}>
+                      {description || "Sem Descrição"}
+                    </Text>  
+  
+                    {/* Mídia e botão */}
                     <Midia imagens={images} />
-
-                    <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} />
-
-                    <Modal
-                      visible={showConfirmation}
-                      transparent
-                      animationType="fade"
-                      onRequestClose={() => setShowConfirmation(false)}
-                    >
-                      <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                          <FlatList
-                            data={selectedImages}
-                            keyExtractor={(item) => item.uri}
-                            renderItem={({ item }) => (
-                              <View style={styles.imageContainer}>
-                                <Image source={{ uri: item.uri }} style={styles.image} />
-                                <TouchableOpacity
-                                  onPress={() => removeImage(item.uri)}
-                                  style={styles.removeButton}
-                                >
-                                  <Text style={styles.removeButtonText}>X</Text>
-                                </TouchableOpacity>
-                              </View>
-                            )}
-                            horizontal
-                          />
-                          <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
-                            <Text style={styles.confirmButtonText}>Confirmar</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </Modal>
-
+                    <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} style={{ marginBottom: 32 }}/>
                   </View>
                 </View>
               </View>
+            }
+            contentContainerStyle={{ paddingBottom: 40 }}
+          />
+  
+          {/* Modal de envio de imagens */}
+          <Modal
+            visible={showConfirmation}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowConfirmation(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <FlatList
+                  data={selectedImages}
+                  keyExtractor={(item) => item.uri}
+                  renderItem={({ item }) => (
+                    <View style={styles.imageContainer}>
+                      <Image source={{ uri: item.uri }} style={styles.image} />
+                      <TouchableOpacity
+                        onPress={() => removeImage(item.uri)}
+                        style={styles.removeButton}
+                      >
+                        <Text style={styles.removeButtonText}>X</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  horizontal
+                />
+                <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
+                  <Text style={styles.confirmButtonText}>Confirmar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </ScrollView>
+          </Modal>
         </ImageBackground>
       </>
     );
