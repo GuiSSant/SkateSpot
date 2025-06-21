@@ -1,3 +1,5 @@
+
+  
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -24,8 +26,11 @@ import ModalExplore from "./Modal/modal";
 import api from "@/lib/api";
 import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import LocationSearchModal from './LocationSearchModal';
+import Constants from 'expo-constants';
 
 const API_URL = api.defaults.baseURL || "http:// ";
+const apiKey = Constants.expoConfig?.extra?.GOOGLE_API_KEY;
 
 interface Location {
   latitude: number;
@@ -68,6 +73,7 @@ export default function Explore() {
   });
   const [showSubfilterModal, setShowSubfilterModal] = useState(false);
   const [currentSubfilterType, setCurrentSubfilterType] = useState<'modalidade' | 'estrutura' | null>(null);
+    const [selectedAddress, setSelectedAddress] = useState('Localização Atual');
   const [userLocation, setUserLocation] = useState<Location>({
     latitude: 0,
     longitude: 0,
@@ -92,23 +98,22 @@ export default function Explore() {
   const DarkStyleMap = customMapStyle;
 
   useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permissão para acessar localização negada");
-        return;
-      }
+    
+const getLocation = async () => {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    console.log("Permissão de localização negada");
+    return;
+  }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setCurrentLocation(location.coords);
+  const location = await Location.getCurrentPositionAsync({});
+  setSelectedAddress("Localização Atual");
+  setShowLocationModal(false);
+  await handleSelectLocation({
+    latitude: location.coords.latitude,
+    longitude: location.coords.longitude }, true);
+};
 
-      setInitialRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      });
-    };
 
     getLocation();
   }, []);
@@ -158,7 +163,7 @@ export default function Explore() {
     }
 
     const location = await Location.getCurrentPositionAsync({});
-    setUserLocation({
+    await handleSelectLocation({
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     });
@@ -185,6 +190,7 @@ export default function Explore() {
         }
       }
 
+      console.log("Params:", params);
       const response = await axios.get<Result[]>(`${API_URL}/search/`, { params });
       console.log("Response data:", response.data);
       setResults(response.data);
@@ -204,6 +210,44 @@ export default function Explore() {
   const handleMapPress = () => {
     setMapExpanded(!mapExpanded);
   };
+
+  const [showLocationModal, setShowLocationModal] = useState(false);
+
+  
+const getLocation = async () => {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    console.log("Permissão de localização negada");
+    return;
+  }
+
+  const location = await Location.getCurrentPositionAsync({});
+  setSelectedAddress("Localização Atual");
+  setShowLocationModal(false);
+  await handleSelectLocation({
+    latitude: location.coords.latitude,
+    longitude: location.coords.longitude }, true);
+};
+
+
+  const handleSelectLocation = async (location: { latitude: number; longitude: number }, isCurrentLocation = false) => {
+    setUserLocation(location);
+    try {
+      const apiKey = Constants.expoConfig?.extra?.GOOGLE_API_KEY || Constants.manifest?.extra?.GOOGLE_API_KEY;
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=${apiKey}`
+      );
+      const data = await response.json();
+      if (isCurrentLocation) {
+      setSelectedAddress("Localização Atual");
+    } else if (data?.results?.[0]?.formatted_address) {
+        setSelectedAddress(data.results[0].formatted_address);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar endereço:', error);
+    }
+  };
+
 
   return (
 <View style={styles.container}>
@@ -295,13 +339,17 @@ export default function Explore() {
   </View> 
 
   <View style={styles.divider} />
-  <TouchableOpacity
-    style={styles.locationButton}
-    onPress={() => navigation.navigate("LocationSearch" as never)}
-  >
-    <Icon name="map-pin" size={20} color="#F5D907" />
-    <Text style={styles.locationButtonText}>Localização Atual</Text>
+  <TouchableOpacity onPress={() => setShowLocationModal(true)}>
+    <View style={styles.locationButton}>
+  <TouchableOpacity onPress={() => setShowLocationModal(true)}>
+    <View style={styles.locationButton}>
+      <Icon name="map-pin" size={20} color="#F5D907" />
+      <Text style={styles.locationButtonText}>{selectedAddress}</Text>
+    </View>
   </TouchableOpacity>
+</View>
+  </TouchableOpacity>
+
   <View style={styles.divider} />
 
   <View style={styles.containerMap}>
@@ -365,6 +413,7 @@ export default function Explore() {
                   longitude: result.longitude,
                 }}
                 title={result.name}
+                onPress={() => router.push({ pathname: "/(tabs)/Spots/detail", params: { id: result.id } }) }
               >
                 {result.type == "spot" ? (
                   <Image
@@ -415,6 +464,16 @@ export default function Explore() {
     }}
     selectedFilters={currentSubfilterType ? subfilters[currentSubfilterType] : []}
   />
+
+  <LocationSearchModal
+    visible={showLocationModal}
+    onClose={() => setShowLocationModal(false)}
+    onSelectLocation={handleSelectLocation}
+    onUseCurrentLocation={getLocation}
+  />
+
+
+
 </View>
   );
 };
