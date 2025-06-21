@@ -98,22 +98,23 @@ export default function Explore() {
   const DarkStyleMap = customMapStyle;
 
   useEffect(() => {
-    
-const getLocation = async () => {
-  const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== "granted") {
-    console.log("Permissão de localização negada");
-    return;
-  }
+    const getLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permissão para acessar localização negada");
+        return;
+      }
 
-  const location = await Location.getCurrentPositionAsync({});
-  setSelectedAddress("Localização Atual");
-  setShowLocationModal(false);
-  await handleSelectLocation({
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude }, true);
-};
+      let location = await Location.getCurrentPositionAsync({});
+      setCurrentLocation(location.coords);
 
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    };
 
     getLocation();
   }, []);
@@ -163,7 +164,7 @@ const getLocation = async () => {
     }
 
     const location = await Location.getCurrentPositionAsync({});
-    await handleSelectLocation({
+    setUserLocation({
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     });
@@ -213,24 +214,21 @@ const getLocation = async () => {
 
   const [showLocationModal, setShowLocationModal] = useState(false);
 
-  
-const getLocation = async () => {
-  const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== "granted") {
-    console.log("Permissão de localização negada");
-    return;
-  }
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permissão de localização negada");
+      return;
+    }
 
-  const location = await Location.getCurrentPositionAsync({});
-  setSelectedAddress("Localização Atual");
-  setShowLocationModal(false);
-  await handleSelectLocation({
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude }, true);
-};
+    const location = await Location.getCurrentPositionAsync({});
+    await handleSelectLocation({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
+  };
 
-
-  const handleSelectLocation = async (location: { latitude: number; longitude: number }, isCurrentLocation = false) => {
+  const handleSelectLocation = async (location: { latitude: number; longitude: number }) => {
     setUserLocation(location);
     try {
       const apiKey = Constants.expoConfig?.extra?.GOOGLE_API_KEY || Constants.manifest?.extra?.GOOGLE_API_KEY;
@@ -238,9 +236,7 @@ const getLocation = async () => {
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=${apiKey}`
       );
       const data = await response.json();
-      if (isCurrentLocation) {
-      setSelectedAddress("Localização Atual");
-    } else if (data?.results?.[0]?.formatted_address) {
+      if (data?.results?.[0]?.formatted_address) {
         setSelectedAddress(data.results[0].formatted_address);
       }
     } catch (error) {

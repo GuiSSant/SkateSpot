@@ -71,7 +71,7 @@ const LocationSearchModal: React.FC<Props> = ({ visible, onClose, onSelectLocati
               }}
             />
 
-            <TouchableOpacity onPress={onUseCurrentLocation} style={styles.gpsButton}>
+            <TouchableOpacity onPress={() => { onUseCurrentLocation(); onClose(); }} style={styles.gpsButton}>
               <Text style={styles.gpsButtonText}>📍 Localização Atual</Text>
             </TouchableOpacity>
 
