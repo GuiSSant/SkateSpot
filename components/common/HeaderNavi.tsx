@@ -41,9 +41,10 @@ export default function HeaderNavi() {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const menuItems: MenuItem[] = [
-    { name: "ASSINATURA", route: "/Premium", color: "#9747FF" },
+    // { name: "ASSINATURA", route: "/Premium", color: "#9747FF" },
+    { name: "ASSINATURA", route: "/Premium" },
     { name: "PISTAS", route: "/Spots" },
-    { name: "EVENTOS", route: "/Eventos" },
+    { name: "EVENTOS", route: "/Events" },
     { name: "LOJAS", route: "/Shops" },
     { name: "MODALIDADES", route: "/Modalities" },
     { name: "ESTRUTURAS", route: "/Structure" },

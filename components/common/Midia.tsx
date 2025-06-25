@@ -18,18 +18,19 @@ interface LocalImage {
 }
 
 interface MidiaProps {
+  onImagePress?: (index: number) => void;
   imagens: LocalImage[];
 }
 
-export default function Midia({ imagens }: MidiaProps) {
+export default function Midia({ imagens, onImagePress }: MidiaProps) {
   const windowWidth = Dimensions.get("window").width - 32;
 
   if (!imagens || imagens.length === 0) {
     return <Text style={styles.textMidia}>Nenhuma mídia disponível.</Text>;
   }
 
-  const renderItem = ({ item }: { item: LocalImage }) => (
-    <TouchableHighlight style={[styles.midiaImageHandler]}>
+  const renderItem = ({ item, index }: { item: LocalImage; index: number }) => (
+    <TouchableHighlight style={[styles.midiaImageHandler]} onPress={() => onImagePress && onImagePress(index)}>
       <Image style={[styles.midiaImage]} source={{ uri: item.image }} />
     </TouchableHighlight>
   );
@@ -40,10 +41,11 @@ export default function Midia({ imagens }: MidiaProps) {
         <Text style={styles.textMidia}>Mídia</Text>
         <View style={styles.midiaContainer}>
           <FlatList
-            contentContainerStyle={{ alignSelf: "center", gap: 8 }}
+            contentContainerStyle={{ gap: 8 }}
             numColumns={3}
             data={imagens}
             scrollEnabled={false}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
           />
@@ -61,13 +63,13 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Bold",
     fontSize: 22,
     lineHeight: 35,
-    color: "#212121",
+    color: "#FFF",
   },
   midiaContainer: {
     width: "100%",
   },
   midiaImageHandler: {
-    marginHorizontal: 8,
+    
     marginVertical: 8
   },
   midiaImage: {

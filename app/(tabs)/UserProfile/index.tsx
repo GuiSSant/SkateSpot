@@ -15,10 +15,14 @@ import MainHeader from "../../../components/common/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import api from "@/lib/api";
+import ImageView from 'react-native-image-viewing';
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
 export default function UserProfile() {
+  const [isImageViewVisible, setIsImageViewVisible] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+
 
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -88,13 +92,21 @@ export default function UserProfile() {
                   <Text style={styles.UsernameTag}>
                     @{username}
                   </Text>
-                  <Carrossel title="Minhas Pistas"/>
-                  <Midia imagens={uploadedImages} />
+                  {/* <Carrossel title="Minhas Pistas"/> */}
+                  <Midia imagens={uploadedImages} onImagePress={(index) => { setImageIndex(index); setIsImageViewVisible(true); }} />
                 </View>
               </View>
             </View>
           </ScrollView>
-        </ImageBackground>
+        
+        <ImageView
+          images={uploadedImages.map(img => ({ uri: img.image }))}
+          imageIndex={imageIndex}
+          visible={isImageViewVisible}
+          onRequestClose={() => setIsImageViewVisible(false)}
+          doubleTapToZoomEnabled
+        />
+</ImageBackground>
       </>
     );
 }
@@ -126,7 +138,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   profileContent: {
-    backgroundColor: "#fff",
+    backgroundColor: "#1C1C1E",
     height: "auto",
     width: "100%",
     alignSelf: "center",
@@ -137,7 +149,7 @@ const styles = StyleSheet.create({
   },
   nameProfile: {
     fontSize: 28,
-    color: "#212121",
+    color: "#FFFFFF",
     alignSelf: "center",
     marginTop: 66,
     lineHeight: 27.5,
@@ -145,7 +157,7 @@ const styles = StyleSheet.create({
   },
     UsernameTag: {
     fontSize: 14,
-    color: "#888", // cinza claro
+    color: "#BBBBBB", // cinza claro
     marginTop: 4,
     alignSelf: "center",
   },

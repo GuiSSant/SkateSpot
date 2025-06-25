@@ -41,10 +41,6 @@ export const updateStructure = (
 //  DELETE
 export const deleteStructure = (id: number) => api.delete(`/structures/${id}/`);
 
-// Eventos
-//  GETS
-export const getEvents = () => api.get('/skate-events/');
-export const getEvent = (id: number) => api.get(`/skate-events/${id}`);
 //  POST
 export const createEvents = (data: {
   id: number;
@@ -71,14 +67,23 @@ export const updateEvent= (
 //  DELETE
 export const deleteEvent = (id: number) => api.delete(`/skate-events/${id}/`);
 
+////////////////////////////////
+///////////// GETS /////////////
+////////////////////////////////
+
 // Pistas
-//  GETS
 export const getSpots = () => api.get("/skate-spots/");
 export const getSpot = (id: number) => api.get(`/skate-spots/${id}/`);
 
 // Lojas
-// GETS
 export const getShops = () => api.get("/skate-shops")
+export const getShop = (id: number) => api.get(`/skate-shops/${id}/`);
+
+// Eventos
+export const getEvents = () => api.get("/skate-events")
+export const getEvent = (id: number) => api.get(`/skate-events/${id}/`);
+
+
 // POSTS
 export const createShops = (data: {
   id: number;
@@ -98,6 +103,8 @@ export const updateShop = (
    location_id: number;
   }
 ) => api.put(`/skate-shops/${id}/`, data);
+
+
 // DELETE
 export const deleteShop = (id: number) => api.delete(`/skate-shops/${id}/`);
 

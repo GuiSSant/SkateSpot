@@ -360,7 +360,7 @@ export default function Explore() {
             if (item.type === "spot") {
               router.push({ pathname: "/(tabs)/Spots/detail", params: { id: item.id } });
             } else if (item.type === "event") {
-              // router.push({ pathname: "/(tabs)/Events/detail", params: { id: item.id } });
+              router.push({ pathname: "/(tabs)/Events/detail", params: { id: item.id } });
             } else if (item.type === "shop") {
               router.push({ pathname: "/(tabs)/Shops/detail", params: { id: item.id } });
             }
@@ -390,7 +390,7 @@ export default function Explore() {
             showsMyLocationButton={true}
             style={[
               styles.map,
-              mapExpanded ? styles.mapExpanded : styles.mapCollapsed,
+              mapExpanded ? styles.mapExpanded : { height: filters.includes("spots") ? "55%" : "58%" },
               { flexGrow: 1 },
             ]}
             initialRegion={{
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   mapCollapsed: {
-    height: "58%",
+    height: "55%",
     marginTop: 0,
   },
   mapExpanded: {

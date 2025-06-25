@@ -56,7 +56,10 @@ export default function Login() {
     <GestureHandlerRootView>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
-          <MainHeader />
+          <Image
+              style={styles.logo}
+              source={require("../../../assets/images/logo.png")}
+          />
           <Text style={styles.titulo}>Login</Text>
           <Text style={styles.infoText}>
             Encontre os melhores spots, descubra eventos e junte-se à comunidade!
@@ -133,5 +136,13 @@ const styles = StyleSheet.create({
   },
   formRegister: {
     width: "100%",
-  }
+  },
+  logo: {
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
+      height: 109,
+      resizeMode: "contain",
+      top: -16,
+  },
 });

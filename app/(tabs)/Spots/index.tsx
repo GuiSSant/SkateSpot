@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, Pressable, FlatList, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { getSpots } from '@/lib/api';
 import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -42,8 +42,10 @@ interface filtrosPista {
 }
 
 export default function Spots() {
+  
   const [spots, setSpots] = useState<Spots[]>([]);
   const [results, setResults] = useState<Result[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<string[]>([]);
   const [subfilters, setSubfilters] = useState<filtrosPista>({
@@ -87,14 +89,15 @@ export default function Spots() {
   };
 
   const fetchResults = async () => {
+    setLoading(true);
     try {
       const appliedFilters =
         filters.length > 0 ? filters.join(",") : "spots";
-
-      const params: any = {
-        lat: userLocation.latitude,
-        lng: userLocation.longitude,
-        types: appliedFilters,
+        
+        const params: any = {
+          lat: userLocation.latitude,
+          lng: userLocation.longitude,
+          types: appliedFilters,
         query: searchQuery,
       };
 
@@ -108,13 +111,13 @@ export default function Spots() {
       }
 
       const response = await axios.get<Result[]>(`${API_URL}/search/`, { params });
-      console.log("Response data:", response.data);
       setResults(response.data);
     } catch (error) {
       console.error("Erro ao buscar resultados:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
 
   const renderSpotItem = ({ item }: { item: Spots }) => {
     return (
@@ -124,7 +127,7 @@ export default function Spots() {
           styles.spotCard,
           { opacity: pressed ? 0.6 : 1 }
         ]}
-      >
+        >
           <Image
             source={{ uri: `${API_URL}${item.main_image}` }}
             style={styles.spotImage}
@@ -137,6 +140,14 @@ export default function Spots() {
       </Pressable>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#F5D907" />
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -153,7 +164,9 @@ export default function Spots() {
             </>
           }
           ListEmptyComponent={
-            <Text style={styles.subtitle}>Nenhuma pista encontrada</Text>
+            !loading && (
+              <Text style={styles.subtitle}>Nenhuma pista encontrada</Text>
+            )
           }
         />
       </View>
@@ -225,5 +238,12 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Bold",
     textAlign: "center",
     fontSize: 18,
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0C0A14",
+  },
+
 });

@@ -31,7 +31,7 @@ export default function Carrossel({
     const fetchUserData = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-        const response = await axios.get(`${API_URL}/skate-spots`); // PEGANDO ID 2 COMO EXEMPLO
+        const response = await axios.get(`${API_URL}/skate-spots`);
         console.log("Dados da pista:", response.data);
 
         setFavoriteSpots(Array.isArray(response.data) ? response.data : [response.data]);

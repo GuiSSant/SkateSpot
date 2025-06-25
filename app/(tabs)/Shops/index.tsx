@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, Pressable, FlatList, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MainHeader from "@/components/common/MainHeader";
@@ -36,8 +36,10 @@ interface Location {
 }
 
 export default function Shops() {
+  
   const [shops, setShops] = useState<Shops[]>([]);
   const [results, setResults] = useState<Result[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<string[]>([]);
   const [userLocation, setUserLocation] = useState<Location>({
@@ -77,6 +79,7 @@ export default function Shops() {
   };
 
   const fetchResults = async () => {
+    setLoading(true);
     try {
       const appliedFilters =
         filters.length > 0 ? filters.join(",") : "shops";
@@ -89,13 +92,13 @@ export default function Shops() {
       };
 
       const response = await axios.get<Result[]>(`${API_URL}/search/`, { params });
-      console.log("Response data:", response.data);
       setResults(response.data);
     } catch (error) {
       console.error("Erro ao buscar resultados:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
 
   const renderShopItem = ({ item }: { item: Shops }) => {
     return (
@@ -105,7 +108,7 @@ export default function Shops() {
           styles.shopCard,
           { opacity: pressed ? 0.6 : 1 }
         ]}
-      >
+        >
           <Image
             source={{ uri: `${API_URL}${item.main_image}` }}
             style={styles.shopImage}
@@ -118,6 +121,14 @@ export default function Shops() {
       </Pressable>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#F5D907" />
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -134,7 +145,9 @@ export default function Shops() {
             </>
           }
           ListEmptyComponent={
-            <Text style={styles.subtitle}>Nenhuma loja encontrada</Text>
+            !loading && (
+              <Text style={styles.subtitle}>Nenhuma loja encontrada</Text>
+            )
           }
         />
       </View>
@@ -206,5 +219,11 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand-Bold",
     textAlign: "center",
     fontSize: 18,
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0C0A14",
+  },
 });

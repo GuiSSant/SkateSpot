@@ -11,6 +11,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Switch,
+  Modal,
+  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
@@ -20,9 +23,14 @@ import { TextInputMask } from 'react-native-masked-text';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import api from "@/lib/api";
+import { ButtonMain } from "@/components/common/ButtonMain";
+import * as ImagePicker from 'expo-image-picker';
+
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const dropdownLocal = [
   { label: '', value: '0' },
@@ -40,8 +48,6 @@ const campos = [
   { id: 6, nome: 'Estado', tipo: 'Text', editavel: false, visivel: "flex" },
   { id: 7, nome: 'País', tipo: 'Text', editavel: false, visivel: "flex" },
   { id: 8, nome: 'Tipo', tipo: 'Dropdown', editavel: true, visivel: "flex" },
-  { id: 9, nome: 'Latitude', tipo: 'Text', editavel: false, visivel: "none" },
-  { id: 10, nome: 'Longitude', tipo: 'Text', editavel: false, visivel: "none" },
   { id: 11, nome: 'Nome', tipo: 'Text', editavel: true, visivel: "flex" },
   { id: 12, nome: 'Descrição', tipo: 'Text', editavel: true, visivel: "flex" },
   { id: 13, nome: 'Água', tipo: 'Switch', editavel: true, visivel: "flex" },
@@ -54,6 +60,12 @@ const campos = [
 let tipoForm = 'TTeste'
 
 function FormCadastros() {
+  const [loading, setLoading] = useState(false);
+
+  const [selectedImages, setSelectedImages] = useState([]);
+  
+  const [images, setImages] = useState<any[]>([]);
+  const [mainImage, setMainImage] = useState<string | null>(null);
 
   // Estado para o tipo selecionado
   const [tipoSelecionado, setTipoSelecionado] = useState(null); 
@@ -137,8 +149,44 @@ function FormCadastros() {
     return dataAtual.toISOString().replace('Z', '-03:00'); // Converte para o formato desejado
   };
   
+
+  const handleAddPhotos = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('Permissão negada', 'Você precisa permitir o acesso à galeria para selecionar fotos.');
+        return;
+      }
+
+      setSelectedImages([]);
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsMultipleSelection: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        console.log("Seleção de fotos cancelada pelo usuário.");
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        setSelectedImages(result.assets);
+        
+      } else {
+        Alert.alert('Erro', 'Nenhuma foto selecionada.');
+      }
+    } catch (error) {
+      console.error("Erro ao abrir a galeria:", error);
+      Alert.alert('Erro', 'Ocorreu um erro ao abrir a galeria.');
+    }
+  };
+
+
   useEffect(() => {
     const cep = valores[1]; // O campo de CEP tem id 1
+    const numero = valores[3]; 
     console.log(Date().toString())
     const buscarDadosPorCep = async () => {
 			setValores((prev) => ({
@@ -149,8 +197,6 @@ function FormCadastros() {
 				5: '',     	// Cidade
 				6: '',     	// Estado
 				7: '',       // País
-        9: '',      // Latitude
-        10: ''      // Longitude
 			}));
       if (cep && cep.length === 8) { // Verifica se o CEP está preenchido (8 dígitos)
         try {
@@ -169,8 +215,6 @@ function FormCadastros() {
             5: data[0]['cidade'],       // Cidade
             6: data[0]['estado'],       // Estado
             7: data[0]['pais'],         // País
-            9: data[0]['latitude'],         // Latitude
-            10: data[0]['longitude']         // Longitude
           }));
         } catch (error) {
           console.error("Erro ao buscar dados:", error);
@@ -182,8 +226,6 @@ function FormCadastros() {
             5: '',     	// Cidade
             6: '',     	// Estado
             7: '',      // País
-            9: '',      // Latitude
-            10: ''      // Longitude
           }));
 					Alert.alert("Erro", "Não foi possível buscar o CEP. Tente novamente.");
         }
@@ -202,31 +244,44 @@ function FormCadastros() {
   };
 
   const registerAddress = async () => {
+    setLoading(true);
     if (value === '0') {
       return Alert.alert("Erro", "É necessário escolher um tipo de local para cadastrar.");
     }
     try {
       console.log("Local: ", valores)
 
-      const response = await axios.post(`${API_URL}/location/`, {
-        'zip_code': valores[1],
-        'street': valores[2],
-        'number': valores[3],
-        'district': valores[4],
-        'city': valores[5],
-        'state': valores[6],
-        'country': valores[7],
-        'latitude': valores[9],
-        'longitude': valores[10],
-      });
-      
+      const token = await AsyncStorage.getItem('authToken');
+      const response = await axios.post(
+        `${API_URL}/location/`,
+        {
+          zip_code: valores[1],
+          street: valores[2],
+          number: valores[3],
+          district: valores[4],
+          city: valores[5],
+          state: valores[6],
+          country: valores[7],
+        },
+        { headers: { Authorization: `Token ${token}` } }
+      );
       console.log(response)
       console.log(response.data['id'])
-      registerAddressType(response.data['id'])
+      await registerAddressType(response.data['id']);
+      setLoading(false);
 
     } catch (error) {
       console.error(error)
       Alert.alert("Erro", "Não foi possível cadastrar o endereço. Tente novamente.");
+      setLoading(false);
+    }
+  };
+
+  const removeImage = (uri) => {
+    const updatedImages = selectedImages.filter(img => img.uri !== uri);
+    setSelectedImages(updatedImages);
+    if (updatedImages.length === 0) {
+        // Fecha o modal se todas as fotos forem removidas
     }
   };
 
@@ -237,47 +292,117 @@ function FormCadastros() {
       console.log("Switchs: ", switches)
 
       if (value === '1') {
-        const response = await axios.post(`${API_URL}/skate-spots/`, {
-          'name': valores[11],
-          'description': valores[12],
-          'water': switches.água,
-          'lighting': switches.iluminação,
-          'bathroom': switches.banheiro,
-          'location_id': location_id,
-          'create_date': gerarCreateDate(),           // Data e hora atuais no formato ISO 8601 com offset
-        });
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await axios.post(
+          `${API_URL}/skate-spots/`,
+          {
+            name: valores[11],
+            description: valores[12],
+            water: switches.água,
+            lighting: switches.iluminação,
+            bathroom: switches.banheiro,
+            location_id: location_id,
+            create_date: gerarCreateDate()
+          },
+          { headers: { Authorization: `Token ${token}` } }
+        );
         console.log(response)
-        console.log(response.data['id'])      
+        console.log(response.data['id'])     
+        registerAddressImages(response.data['id']);
       }
 
       if (value === '2') {
-        const response = await axios.post(`${API_URL}/skate-shops/`, {
-          'name': valores[11],
-          'description': valores[12],
-          'location_id': location_id,
-        });
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await axios.post(
+          `${API_URL}/skate-shops/`,
+          {
+            name: valores[11],
+            description: valores[12],
+            location_id: location_id,
+            create_date: gerarCreateDate(),
+          },
+          { headers: { Authorization: `Token ${token}` } }
+        );
         console.log(response)
-        console.log(response.data['id'])      
+        console.log(response.data['id'])   
+        registerAddressImages(response.data['id']);
       }
 
       if (value === '3') {
-        const response = await axios.post(`${API_URL}/skate-events/`, {
-          'name': valores[11],
-          'description': valores[12],
-          'start_date': formatarParaISO(valores[16]), // Data de início no formato ISO 8601 com offset
-          'end_date': formatarParaISO(valores[17]),   // Data de encerramento no formato ISO 8601 com offset
-          'location_id': location_id,
-          'create_date': gerarCreateDate(),           // Data e hora atuais no formato ISO 8601 com offset
-        });
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await axios.post(
+          `${API_URL}/skate-events/`,
+          {
+            name: valores[11],
+            description: valores[12],
+            location_id: location_id,
+            create_date: gerarCreateDate(),
+          },
+          { headers: { Authorization: `Token ${token}` } }
+        );
         console.log(response)
-        console.log(response.data['id'])      
+        console.log(response.data['id'])     
+        registerAddressImages(response.data['id']);
+      }
+
+    } catch (error) {
+      console.error(error)
+      Alert.alert("Erro", "Não foi possível cadastrar o local. Tente novamente.");
+    }
+  };
+
+  const registerAddressImages = async (id: number) => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+
+      if (!token) {
+        Alert.alert("Erro", "Token de autenticação não encontrado.");
+        return;
+      }
+
+      console.log("Token: ", token)
+      
+      for (const img of selectedImages) {
+        const formData = new FormData();
+        formData.append('image', {
+          uri: img.uri,
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+        });
+
+        // Pista
+        if (value === '1') {
+          console.log("skatespot_id: ", id)
+          formData.append('skatespot_id', id);
+        }
+
+        // Skateshop
+        if (value === '2') {
+          console.log("skateshop_id: ", id)
+          formData.append('skateshop_id', id);
+        }
+
+        // Evento
+        if (value === '3') {
+          console.log("skateevent_id: ", id)
+          formData.append('skateevent_id', id);
+        }
+
+        console.log("FormData sendo enviado:", formData);
+
+        await axios.post(`${API_URL}/local-images/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Token ${token}`,
+          },
+        });
       }
 
       Alert.alert("Sucesso", "Local cadastrado com sucesso!");
 
     } catch (error) {
-      console.error(error)
-      Alert.alert("Erro", "Não foi possível cadastrar o local. Tente novamente.");
+      console.error('Erro ao enviar fotos:', error);
+      Alert.alert('Erro', 'Erro ao enviar fotos');
     }
   };
 
@@ -293,6 +418,9 @@ function FormCadastros() {
           }}
         >
         <View style={styles.container}>
+          {loading && (
+            <ActivityIndicator size={75} color="#F5D907" style={{ alignSelf: "center", marginVertical: 16 }} />
+          )}
           <Image
             style={styles.logo}
             source={require("../../../assets/images/logo.png")}
@@ -352,9 +480,13 @@ function FormCadastros() {
                     <>
                       <Text style={styles.formFieldTitle}>{campo.nome}</Text>
                       <Dropdown
+                        placeholderStyle={{ color: '#888888', fontSize: 16 }}
+                        selectedTextStyle={{ color: '#FFFFFF', fontSize: 16 }}
+                        itemTextStyle={{ color: '#FFFFFF' }}
+                        containerStyle={{ backgroundColor: '#1C1C1E' }}
                         style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
+                        // placeholderStyle={styles.placeholderStyle}
+                        // selectedTextStyle={styles.selectedTextStyle}
                         iconStyle={styles.iconStyle}
                         data={dropdownLocal}
                         maxHeight={300}
@@ -399,9 +531,42 @@ function FormCadastros() {
             )}
           </View>
 
+          <TouchableOpacity onPress={handleAddPhotos} style={{ backgroundColor: '#1F1B24', padding: 10, borderRadius: 8, marginBottom: 16 }}>
+            <Text style={{ color: '#F5D907', fontFamily: 'Quicksand-Bold', fontSize: 16, textAlign: 'center' }}>Adicionar Fotos</Text>
+          </TouchableOpacity>
+
+
+          {/* Exibir imagens selecionadas */}
+          {selectedImages.length > 0 && (
+            <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 16 }}>
+              {selectedImages.map((img, index) => (
+                <View key={img.uri || index.toString()} style={{ margin: 4, position: 'relative' }}>
+                  <Image source={{ uri: img.uri }} style={{ width: 80, height: 80, borderRadius: 8 }} />
+                  <TouchableOpacity
+                    onPress={() => removeImage(img.uri)}
+                    style={{
+                      position: "absolute",
+                      top: 2,
+                      right: 2,
+                      backgroundColor: "rgba(0,0,0,0.6)",
+                      borderRadius: 10,
+                      paddingHorizontal: 5,
+                    }}
+                  >
+                    <Text style={{ color: "white", fontSize: 12 }}>X</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+
+
           <TouchableOpacity style={styles.button} onPress={registerAddress}>
             <Text style={styles.textButton}>Cadastrar</Text>
           </TouchableOpacity>
+
+          
+
         </View>
         </ScrollView>
       </GestureHandlerRootView>
@@ -414,7 +579,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#0C0A14",
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
   },
   logo: {
     justifyContent: "center",
@@ -442,9 +607,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.11,
     textAlign: "center",
     marginHorizontal: 28,
-    marginTop: 12,
+    marginTop: 4,
   },
   button: {
+    elevation: 2,
     backgroundColor: "#9747FF",
     borderRadius: 8,
     paddingHorizontal: 42,
@@ -453,6 +619,7 @@ const styles = StyleSheet.create({
     marginVertical: 32
   },
   textButton: {
+    paddingVertical: 6,
     color: "#fff",
     fontFamily: "Quicksand-Bold",
     fontSize: 22,
@@ -476,9 +643,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 14,
   },
   formRegister: {
+    gap: 12,
+    marginTop: 24,
     width: "100%",
   },
   formFieldTitle: {
+    marginBottom: 8,
     color: "#F5D907",
     fontFamily: "Quicksand-Bold",
     fontSize: 14,
@@ -489,19 +659,29 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   formInputText: {
-    backgroundColor: "#fff",
+    color: "#FFFFFF",
+    fontSize: 16,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    borderColor: "#333",
+    paddingVertical: 10,
+    backgroundColor: "#1C1C1E",
     borderRadius: 8,
-    marginTop: 12,
-    paddingHorizontal: 16,
+    marginTop: 4,
+    paddingHorizontal: 14,
   },
   dropdown: {
     height: 50,
     width: 250,
-    borderColor: 'gray',
+    borderColor: '#333',
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#1C1C1E',
     marginVertical: 16
   },
   icon: {
@@ -509,7 +689,7 @@ const styles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
-    backgroundColor: 'white',
+    backgroundColor: '#1C1C1E',
     left: 22,
     top: 8,
     zIndex: 999,
@@ -517,14 +697,90 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   placeholderStyle: {
-    fontSize: 16,
+    paddingVertical: 6,
+    color: "#fff",
+    fontFamily: "Quicksand-Bold",
+    fontSize: 22,
+    lineHeight: 27.5,
+    letterSpacing: 0.11,
+    textAlign: "center",
   },
   selectedTextStyle: {
-    fontSize: 16,
+    paddingVertical: 6,
+    color: "#fff",
+    fontFamily: "Quicksand-Bold",
+    fontSize: 22,
+    lineHeight: 27.5,
+    letterSpacing: 0.11,
+    textAlign: "center",
   },
   iconStyle: {
     width: 20,
     height: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",  // Fundo escuro semi-transparente
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: windowWidth * 0.9,
+    maxHeight: windowHeight * 0.8,
+    backgroundColor: "#1C1C1E",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontFamily: "Quicksand-Bold",
+    fontSize: 22,
+    color: "#FFFFFF",
+    marginBottom: 10,
+  },
+  closeButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#FF6F61",  // Cor de botão consistente com seu app
+    borderRadius: 10,
+  },
+  closeButtonText: {
+    fontFamily: "Quicksand-Bold",
+    color: "#fff",
+    fontSize: 16,
+  },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
+  imageContainer: {
+    marginRight: 8,
+    position: "relative",
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 16,
+  },
+  removeButton: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+  },
+  removeButtonText: {
+    color: "white",
+    fontSize: 12,
+  },
+  confirmButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#FF6F61",
+    borderRadius: 10,
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

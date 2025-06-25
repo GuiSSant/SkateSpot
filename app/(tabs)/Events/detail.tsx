@@ -14,12 +14,11 @@ import {
   Alert
 } from "react-native";
 import { useFonts } from "expo-font";
-import Carrossel from "../../../components/common/Carrossel";
 import Midia from "../../../components/common/Midia";
 import MainHeader from "../../../components/common/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import api, {getShop } from "@/lib/api";
+import api, {getEvent } from "@/lib/api";
 import { ButtonMain } from "@/components/common/ButtonMain";
 import { useRoute } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
@@ -33,16 +32,16 @@ type RouteParams = {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export default function SkateShop() {
+export default function SkateEvent() {
   const route = useRoute();
   const { id } = route.params as RouteParams;
 
-  const [shopName, setshopName] = useState<string | null>(null);
+  const [eventName, seteventName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
   const [images, setImages] = useState<any[]>([]);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [selectedImages, setSelectedImages] = useState([]);
-	const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleAddPhotos = async () => {
     try {
@@ -94,7 +93,7 @@ export default function SkateShop() {
       }
 
       console.log("Token: ", token)
-      console.log("skateshop_id: ", id)
+      console.log("skateevent_id: ", id)
       
       for (const img of selectedImages) {
         const formData = new FormData();
@@ -104,7 +103,7 @@ export default function SkateShop() {
           type: 'image/jpeg',
         });
 
-        formData.append('skateshop_id', id);
+        formData.append('skateevent_id', id);
 
         console.log("FormData sendo enviado:", formData);
 
@@ -121,7 +120,7 @@ export default function SkateShop() {
       setSelectedImages([]);
       setShowConfirmation(false);
 
-      const response = await api.get(`/skate-shops/${id}/`);
+      const response = await api.get(`/skate-events/${id}/`);
       setImages(response.data.images);
 
     } catch (error) {
@@ -131,24 +130,24 @@ export default function SkateShop() {
   };
 
   useEffect(() => {
-    const fetchShopData = async () => {
+    const fetchEventData = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-        const response = await getShop(id);
-        console.log("Dados da loja:", response.data);
+        const response = await getEvent(id);
+        console.log("Dados do evento:", response.data);
 
-        setshopName(response.data.name || "");
+        seteventName(response.data.name || "");
         setDescription(response.data.description || "");
         setImages(response.data.images || []);
         const mainImgObj = response.data.images?.find((img: any) => img.main_image);
         setMainImage(mainImgObj ? mainImgObj.image : null);                     
       } catch (error) {
-        console.log("Erro ao carregar dados da loja:", error);
+        console.log("Erro ao carregar dados do evento:", error);
       }
 
     };
 
-    fetchShopData();
+    fetchEventData();
   }, []);
 
 
@@ -175,8 +174,8 @@ export default function SkateShop() {
                 <View style={styles.UserContainer}>
                   <View style={styles.profileContent}>
                     <View style={{ flexDirection: "row", alignItems: "center", marginTop: 64, paddingHorizontal: 16 }}>
-                      <Text style={styles.nameShop}>
-                        {shopName || "Sem Nome"}
+                      <Text style={styles.nameEvent}>
+                        {eventName || "Sem Nome"}
                       </Text>
                       {/* <Text style={styles.descriptionText}>
                         {"(4,0)"}
@@ -268,7 +267,7 @@ const styles = StyleSheet.create({
     marginTop: -60,
     paddingHorizontal: 16,
   },
-  nameShop: {
+  nameEvent: {
     fontSize: 28,
     color: "#FFFFFF",
     alignSelf: "center",
@@ -283,18 +282,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   avaliationText: {
-    fontSize: 14,
-    color: "#FFFFFF",
-    alignSelf: "center",
-    paddingHorizontal: 16,
-  },
-  modalityText: {
-    fontSize: 20,
-    color: "#FFFFFF",
-    alignSelf: "center",
-    paddingHorizontal: 16,
-  },
-  structureText: {
     fontSize: 14,
     color: "#FFFFFF",
     alignSelf: "center",
