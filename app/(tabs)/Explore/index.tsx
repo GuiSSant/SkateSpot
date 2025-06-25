@@ -19,8 +19,7 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Keyboard } from "react-native";
-import { customMapStyle } from "../../../assets/customMapStyle";
-
+import { customMapStyle } from "@/assets/customMapStyle";
 import HeaderNavi from "@/components/common/HeaderNavi";
 import ModalExplore from "./Modal/modal";
 import api from "@/lib/api";
@@ -92,8 +91,8 @@ export default function Explore() {
   } | null>(null);
 
   const [loaded, error] = useFonts({
-    "Quicksand-Bold": require("../../../assets/fonts/Quicksand-Bold.ttf"),
-    "Quicksand-Regular": require("../../../assets/fonts/Quicksand-Regular.ttf")
+    "Quicksand-Bold": require("@/assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Regular": require("@/assets/fonts/Quicksand-Regular.ttf")
   });
 
   const DarkStyleMap = customMapStyle;
@@ -245,6 +244,20 @@ export default function Explore() {
     }
   };
 
+  const getMarkerIcon = (type: string) => {
+    if (type === 'spot') {
+      return require("@/assets/images/skateRoxo.png");
+    }
+    if (type === 'event') {
+      return require("@/assets/images/eventoAmarelo.png");
+    }
+    if (type === 'shop') {
+      return require("@/assets/images/shopRoxo.png");
+    }
+    // Default fallback icon
+    return require("@/assets/images/skateRoxo.png");
+  };
+
 
   return (
 <View style={styles.container}>
@@ -360,7 +373,7 @@ export default function Explore() {
             if (item.type === "spot") {
               router.push({ pathname: "/(tabs)/Spots/detail", params: { id: item.id } });
             } else if (item.type === "event") {
-              // router.push({ pathname: "/(tabs)/Events/detail", params: { id: item.id } });
+              router.push({ pathname: "/(tabs)/Events/detail", params: { id: item.id } });
             } else if (item.type === "shop") {
               router.push({ pathname: "/(tabs)/Shops/detail", params: { id: item.id } });
             }
@@ -401,37 +414,30 @@ export default function Explore() {
             }}
             customMapStyle={DarkStyleMap}
           >
-            {results.map((result) => (
-              <Marker
-                key={`${result.type}_${result.location_id}`}
-                coordinate={{
-                  latitude: result.latitude,
-                  longitude: result.longitude,
-                }}
-                title={result.name}
-                onPress={() => router.push({ pathname: "/(tabs)/Spots/detail", params: { id: result.id } }) }
-              >
-                {result.type == "spot" ? (
-                  <Image
-                    source={require("../../../assets/images/skateRoxo.png")}
-                    style={{ width: 30, height: 35 }}
-                    resizeMode="contain"
-                  />
-                ) : result.type == "shop" ? (
-                  <Image
-                    source={require("../../../assets/images/shopRoxo.png")}
-                    style={{ width: 30, height: 35 }}
-                    resizeMode="contain"
-                  />
-                ) : (
-                  <Image
-                    source={require("../../../assets/images/eventoAmarelo.png")}
-                    style={{ width: 30, height: 35 }}
-                    resizeMode="contain"
-                  />
-                )}
-              </Marker>
-            ))}
+            {results.map((result) => {
+              const longitudeOffset = result.type === 'event' ? -0.00040 : 0;
+              return (
+                <Marker
+                  key={`${result.type}-${result.id}`}
+                  coordinate={{
+                    latitude: result.latitude,
+                    longitude: result.longitude + longitudeOffset,
+                  }}
+                  title={result.name}
+                  onPress={() => {
+                    if (result.type === "spot") {
+                      router.push({ pathname: "/(tabs)/Spots/detail", params: { id: result.id } });
+                    } else if (result.type === "event") {
+                      router.push({ pathname: "/(tabs)/Events/detail", params: { id: result.id } });
+                    } else if (result.type === "shop") {
+                      router.push({ pathname: "/(tabs)/Shops/detail", params: { id: result.id } });
+                    }
+                  }}
+                >
+                  <Image source={getMarkerIcon(result.type)} style={{ width: 30, height: 35 }} resizeMode="contain" />
+                </Marker>
+              );
+            })}
           </MapView>
         ) : (
           <ActivityIndicator

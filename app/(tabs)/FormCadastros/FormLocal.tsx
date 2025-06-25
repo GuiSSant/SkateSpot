@@ -20,6 +20,8 @@ import { TextInputMask } from 'react-native-masked-text';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import api from "@/lib/api";
+import MainHeader from "@/components/common/MainHeader";
+
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
@@ -293,11 +295,7 @@ function FormCadastros() {
           }}
         >
         <View style={styles.container}>
-          <Image
-            style={styles.logo}
-            source={require("../../../assets/images/logo.png")}
-          />
-
+                  <MainHeader />
           <Text style={styles.titulo}>Local</Text>
           <Text style={styles.infoText}>
             Preencha o formulário para cadastrar um novo local

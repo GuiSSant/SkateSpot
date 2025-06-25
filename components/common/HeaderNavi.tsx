@@ -43,7 +43,7 @@ export default function HeaderNavi() {
   const menuItems: MenuItem[] = [
     { name: "ASSINATURA", route: "/Premium", color: "#9747FF" },
     { name: "PISTAS", route: "/Spots" },
-    { name: "EVENTOS", route: "/Eventos" },
+    { name: "EVENTOS", route: "/Events" },
     { name: "LOJAS", route: "/Shops" },
     { name: "MODALIDADES", route: "/Modalities" },
     { name: "ESTRUTURAS", route: "/Structure" },

@@ -34,7 +34,7 @@ const PagamentoScreen = () => {
   const [pagto, setPagto] = useState<Pagt[]>([
  
   {
-    id: '2',
+    id: '1',
     title: 'PIX',
     tag: '1',
     description: "Um QR Code será encaminhado ao seu e-mail. Faça o pagamento no tempo estipulado.",
@@ -42,9 +42,9 @@ const PagamentoScreen = () => {
 
   },
    {
-    id: '1',
+    id: '2',
     title: 'Boleto',
-    tag: '3',
+    tag: '2',
     description: "Um boleto será encaminhado ao seu e-mail. Faça o pagamento antes da data de vencimento.",
     expanded: false
 
@@ -52,7 +52,7 @@ const PagamentoScreen = () => {
   {
     id: '3',
     title: 'Paypal',
-    tag: '2',
+    tag: '3',
     description: "Uma cobrança chegará ao seu e-mail. Faça o pagamento para a conta que será informada",     
     expanded: false
   }
