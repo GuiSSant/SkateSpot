@@ -59,7 +59,7 @@ const PlanosScreen = () => {
     subtitle: 'Individual',
     tag: 'Lenda',
     description: "• Tudo de 'Profissa' • Conteúdo exclusivo • Dicas e tutoriais • Notificações personalizadas",
-    price: 'R$500 /mês',
+    price: 'R$75 /mês',
     expanded: false
 
   },
