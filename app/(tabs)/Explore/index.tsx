@@ -39,6 +39,7 @@ interface Location {
 
 interface Result {
   id: number;
+  location_id: number;
   name: string;
   type: string;
   latitude: number;
@@ -335,17 +336,16 @@ export default function Explore() {
   </View> 
 
   <View style={styles.divider} />
-  <TouchableOpacity onPress={() => setShowLocationModal(true)}>
-    <View style={styles.locationButton}>
-  <TouchableOpacity onPress={() => setShowLocationModal(true)}>
-    <View style={styles.locationButton}>
-      <Icon name="map-pin" size={20} color="#F5D907" />
-      <Text style={styles.locationButtonText}>{selectedAddress}</Text>
-    </View>
-  </TouchableOpacity>
-</View>
-  </TouchableOpacity>
-
+    <TouchableOpacity onPress={() => setShowLocationModal(true)}>
+      <View style={styles.locationButton}>
+        <TouchableOpacity onPress={() => setShowLocationModal(true)}>
+          <View style={styles.locationButton}>
+            <Icon name="map-pin" size={20} color="#F5D907" />
+            <Text style={styles.locationButtonText}>{selectedAddress}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   <View style={styles.divider} />
 
   <View style={styles.containerMap}>
@@ -353,7 +353,7 @@ export default function Explore() {
     <FlatList
       horizontal
       data={results}
-      keyExtractor={(item) => `${item.type}_${item.id}`}
+      keyExtractor={(item) => `${item.type}_${item.location_id}`}
       renderItem={({ item }) => (
         <TouchableOpacity
           onPress={() => {
@@ -371,9 +371,9 @@ export default function Explore() {
               source={{ uri: `${API_URL}${item.main_image}` }}
               style={styles.cardImage}
             />
-            <Text style={styles.cardTitle}>{item.name}</Text>
+            <Text style={styles.cardTitle} numberOfLines={2}>{item.name}</Text>
             <View style={styles.cardDistanceContainer}>
-              <Icon name="map-pin" size={12} color="#666" />
+              <Icon name="map-pin" size={12} color="#CCC" />
               <Text style={styles.cardDistance}>{item.distance.toFixed(2)} km</Text>
             </View>
           </View>
@@ -403,7 +403,7 @@ export default function Explore() {
           >
             {results.map((result) => (
               <Marker
-                key={`${result.type}_${result.id}`}
+                key={`${result.type}_${result.location_id}`}
                 coordinate={{
                   latitude: result.latitude,
                   longitude: result.longitude,
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
   searchBar: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    height: 30,
+    height: 40,
     marginTop: 15,
     paddingHorizontal: 16,
   },
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: 4,
     alignSelf: "center",
   },
   locationButtonText: {
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "#ccc",
-    marginVertical: 2,
+    marginVertical: 1,
     width: "100%",
     alignSelf: "center",
   },
@@ -587,6 +587,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginRight: 12,
     marginTop: 8,
+    marginBottom: 8,
     borderRadius: 15,
     backgroundColor: "#fff",
     elevation: 2,
@@ -604,15 +605,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 4,
     fontFamily: "Quicksand-Bold",
+    lineHeight: 16,
+    height: 32,
   },
   cardDistanceContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 2,
+    marginBottom: 2,
   },
   cardDistance: {
     fontSize: 10,
-    color: "#666",
+    color: "#CCC",
     marginLeft: 4,
     marginTop: 4,
   },
@@ -625,7 +629,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   mapCollapsed: {
-    height: "60%",
+    height: "58%",
     marginTop: 0,
   },
   mapExpanded: {
