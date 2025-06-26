@@ -100,6 +100,11 @@ export const updateShop = (
 ) => api.put(`/skate-shops/${id}/`, data);
 // DELETE
 export const deleteShop = (id: number) => api.delete(`/skate-shops/${id}/`);
+// Favoritos
+export const toggleFavorite = (spotId: number, action: 'favorite' | 'unfavorite') => 
+  api.post('/api/favorites/', { spot_id: spotId, action });
+
+export const getFavorites = () => api.get('/api/my-favorites/');
 
 
 export default api;

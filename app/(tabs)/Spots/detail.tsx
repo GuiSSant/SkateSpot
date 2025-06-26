@@ -19,10 +19,12 @@ import Midia from "../../../components/common/Midia";
 import MainHeader from "../../../components/common/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import api, { getModalities, getStructures, getSpot } from "@/lib/api";
+import api, { getModalities, getStructures, getSpot, toggleFavorite } from "@/lib/api";
 import { ButtonMain } from "@/components/common/ButtonMain";
 import { useRoute } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
+import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
+import Toast from "react-native-toast-message";
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
@@ -46,6 +48,7 @@ const windowHeight = Dimensions.get("window").height;
 export default function SkateSpot() {
   const route = useRoute();
   const { id } = route.params as RouteParams;
+  console.log(id);
 
   const [spotName, setspotName] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
@@ -57,7 +60,27 @@ export default function SkateSpot() {
   const [images, setImages] = useState<any[]>([]);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [selectedImages, setSelectedImages] = useState([]);
-	const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [favorite, setFavorite] = useState(false);
+
+  const toggleFavoriteFunction = () => {
+    if (favorite == false) {
+      setFavorite(true);
+      Toast.show({
+        type: 'success',
+        text1: 'Pista adicionada aos favoritos!',
+      });
+      toggleFavorite(id, 'favorite');
+    }
+    else {
+      setFavorite(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Pista removida dos favoritos!',
+      });
+      toggleFavorite(id, 'unfavorite');
+    }
+  };
 
   const handleAddPhotos = async () => {
     try {
@@ -110,7 +133,7 @@ export default function SkateSpot() {
 
       console.log("Token: ", token)
       console.log("skatespot_id: ", id)
-      
+
       for (const img of selectedImages) {
         const formData = new FormData();
         formData.append('image', {
@@ -167,7 +190,7 @@ export default function SkateSpot() {
         setLighting(response.data.lighting || false);
         setImages(response.data.images || []);
         const mainImgObj = response.data.images?.find((img: any) => img.main_image);
-        setMainImage(mainImgObj ? mainImgObj.image : null);                     
+        setMainImage(mainImgObj ? mainImgObj.image : null);
       } catch (error) {
         console.log("Erro ao carregar dados da pista:", error);
       }
@@ -184,114 +207,117 @@ export default function SkateSpot() {
   });
 
   if (loaded)
-  return (
-    <>
-      <ImageBackground
-        source={mainImage ? { uri: mainImage } : require("../../../assets/images/profileBackgroundImage.jpg")}
-        resizeMode="cover"
-        style={styles.profileBackgroundImage}
-        imageStyle={{ opacity: 0.3 }}
-      >
-        <FlatList
-          data={[]} // FlatList vazia, usamos apenas o header aqui
-          ListHeaderComponent={
-            <View style={styles.container}>
-              <MainHeader />
+    return (
+      <>
+        <ImageBackground
+          source={mainImage ? { uri: mainImage } : require("../../../assets/images/profileBackgroundImage.jpg")}
+          resizeMode="cover"
+          style={styles.profileBackgroundImage}
+          imageStyle={{ opacity: 0.3 }}
+        >
+          <FlatList
+            data={[]} // FlatList vazia, usamos apenas o header aqui
+            ListHeaderComponent={
+              <View style={styles.container}>
+                <MainHeader />
 
-              <View style={styles.UserContainer}>
-                <View style={styles.profileContent}>
-                  <View style={{ flexDirection: "row", alignItems: "center", marginTop: 64, paddingHorizontal: 16 }}>
-                    <Text style={styles.nameSpot}>
-                      {spotName || "Sem Nome"}
+                <View style={styles.UserContainer}>
+                  <View style={styles.profileContent}>
+                    <MaterialCommunityIcons name={favorite ? "heart" : "heart-outline"} size={48} color={favorite ? '#9747FF' : '#000000'} onPress={toggleFavoriteFunction}
+                      style={{ alignSelf: 'flex-end', paddingTop: 32, marginRight: 32 }} />
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, paddingHorizontal: 32 }}>
+                      <Text style={styles.nameSpot}>
+                        {spotName || "Sem Nome"}
+                      </Text>
+                      <Text style={styles.descriptionText}>
+                        {"(4,0)"}
+                      </Text>
+                    </View>
+                    <Text style={[styles.descriptionText, { marginTop: 16 }]}>
+                      {description || "Sem Descrição"}
                     </Text>
-                    <Text style={styles.descriptionText}>
-                      {"(4,0)"}
-                    </Text>
-                  </View>
-                  <Text style={[styles.descriptionText, { marginTop: 16 }]}>
-                    {description || "Sem Descrição"}
-                  </Text>
 
-                  {/* Modalidades */}
-                  <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
-                    <Text style={styles.textSection}>Modalidades</Text>
-                    <View style={styles.cardBox}>
-                      {modalities.map((item) => (
-                        <View key={item.id} style={styles.chip}>
-                          <Text style={styles.chipText}>{item.name}</Text>
-                        </View>
-                      ))}
+                    {/* Modalidades */}
+                    <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+                      <Text style={styles.textSection}>Modalidades</Text>
+                      <View style={styles.cardBox}>
+                        {modalities.map((item) => (
+                          <View key={item.id} style={styles.chip}>
+                            <Text style={styles.chipText}>{item.name}</Text>
+                          </View>
+                        ))}
+                      </View>
                     </View>
-                  </View>
 
-                  {/* Estruturas */}
-                  <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
-                    <Text style={styles.textSection}>Estruturas</Text>
-                    <View style={styles.cardBox}>
-                      {structures.map((item) => (
-                        <View key={item.id} style={styles.chip}>
-                          <Text style={styles.chipText}>{item.name}</Text>
-                        </View>
-                      ))}
+                    {/* Estruturas */}
+                    <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+                      <Text style={styles.textSection}>Estruturas</Text>
+                      <View style={styles.cardBox}>
+                        {structures.map((item) => (
+                          <View key={item.id} style={styles.chip}>
+                            <Text style={styles.chipText}>{item.name}</Text>
+                          </View>
+                        ))}
+                      </View>
                     </View>
-                  </View>
 
-                  {/* Infraestrutura */}
-                  <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
-                    <Text style={styles.textSection}>Infraestrutura</Text>
-                    <View style={[styles.cardBox, { justifyContent: "space-between", paddingHorizontal: 16 }]}>
-                      <Text style={bathroom ? styles.infraTextActive : styles.infraTextNotActive}>Banheiro</Text>
-                      <Text style={lighting ? styles.infraTextActive : styles.infraTextNotActive}>Iluminação</Text>
-                      <Text style={water ? styles.infraTextActive : styles.infraTextNotActive}>Água</Text>
+                    {/* Infraestrutura */}
+                    <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+                      <Text style={styles.textSection}>Infraestrutura</Text>
+                      <View style={[styles.cardBox, { justifyContent: "space-between", paddingHorizontal: 16 }]}>
+                        <Text style={bathroom ? styles.infraTextActive : styles.infraTextNotActive}>Banheiro</Text>
+                        <Text style={lighting ? styles.infraTextActive : styles.infraTextNotActive}>Iluminação</Text>
+                        <Text style={water ? styles.infraTextActive : styles.infraTextNotActive}>Água</Text>
+                      </View>
                     </View>
+
+
+
+                    {/* Mídia e botão */}
+                    <Midia imagens={images} />
+                    <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} style={{ marginBottom: 32 }} />
                   </View>
-
-
-
-                  {/* Mídia e botão */}
-                  <Midia imagens={images} />
-                  <ButtonMain title="Adicionar Fotos" onPress={handleAddPhotos} style={{ marginBottom: 32 }}/>
                 </View>
               </View>
-            </View>
-          }
-          contentContainerStyle={{ paddingBottom: 40 }}
-        />
+            }
+            contentContainerStyle={{ paddingBottom: 40 }}
+          />
 
-        {/* Modal de envio de imagens */}
-        <Modal
-          visible={showConfirmation}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setShowConfirmation(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-              <FlatList
-                data={selectedImages}
-                keyExtractor={(item) => item.uri}
-                renderItem={({ item }) => (
-                  <View style={styles.imageContainer}>
-                    <Image source={{ uri: item.uri }} style={styles.image} />
-                    <TouchableOpacity
-                      onPress={() => removeImage(item.uri)}
-                      style={styles.removeButton}
-                    >
-                      <Text style={styles.removeButtonText}>X</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-                horizontal
-              />
-              <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
-                <Text style={styles.confirmButtonText}>Confirmar</Text>
-              </TouchableOpacity>
+          {/* Modal de envio de imagens */}
+          <Modal
+            visible={showConfirmation}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowConfirmation(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <FlatList
+                  data={selectedImages}
+                  keyExtractor={(item) => item.uri}
+                  renderItem={({ item }) => (
+                    <View style={styles.imageContainer}>
+                      <Image source={{ uri: item.uri }} style={styles.image} />
+                      <TouchableOpacity
+                        onPress={() => removeImage(item.uri)}
+                        style={styles.removeButton}
+                      >
+                        <Text style={styles.removeButtonText}>X</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  horizontal
+                />
+                <TouchableOpacity style={styles.confirmButton} onPress={confirmUpload}>
+                  <Text style={styles.confirmButtonText}>Confirmar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </Modal>
-      </ImageBackground>
-    </>
-  );
+          </Modal>
+        </ImageBackground>
+        <Toast />
+      </>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -380,7 +406,7 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     color: "#212121",
   },
-   modalOverlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",  // Fundo escuro semi-transparente
     justifyContent: "center",

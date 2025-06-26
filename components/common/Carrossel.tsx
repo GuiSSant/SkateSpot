@@ -27,6 +27,7 @@ export default function Carrossel({
   const API_URL = api.defaults.baseURL || "http:// ";
   const [favoriteSpots, setFavoriteSpots] = React.useState<any[]>([]);
 
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {

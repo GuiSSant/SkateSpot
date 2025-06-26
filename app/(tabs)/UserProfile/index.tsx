@@ -14,7 +14,7 @@ import Midia from "../../../components/common/Midia";
 import MainHeader from "../../../components/common/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import api from "@/lib/api";
+import api, {getFavorites} from "@/lib/api";
 
 const API_URL = api.defaults.baseURL || "http:// ";
 
@@ -88,7 +88,7 @@ export default function UserProfile() {
                   <Text style={styles.UsernameTag}>
                     @{username}
                   </Text>
-                  <Carrossel title="Minhas Pistas"/>
+                  <Carrossel title="Pistas Favoritas"/>
                   <Midia imagens={uploadedImages} />
                 </View>
               </View>
